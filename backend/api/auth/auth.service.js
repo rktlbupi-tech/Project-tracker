@@ -2,7 +2,7 @@ const Cryptr = require('cryptr')
 const bcrypt = require('bcryptjs')
 const userService = require('../user/user.service')
 const logger = require('../../services/logger.service')
-const cryptr = new Cryptr(process.env.SECRET1)
+const cryptr = new Cryptr(process.env.SECRET1 || 'Secret-Puk-Default-1234')
 
 module.exports = {
     signup,
