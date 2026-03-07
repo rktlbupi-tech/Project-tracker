@@ -1,0 +1,12 @@
+# Ignored files
+node_modules/
+.env
+logs/
+.DS_Store
+dist/
+build/
+.next/
+.serverless/
+vercel.json.example
+env.example
+*.log

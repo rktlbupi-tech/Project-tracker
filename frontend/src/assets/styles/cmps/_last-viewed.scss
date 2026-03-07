@@ -1,0 +1,18 @@
+.last-viewed {
+    padding: $spacing-xl $spacing-medium;
+
+    .title {
+        margin-bottom: $spacing-small;
+    }
+
+    .last-viewed-main {
+        .member-info {
+            gap: $spacing-small;
+            margin-bottom: $spacing-small;
+
+            img {
+                @include members();
+            }
+        }
+    }
+}
