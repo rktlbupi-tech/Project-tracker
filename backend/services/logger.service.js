@@ -3,8 +3,10 @@ const asyncLocalStorage = require('./als.service')
 const utilService = require('./util.service')
 
 
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL
 const logsDir = './logs'
-if (!fs.existsSync(logsDir)) {
+
+if (!isProduction && !fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir)
 }
 
@@ -29,10 +31,14 @@ function doLog(level, ...args) {
     const userId = store?.loggedinUser?._id
     const str = userId ? `(userId: ${userId})` : ''
     line = `${getTime()} - ${level} - ${line} ${str}\n`
+    
     console.log(line)
-    fs.appendFile('./logs/backend.log', line, (err) =>{
-        if (err) console.log('FATAL: cannot write to log file')
-    })
+    
+    if (!isProduction) {
+        fs.appendFile('./logs/backend.log', line, (err) =>{
+            if (err) console.log('FATAL: cannot write to log file')
+        })
+    }
 }
 
 module.exports = {
