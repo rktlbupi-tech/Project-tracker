@@ -1,100 +1,173 @@
-.login-page-header {
-    border-bottom: 1px solid #e0e0e0;
-    height: 65px;
-    background: $login-bg;
+@import '../setup/variables';
+@import '../setup/mixins';
 
-    .logo {
-        height: 65px;
-        cursor: pointer;
-    }
-}
-
-.form-container {
-    @include center-flex();
+.login-signup {
+    min-height: 100vh;
+    background: $home-bg;
+    display: flex;
     flex-direction: column;
-    margin-top: 40px;
-    margin-bottom: $spacing-medium;
-    text-align: center;
 
-    h1 {
-        font-size: rem(40px);
-        font-weight: 100;
-        margin-bottom: $spacing-small;
-        color: #333;
-    }
+    .login-page-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        height: 65px;
+        background: transparent;
+        display: flex;
+        align-items: center;
 
-    .login-explain {
-        font-weight: 500;
-        margin-bottom: 20px;
-        color: #333
-    }
-
-    input {
-        width: 328px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        padding: 6px 12px;
-        font-size: rem(16px);
-        outline: none;
-        margin-bottom: $spacing-medium;
-    }
-
-    .btn-next {
-        text-align: center;
-        width: 328px;
-        padding: 6px 0;
-        border: none;
-        border-radius: 4px;
-        font-size: rem(18px);
-        background-color: $board-btn;
-        color: #fff;
-    }
-
-    .split-line {
-        margin-bottom: $spacing-medium;
-        margin-top: 30px;
-        width: 100%;
-        
-        .separator-line {
-            border: .5px solid #c5c7d0;
-            width: 200px;
-            margin: $spacing-medium;
+        .logo {
+            height: 40px;
+            cursor: pointer;
+            filter: brightness(0) invert(1); // Make logo white for dark bg
         }
     }
 
-    .btn-login-google {
+    .main-content {
+        flex: 1;
         @include center-flex();
-        font-family: roboto-light;
-        padding: 12px $spacing-medium;
-        border: 1px solid #c5c7d0;
-        border-radius: 4px;
-        gap: 8px;
-        margin-bottom: 32px;
-        background-color: $app-bg ;
+        padding: $spacing-xl;
+    }
 
-        .img-google-login {
-            width: 16px;
+    .form-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: $spacing-xxl;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+        h1 {
+            font-size: rem(32px);
+            font-weight: 600;
+            margin-bottom: $spacing-medium;
+            background: linear-gradient(180deg, #fff 0%, #adadad 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        span {
-            font-family: tahoma;
+        .login-explain {
+            font-weight: 300;
+            margin-bottom: $spacing-large;
+            color: #d1d1d1;
+            font-size: rem(16px);
+        }
+
+        .inputs-container {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-medium;
+            margin-bottom: $spacing-large;
+
+            input {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 6px;
+                padding: 12px 16px;
+                font-size: rem(16px);
+                color: #fff;
+                outline: none;
+                transition: border-color 0.2s, background 0.2s;
+
+                &::placeholder {
+                    color: #888;
+                }
+
+                &:focus {
+                    border-color: #6161FF;
+                    background: rgba(255, 255, 255, 0.1);
+                }
+            }
+        }
+
+        .btn-next {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: rem(18px);
+            font-weight: 600;
+            background: $home-btn-bg-gradient;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+
+            &:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.1);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+
+        .split-line {
+            display: flex;
+            align-items: center;
+            margin: $spacing-xl 0;
+            color: #888;
             font-size: rem(14px);
-            color: #000000;
+
+            &::before, &::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            p {
+                padding: 0 $spacing-medium;
+            }
+        }
+
+        .btn-login-google {
+            @include center-flex();
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            gap: 12px;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.2s;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .img-google-login {
+                width: 20px;
+            }
+
+            span {
+                font-size: rem(15px);
+                color: #fff;
+            }
+        }
+
+        .suggest-signup {
+            margin-top: $spacing-xl;
+            font-size: rem(15px);
+            color: #adadad;
+
+            .btn-signup {
+                color: #6161FF;
+                background: transparent;
+                border: none;
+                padding-left: $spacing-xs;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
     }
-
-    .suggest-signup {
-        .suggest-signup-prefix {
-            padding-right: $spacing-xs;
-            font-size: rem(16px);
-        }
-
-        .btn-signup {
-            color: #0fa2e2;
-            background-color: $app-bg;
-            margin: 0;
-            padding: 0;
-            font-size: rem(16px);
-        }
-    }
-}
+}

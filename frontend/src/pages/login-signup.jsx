@@ -89,56 +89,60 @@ export function LoginSignup() {
         // TODO: fix image uplouder 
         <div className="login-signup">
             <LoginPageHeader />
-            <form className="form-container layout" onSubmit={(ev) => onSubmit(ev, isSignup)}>
-                <h1>{isSignup ? 'Create your MyDay account here ' : 'Log in to your account'}</h1>
-                {isSignup && <ImgUploader onUploaded={onUploaded} />}
-                {!isSignup && <p className="login-explain">Enter your username and password</p>}
-                {isSignup && <p className="login-explain">Enter your full name, username and password</p>}
-                {isSignup && 
-                <input
-                    type="text"
-                    name="fullname"
-                    value={credentials.fullname}
-                    placeholder="Full name"
-                    onChange={handleChange}
-                    required
-                    autoFocus
-                />}
-                <input
-                    type="text"
-                    name="username"
-                    value={credentials.username}
-                    placeholder="Username"
-                    onChange={handleChange}
-                    required
-                    autoFocus
-                />
-                {
-                    <input
-                        type="password"
-                        name="password"
-                        value={credentials.password}
-                        placeholder="Password"
-                        onChange={handleChange}
-                        required
-                    />
-                }
-                <button className="btn-next">{isSignup ? 'Sign up' : 'Log in'}</button>
-                <div className="flex justify-center align-center split-line">
-                    <span className="separator-line"></span>
-                    <p>{isSignup ? 'Or sign up with' : 'Or sign in with'}</p>
-                    <span className="separator-line"></span>
-                </div>
-                <button className="btn-login-google" onClick={() => googleLogin()}>
-                    <img className="img-google-login" src="https://cdn.monday.com/images/logo_google_v2.svg" aria-hidden="true" alt="" />
-                    <span>Google</span>
-                </button>
-                <div className="suggest-signup">
-                    <span className="suggest-signup-prefix">{isSignup ? 'Already have an account?' : 'Don\'t have an account yet?'}</span>
-                    {!isSignup && <Link to={'/auth/signup'}><button className="btn-signup" onClick={toggleSignup}>Sign up</button></Link>}
-                    {isSignup && <Link to={'/auth/login'}><button className="btn-signup" onClick={toggleSignup}>Log in</button></Link>}
-                </div>
-            </form>
+            <main className="main-content">
+                <form className="form-container" onSubmit={(ev) => onSubmit(ev, isSignup)}>
+                    <h1>{isSignup ? 'Create your MyDay account here ' : 'Log in to your account'}</h1>
+                    {isSignup && <ImgUploader onUploaded={onUploaded} />}
+                    {!isSignup && <p className="login-explain">Enter your username and password</p>}
+                    {isSignup && <p className="login-explain">Enter your details to get started</p>}
+                    
+                    <div className="inputs-container">
+                        {isSignup && 
+                        <input
+                            type="text"
+                            name="fullname"
+                            value={credentials.fullname}
+                            placeholder="Full name"
+                            onChange={handleChange}
+                            required
+                            autoFocus
+                        />}
+                        <input
+                            type="text"
+                            name="username"
+                            value={credentials.username}
+                            placeholder="Username"
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="password"
+                            name="password"
+                            value={credentials.password}
+                            placeholder="Password"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <button className="btn-next">{isSignup ? 'Sign up' : 'Log in'}</button>
+
+                    <div className="split-line">
+                        <p>{isSignup ? 'Or sign up with' : 'Or sign in with'}</p>
+                    </div>
+
+                    <button type="button" className="btn-login-google" onClick={() => googleLogin()}>
+                        <img className="img-google-login" src="https://cdn.monday.com/images/logo_google_v2.svg" aria-hidden="true" alt="" />
+                        <span>Google</span>
+                    </button>
+
+                    <div className="suggest-signup">
+                        <span>{isSignup ? 'Already have an account?' : 'Don\'t have an account yet?'}</span>
+                        {!isSignup && <Link to={'/auth/signup'} className="btn-signup" onClick={toggleSignup}>Sign up</Link>}
+                        {isSignup && <Link to={'/auth/login'} className="btn-signup" onClick={toggleSignup}>Log in</Link>}
+                    </div>
+                </form>
+            </main>
         </div>
     )
 }
