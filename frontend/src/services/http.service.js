@@ -5,9 +5,60 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.NODE_ENV === 'pr
     : '//localhost:3031/api/')
 
 
-var axios = Axios.create({
+const axios = Axios.create({
     withCredentials: true
 })
+
+// Request Interceptor
+axios.interceptors.request.use(
+    (config) => {
+        console.log(
+            `🚀 %c[API Request] %c${config.method?.toUpperCase()} %c${config.url}`,
+            "color: #FF6B00; font-weight: bold;",
+            "color: #1B2D1F; font-weight: bold;",
+            "color: #868E96;",
+            config.data || ""
+        );
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Response Interceptor
+axios.interceptors.response.use(
+    (response) => {
+        console.log(
+            `✅ %c[API Response]  %c${response.status} %c${response.config.url}`,
+            "color: #6CC51D; font-weight: bold;",
+            "color: #1B2D1F; font-weight: bold;",
+            "color: #868E96;",
+            response.data
+        );
+        return response;
+    },
+    (error) => {
+        const status = error.response?.status || "Network Error"
+        const url = error.config?.url || "Unknown URL"
+        
+        console.log(
+            `❌ %c[API Error] %c${status} %c${url}`,
+            "color: #FA5252; font-weight: bold;",
+            "color: #1B2D1F; font-weight: bold;",
+            "color: #868E96;",
+            error.response?.data || error.message
+        );
+
+        if (error.response && error.response.status === 401) {
+            sessionStorage.clear()
+        }
+        if (error.response && error.response.status === 500) {
+            window.location.assign('/')
+        }
+        return Promise.reject(error);
+    }
+);
 
 export const httpService = {
     get (endpoint, data) {
@@ -34,14 +85,6 @@ async function ajax (endpoint, method = 'GET', data = null) {
         })
         return res.data
     } catch (err) {
-        console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, data)
-        console.dir(err)
-        if (err.response && err.response.status === 401) {
-            sessionStorage.clear()
-        }
-        if (err.response && err.response.status === 500) {
-            window.location.assign('/')
-        }
         throw err
     }
 }
