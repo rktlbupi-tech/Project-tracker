@@ -21,7 +21,6 @@ function isError(e) {
 }
 
 function doLog(level, ...args) {
-
     const strs = args.map(arg =>
         (typeof arg === 'string' || isError(arg)) ? arg : JSON.stringify(arg)
     )
@@ -30,14 +29,24 @@ function doLog(level, ...args) {
     const store = asyncLocalStorage.getStore()
     const userId = store?.loggedinUser?._id
     const str = userId ? `(userId: ${userId})` : ''
-    line = `${getTime()} - ${level} - ${line} ${str}\n`
-    
-    console.log(line)
-    
+    line = `${getTime()} - ${level} - ${line} ${str}`
+
     if (!isProduction) {
-        fs.appendFile('./logs/backend.log', line, (err) =>{
+        const colors = {
+            DEBUG: '\x1b[36m', // Cyan
+            INFO: '\x1b[32m',  // Green
+            WARN: '\x1b[33m',  // Yellow
+            ERROR: '\x1b[31m', // Red
+            RESET: '\x1b[0m'
+        }
+        const color = colors[level] || colors.RESET
+        console.log(`${color}${line}${colors.RESET}`)
+
+        fs.appendFile('./logs/backend.log', line + '\n', (err) => {
             if (err) console.log('FATAL: cannot write to log file')
         })
+    } else {
+        console.log(line)
     }
 }
 
