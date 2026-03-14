@@ -1,6 +1,6 @@
 import { useState, useRef} from "react"
 import { useSelector } from "react-redux"
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd"
+import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import { TaskPreview } from "../task/task-preview"
 import { addTask, updateGroupAction, updatePickerCmpsOrder, addActivity, setDynamicModalObj } from "../../store/board.actions"
@@ -85,12 +85,6 @@ export function GroupPreview ({ group, board, idx }) {
         setTaskToEdit(boardService.getEmptyTask())
     }
 
-    function handleHorizontalDrag (ev) {
-        const updatedTitles = [...board.cmpsOrder]
-        const [draggedItem] = updatedTitles.splice(ev.source.index, 1)
-        updatedTitles.splice(ev.destination.index, 0, draggedItem)
-        updatePickerCmpsOrder(board, updatedTitles)
-    }
 
     async function handleCheckboxChange (task) {
         try {
@@ -134,7 +128,7 @@ export function GroupPreview ({ group, board, idx }) {
     }
 
     return <ul className="group-preview flex column" >
-        <Draggable key={group.id} draggableId={group.id} index={idx}>
+        <Draggable key={group.id || group._id} draggableId={`${group.id || group._id}`} index={idx}>
             {(provided) => {
                 return <div ref={provided.innerRef}
                     {...provided.draggableProps}>
@@ -154,8 +148,7 @@ export function GroupPreview ({ group, board, idx }) {
                         </div>
                     </div>
                     <div className="group-preview-content" >
-                        <DragDropContext onDragEnd={handleHorizontalDrag}>
-                            <Droppable droppableId="title" direction="horizontal">
+                            <Droppable droppableId={`column-${group.id || group._id}`} direction="horizontal" type="column">
                                 {(droppableProvided) => {
                                     return <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} className={`title-container flex ${!board.description ? ' not-des' : ''}`}>
                                         <div className="sticky-div titles flex" style={{ borderColor: group.color }}>
@@ -166,7 +159,7 @@ export function GroupPreview ({ group, board, idx }) {
                                             <div className="task title">Task</div>
                                         </div>
                                         {board.cmpsOrder.map((title, idx) =>
-                                            <Draggable key={title} draggableId={title} index={idx}>
+                                            <Draggable key={title + (group.id || group._id)} draggableId={title + (group.id || group._id)} index={idx}>
                                                 {(provided, snapshot) => {
                                                     return (
                                                         <li ref={provided.innerRef}
@@ -186,12 +179,11 @@ export function GroupPreview ({ group, board, idx }) {
                                     </div>
                                 }}
                             </Droppable>
-                        </DragDropContext>
-                        <Droppable droppableId={group.id} type='task'>
+                        <Droppable droppableId={group.id || group._id} type='task'>
                             {(droppableProvided) => (
                                 <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} >
                                     {group.tasks.map((task, idx) => (
-                                        <Draggable key={task.id} draggableId={task.id} index={idx}>
+                                        <Draggable key={task.id || task._id} draggableId={`${task.id || task._id}`} index={idx}>
                                             {(provided) => (
                                                 <li ref={provided.innerRef}{...provided.draggableProps} {...provided.dragHandleProps} key={idx}>
                                                     <TaskPreview task={task} group={group} board={board} handleCheckboxChange={handleCheckboxChange} isMainCheckbox={isMainCheckbox} />
@@ -210,8 +202,7 @@ export function GroupPreview ({ group, board, idx }) {
                                                     name="title"
                                                     value={taskToEdit.title}
                                                     placeholder="+ Add Task"
-                                                    onChange={handleChange}
-                                                    onBlur={onAddTask} />
+                                                    onChange={handleChange} />
                                             </form>
                                         </div>
                                         <div className="empty-div"></div>

@@ -5,7 +5,6 @@ import { BsPersonCircle } from 'react-icons/bs'
 import { boardService } from "../../services/board.service"
 import { setDynamicModalObj } from "../../store/board.actions"
 
-const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
 export function MemberPicker({ info, onUpdate }) {
     const board = useSelector(storeState => storeState.boardModule.board)
@@ -33,8 +32,8 @@ export function MemberPicker({ info, onUpdate }) {
         <section className="task-person" ref={elMemberSection} onClick={onToggleMenuModal}>
             <div className="members-imgs" >
                 {members.length === 0 && <BsPersonCircle className="icon-person" />}
-                {members.length > 0 && <img className='member-img1' src={members[0]?.imgUrl || guest} alt="member" onClick={() => setIsModalOpen(!isModalOpen)} />}
-                {members.length === 2 && <img className='member-img2' src={members[1]?.imgUrl || guest} alt="member" onClick={() => setIsModalOpen(!isModalOpen)} />}
+                {members.length > 0 && <img className='member-img1' src={members[0]?.imgUrl} alt="member" onClick={() => setIsModalOpen(!isModalOpen)} />}
+                {members.length === 2 && <img className='member-img2' src={members[1]?.imgUrl} alt="member" onClick={() => setIsModalOpen(!isModalOpen)} />}
                 {members.length > 2 && <div className='show-more-members'>
                     <span className='show-more-count'>+{members.length - 1}</span>
                 </div>}

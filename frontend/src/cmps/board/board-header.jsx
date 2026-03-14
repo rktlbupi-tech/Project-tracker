@@ -11,10 +11,12 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RiUserAddLine } from 'react-icons/ri'
 import { Tooltip } from '@mui/material'
+import { FaRobot } from 'react-icons/fa'
 
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
-export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescription, setIsInviteModalOpen, setBoardType, boardType }) {
+export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescription, setIsInviteModalOpen, setIsAutomationsOpen, setBoardType, boardType }) {
+    const onlineUsers = useSelector(storeState => storeState.boardModule.onlineUsers)
     const isOpen = useSelector(storeState => storeState.boardModule.isBoardModalOpen)
     const navigate = useNavigate()
 
@@ -74,14 +76,29 @@ export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescr
                     </Tooltip>
                     <Tooltip title="Show board members" arrow>
                         <div className='members-last-seen flex' onClick={() => toggleIsOpen('last-viewed')}>
-                            <span className='last-seen-title'>Last seen</span>
+                            <span className='last-seen-title'>Viewing</span>
                             <div className='flex members-imgs'>
-                                <img className='member-img1' src={board.members.length ? board.members[0].imgUrl : guest} alt="member" />
-                                <img className='member-img2' src={board.members.length > 1 ? board.members[1].imgUrl : guest} alt="member" />
-                                <div className='show-more-members'>
-                                    <span className='show-more-count'>+2</span>
-                                </div>
+                                {onlineUsers.slice(0, 3).map((user, idx) => (
+                                    <img 
+                                        key={user._id} 
+                                        className={`member-img${idx + 1}`} 
+                                        src={user.imgUrl || guest} 
+                                        alt={user.fullname} 
+                                        title={user.fullname}
+                                    />
+                                ))}
+                                {onlineUsers.length > 3 && (
+                                    <div className='show-more-members'>
+                                        <span className='show-more-count'>+{onlineUsers.length - 3}</span>
+                                    </div>
+                                )}
                             </div>
+                        </div>
+                    </Tooltip>
+                    <Tooltip title="Automations" arrow>
+                        <div className="invite automations-trigger" onClick={() => setIsAutomationsOpen(prev => !prev)}>
+                            <FaRobot className="invite-icon" />
+                            <span className='invite-title'> Automate</span>
                         </div>
                     </Tooltip>
                     <Tooltip title="Invite members" arrow>

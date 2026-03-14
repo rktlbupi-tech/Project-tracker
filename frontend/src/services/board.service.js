@@ -110,6 +110,7 @@ function getEmptyTask() {
             "imgUrl": "",
         },
         "file": "",
+        "version": 0
     }
 }
 
@@ -153,11 +154,7 @@ function getEmptyBoard() {
         "title": 'New Board',
         "archivedAt": Date.now(),
         "isStarred": false,
-        "createdBy": {
-            "fullname": "Ofer Gavrilov",
-            "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069496/me_dpbzfs.jpg",
-            "_id": utilService.makeId()
-        },
+        "createdBy": userService.getLoggedinUser(),
         "labels": [
             {
                 "id": "l101",
@@ -195,30 +192,10 @@ function getEmptyBoard() {
                 "color": "#c4c4c4"
             },
         ],
-        "members": [
-            {
-                "_id": "m101",
-                "fullname": "Tal Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-            },
-            {
-                "_id": "m102",
-                "fullname": "Idan David",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673820094/%D7%A2%D7%99%D7%93%D7%9F_jranbo.jpg"
-            },
-            {
-                "_id": "m103",
-                "fullname": "Ofek Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069458/image_exxnux.png"
-            },
-            {
-                "_id": "m104",
-                "fullname": "Ofer Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069496/me_dpbzfs.jpg"
-            }
-        ],
+        "members": [],
         "groups": [],
         "activities": [],
+        "automations": [],
         "cmpsOrder": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'updated-picker'],
         "description": "",
         "cmpsOption": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'number-picker', 'file-picker', 'updated-picker']

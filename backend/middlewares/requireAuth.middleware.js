@@ -11,6 +11,8 @@ function requireAuth(req, res, next) {
     return next()
   }
   if (!loggedinUser) return res.status(401).send('Not Authenticated')
+  
+  req.loggedinUser = loggedinUser
   next()
 }
 

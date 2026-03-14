@@ -11,6 +11,9 @@ export const ADD_GROUP = 'ADD_GROUP'
 export const SET_MODAL = 'SET_MODAL'
 export const REMOVE_GROUP = 'REMOVE_GROUP'
 export const SET_DYNAMIC_MODAL = 'SET_DYNAMIC_MODAL'
+export const SET_ONLINE_USERS = 'SET_ONLINE_USERS'
+export const SET_TASK_EDITING = 'SET_TASK_EDITING'
+export const UNSET_TASK_EDITING = 'UNSET_TASK_EDITING'
 
 const initialState = {
     boards: [],
@@ -18,7 +21,9 @@ const initialState = {
     board: null,
     isBoardModalOpen: false,
     dynamicModalObj: { isOpen: false, pos: { x: '', y: '' }, type: '' },
-    filter: boardService.getDefaultFilterBoard()
+    filter: boardService.getDefaultFilterBoard(),
+    onlineUsers: [],
+    editingTasks: {} // { taskId: user }
 }
 
 export function boardReducer(state = initialState, action) {
@@ -49,6 +54,14 @@ export function boardReducer(state = initialState, action) {
         case SET_DYNAMIC_MODAL:{
             return {...state, dynamicModalObj: action.dynamicModalObj}
         }
+        case SET_ONLINE_USERS:
+            return { ...state, onlineUsers: action.onlineUsers }
+        case SET_TASK_EDITING:
+            return { ...state, editingTasks: { ...state.editingTasks, [action.taskId]: action.user } }
+        case UNSET_TASK_EDITING:
+            const newEditingTasks = { ...state.editingTasks }
+            delete newEditingTasks[action.taskId]
+            return { ...state, editingTasks: newEditingTasks }
         default:
             return state
     }

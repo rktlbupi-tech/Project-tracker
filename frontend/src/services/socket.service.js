@@ -8,6 +8,10 @@ export const SOCKET_EMIT_SEND_UPDATE_BOARD = 'board-send-update'
 export const SOCKET_EMIT_SET_TOPIC = 'chat-set-topic'
 export const SOCKET_EMIT_USER_WATCH = 'user-watch'
 
+export const SOCKET_EMIT_WATCH_BOARD = 'watch-board'
+export const SOCKET_EMIT_UNWATCH_BOARD = 'unwatch-board'
+export const SOCKET_EVENT_BOARD_USERS_ONLINE = 'board-users-online'
+export const SOCKET_EMIT_SET_USER_PRESENCE = 'set-user-presence'
 const SOCKET_EMIT_LOGIN = 'set-user-socket'
 const SOCKET_EMIT_LOGOUT = 'unset-user-socket'
 
@@ -41,8 +45,9 @@ function createSocketService() {
     emit(eventName, data) {
       socket.emit(eventName, data)
     },
-    login(userId) {
+    login(userId, user = null) {
       socket.emit(SOCKET_EMIT_LOGIN, userId)
+      if (user) socket.emit(SOCKET_EMIT_SET_USER_PRESENCE, user)
     },
     logout() {
       socket.emit(SOCKET_EMIT_LOGOUT)

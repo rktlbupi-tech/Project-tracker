@@ -1,6 +1,8 @@
 const boardService = require('./board.service.js')
 
 const logger = require('../../services/logger.service')
+const eventBus = require('../../services/event-bus.service')
+const socketService = require('../../services/socket.service')
 
 async function getBoards(req, res) {
   try {
@@ -10,7 +12,7 @@ async function getBoards(req, res) {
     }
     filterBy.isStarred = req.query.isStarred === 'true' ? true : false
 
-    const boards = await boardService.query(filterBy)
+    const boards = await boardService.query(filterBy, req.loggedinUser)
     res.json(boards)
   } catch (err) {
     logger.error('Failed to get boards', err)
@@ -33,6 +35,8 @@ async function addBoard(req, res) {
   try {
     const board = req.body
     const addedBoard = await boardService.add(board)
+    
+    socketService.broadcast({ type: 'board-add-update', data: addedBoard, room: addedBoard._id })
     res.json(addedBoard)
   } catch (err) {
     logger.error('Failed to add board', err)
@@ -45,6 +49,8 @@ async function updateBoard(req, res) {
   try {
     const board = req.body
     const updatedBoard = await boardService.update(board)
+    
+    socketService.broadcast({ type: 'board-add-update', data: updatedBoard, room: updatedBoard._id })
     res.json(updatedBoard)
   } catch (err) {
     logger.error('Failed to update board', err)
@@ -67,9 +73,17 @@ async function removeBoard(req, res) {
 async function updateTask(req, res) {
   try {
     const task = req.body
-    const {boardId, groupId, taskId} = req.params
-    const taskToSend = await boardService.updateTask(boardId, groupId, taskId, task)
-    res.send(taskToSend)
+    const { boardId, groupId, taskId } = req.params
+    const board = await boardService.updateTask(boardId, groupId, taskId, task)
+    
+    // Find the specific task in the updated board to send to the automation engine
+    const group = board.groups.find(g => (g.id === groupId || g._id === groupId))
+    const taskToSend = group.tasks.find(t => (t.id === taskId || t._id === taskId))
+    
+    // Event emitted for the Automation Engine
+    eventBus.emit('TASK_UPDATED', { boardId, groupId, task: taskToSend })
+
+    res.send(board)
   } catch (err) {
     logger.error('Failed to update task', err)
     res.status(500).send({ err: 'Failed to update task' })
@@ -81,6 +95,10 @@ async function updateGroup(req, res) {
     const group = req.body
     const {boardId, groupId} = req.params
     const groupToSend = await boardService.updateGroup(boardId, groupId, group)
+    
+    // Event emitted for the Automation Engine (which now bridges to sockets)
+    eventBus.emit('GROUP_UPDATED', { boardId, group: groupToSend })
+
     res.send(groupToSend)
   } catch (err) {
     logger.error('Failed to update group', err)

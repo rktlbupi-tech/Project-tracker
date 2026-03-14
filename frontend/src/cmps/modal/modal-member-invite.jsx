@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 
 import { loadBoard, saveBoard } from "../../store/board.actions"
+import { inviteUser } from "../../store/user.actions"
 
 import { VscTriangleUp } from 'react-icons/vsc'
 import { CiSearch } from 'react-icons/ci'
@@ -34,16 +35,14 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
         return task.memberIds.filter(memberId => memberId !== removeMemberId)
     }
 
-    async function onAddMember(member) {
+    async function onInviteMember(member) {
         try {
-            board.members.push(member)
-            await saveBoard(board)
-            loadBoard(board._id)
+            await inviteUser(member._id, board._id, board.title)
             setIsInviteModalOpen(false)
+            alert(`Invitation sent to ${member.fullname}`)
         } catch (err) {
-            console.log('cant save board:', err)
+            console.log('cant invite member:', err)
         }
-        
     }
 
     function handleChange({ target }) {
@@ -92,7 +91,7 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
                     {outBoardMembers.length > 0 && <ul className="out-member-list">
                         {
                             outBoardMembers.map(member => {
-                                return <li key={member._id} onClick={() => onAddMember(member)}>
+                                return <li key={member._id} onClick={() => onInviteMember(member)}>
                                     <img src={member.imgUrl} alt="member-img"/>
                                     <span>{member.fullname}</span>
                                 </li>

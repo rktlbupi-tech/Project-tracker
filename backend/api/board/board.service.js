@@ -2,11 +2,19 @@ const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 const ObjectId = require('mongodb').ObjectId
 
-async function query(filterBy) {
+async function query(filterBy, loggedinUser) {
     try {
         const criteria = {}
-       if(filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
-       if(filterBy.isStarred) criteria.isStarred = filterBy.isStarred
+        if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
+        if (filterBy.isStarred) criteria.isStarred = filterBy.isStarred
+
+        if (loggedinUser) {
+            criteria.$or = [
+                { 'createdBy._id': loggedinUser._id },
+                { 'members._id': loggedinUser._id }
+            ]
+        }
+        
         const collection = await dbService.getCollection('board')
         var boards = await collection.find(criteria).toArray()
         return boards
@@ -19,7 +27,7 @@ async function query(filterBy) {
 async function getById(boardId) {
     try {
         const collection = await dbService.getCollection('board')
-        const board = collection.findOne({ _id: ObjectId(boardId) })
+        const board = await collection.findOne({ _id: ObjectId(boardId) })
         return board
     } catch (err) {
         logger.error(`while finding board ${boardId}`, err)
@@ -66,7 +74,23 @@ async function updateTask(boardId, groupId, taskId, saveTask){
     try {
         const board =  await getById(boardId)
         const group = board.groups.find(group => group.id === groupId)
-        group.tasks = group.tasks.map(task => (task.id === taskId) ? saveTask : task)
+        
+        let targetTaskIdx = group.tasks.findIndex(task => task.id === taskId)
+        if (targetTaskIdx === -1) throw new Error(`Task ${taskId} not found`)
+        
+        const dbTask = group.tasks[targetTaskIdx]
+
+        // 1. Version Check (Optimistic Concurrency)
+        if (saveTask.version && dbTask.version && saveTask.version < dbTask.version) {
+            const conflictErr = new Error(`Conflict: Task was modified by another user. Refresh to see the latest changes.`)
+            conflictErr.status = 409 // HTTP 409 Conflict
+            throw conflictErr
+        }
+
+        // 2. Increment Version
+        saveTask.version = (dbTask.version || 0) + 1
+
+        group.tasks[targetTaskIdx] = saveTask
         await update(board)
         return board
     } catch (err) {

@@ -8,7 +8,10 @@ module.exports = {
     getByUsername,
     remove,
     update,
-    add
+    add,
+    addInvitation,
+    updateInvitationStatus,
+    makeId
 }
 
 async function query(filterBy = {}) {
@@ -87,6 +90,7 @@ async function add(user) {
             password: user.password,
             fullname: user.fullname,
             imgUrl: user.imgUrl,
+            invitations: []
         }
         const collection = await dbService.getCollection('user')
         await collection.insertOne(userToAdd)
@@ -95,6 +99,50 @@ async function add(user) {
         logger.error('cannot add user', err)
         throw err
     }
+}
+
+async function addInvitation(userId, invitation) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $push: { invitations: invitation } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot add invitation to user ${userId}`, err)
+        throw err
+    }
+}
+
+async function updateInvitationStatus(userId, invitationId, status) {
+    try {
+        const collection = await dbService.getCollection('user')
+        if (status === 'accepted' || status === 'rejected') {
+            await collection.updateOne(
+                { _id: ObjectId(userId), 'invitations.id': invitationId },
+                { $set: { 'invitations.$.status': status } }
+            )
+        } else if (status === 'cleared') {
+             await collection.updateOne(
+                { _id: ObjectId(userId) },
+                { $pull: { invitations: { id: invitationId } } }
+            )
+        }
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot update invitation status for user ${userId}`, err)
+        throw err
+    }
+}
+
+function makeId(length = 6) {
+    var txt = ''
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (var i = 0; i < length; i++) {
+        txt += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return txt
 }
 
 function _buildCriteria(filterBy) {

@@ -10,6 +10,17 @@ export function MemberFilterModal({dynamicModalObj}) {
         dynamicModalObj.setFilterBy({...dynamicModalObj.filterBy})
     }
 
+    function getUsersToFilter() {
+        const usersMap = {}
+        board.members.forEach(m => usersMap[m._id] = m)
+        board.activities.forEach(activity => {
+            if (activity.byMember && !usersMap[activity.byMember._id]) {
+                usersMap[activity.byMember._id] = activity.byMember
+            }
+        })
+        return Object.values(usersMap)
+    }
+
     return (
         <section className="filter-member-modal flex column">
             <CgClose className="close-btn" onClick={() => setDynamicModalObj({ isOpen: false})} />
@@ -17,7 +28,7 @@ export function MemberFilterModal({dynamicModalObj}) {
             <div className="secondary-title">Filter items and subitems by person</div>
             <ul>
                 {
-                    board.members.map(member => {
+                    getUsersToFilter().map(member => {
                         return <li key={member._id} className={dynamicModalObj.filterBy.memberId === member._id ? 'active' : ''}>
                             <img onClick={() => onFilterBoard(member._id)} src={member.imgUrl} alt="" />
                         </li>

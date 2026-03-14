@@ -15,6 +15,8 @@ export const userService = {
     getById,
     remove,
     update,
+    invite,
+    updateInvitation
 }
 
 window.userService = userService
@@ -32,8 +34,19 @@ function remove(userId) {
 }
 
 async function update({user}) {
-    if (user._id) return httpService.put(BASE_URL + user._id, user)
-    return httpService.post(BASE_URL, user)
+    const savedUser = user._id ? await httpService.put(BASE_URL + user._id, user) : await httpService.post(BASE_URL, user)
+    if (getLoggedinUser()._id === savedUser._id) saveLocalUser(savedUser)
+    return savedUser
+}
+
+async function invite(invitedUserId, boardId, boardTitle) {
+    return httpService.post(BASE_URL + 'invite', { invitedUserId, boardId, boardTitle })
+}
+
+async function updateInvitation(invitationId, status) {
+    const user = await httpService.post(BASE_URL + 'invitation', { invitationId, status })
+    if (getLoggedinUser()._id === user._id) saveLocalUser(user)
+    return user
 }
 
 async function login(userCred) {
@@ -57,7 +70,7 @@ async function logout() {
 }
 
 function saveLocalUser(user) {
-    user = {_id: user._id, fullname: user.fullname, imgUrl: user.imgUrl}
+    user = { _id: user._id, fullname: user.fullname, imgUrl: user.imgUrl, invitations: user.invitations || [] }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
 }

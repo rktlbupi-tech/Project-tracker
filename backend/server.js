@@ -25,6 +25,7 @@ const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
 const boardRoutes = require('./api/board/board.routes')
 const { setupSocketAPI } = require('./services/socket.service')
+const { registerSocketEvents } = require('./services/socket.events')
 
 // routes
 const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
@@ -34,6 +35,10 @@ app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/board', boardRoutes)
 setupSocketAPI(http)
+
+// Initialize Automation and Socket Event listeners
+require('./services/automation.service')
+registerSocketEvents()
 
 app.get('/**', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'))

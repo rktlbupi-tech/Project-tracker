@@ -1,0 +1,217 @@
+.board-automations-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-height: 80vh;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    color: $primary-text-color;
+    overflow: hidden;
+
+    .header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        background: rgba(248, 249, 250, 0.5);
+
+        .title {
+            gap: 12px;
+            
+            h2 {
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+
+            .robot-icon {
+                font-size: 1.5rem;
+                color: #579bfc;
+            }
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: $primary-text-color;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+        }
+    }
+
+    .content {
+        padding: 24px;
+        overflow-y: auto;
+        flex-grow: 1;
+
+        .btn-add-automation {
+            width: 100%;
+            padding: 16px;
+            background: rgba(87, 155, 252, 0.1);
+            color: #579bfc;
+            border: 1px dashed #579bfc;
+            border-radius: 8px;
+            cursor: pointer;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 24px;
+
+            &:hover {
+                background: rgba(87, 155, 252, 0.15);
+                transform: translateY(-1px);
+            }
+        }
+
+        .no-automations {
+            text-align: center;
+            padding: 40px 20px;
+            color: #676879;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .automations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .automation-item {
+                padding: 16px;
+                background: #fff;
+                border: 1px solid #d0d4e4;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+
+                &.disabled {
+                    opacity: 0.6;
+                    background: #f8f8f8;
+                }
+
+                .automation-details {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    flex-wrap: wrap;
+
+                    .when-label, .then-label {
+                        font-weight: 600;
+                        color: #676879;
+                    }
+
+                    .highlight.tag {
+                        background: #e6f0ff;
+                        color: #0060ba;
+                        padding: 4px 10px;
+                        border-radius: 4px;
+                        font-weight: 500;
+                        font-size: 0.9rem;
+                    }
+                }
+
+                .toggle-btn {
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    border: 1px solid #c3c6d4;
+                    background: #fff;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                    transition: all 0.2s;
+
+                    &.active {
+                        background: #00c875;
+                        color: white;
+                        border-color: #00c875;
+                    }
+                }
+            }
+        }
+
+        .automation-creator {
+            h3 {
+                margin-top: 0;
+                margin-bottom: 24px;
+                font-weight: 600;
+                color: $primary-text-color;
+            }
+
+            .creator-step {
+                margin-bottom: 20px;
+
+                label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    color: #323338;
+                }
+
+                select {
+                    width: 100%;
+                    padding: 10px 12px;
+                    border: 1px solid #c3c6d4;
+                    border-radius: 4px;
+                    font-size: 1rem;
+                    outline: none;
+                    background: white;
+
+                    &:focus {
+                        border-color: #0073ea;
+                    }
+                }
+            }
+
+            .creator-actions {
+                margin-top: 32px;
+                gap: 12px;
+
+                button {
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    font-weight: 500;
+                    border: none;
+                    transition: all 0.2s;
+                }
+
+                .btn-cancel {
+                    background: transparent;
+                    border: 1px solid #c3c6d4;
+                    color: $primary-text-color;
+
+                    &:hover {
+                        background: #f4f4f4;
+                    }
+                }
+
+                .btn-save {
+                    background: #0073ea;
+                    color: white;
+
+                    &:hover {
+                        background: #0060ba;
+                    }
+                }
+            }
+        }
+    }
+}

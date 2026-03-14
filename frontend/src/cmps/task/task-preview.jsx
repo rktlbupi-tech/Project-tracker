@@ -6,7 +6,7 @@ import { DueDate } from "./date-picker"
 import { MemberPicker } from "./member-picker"
 import { PriorityPicker } from "./priority-picker"
 import { StatusPicker } from "./status-picker"
-import { setDynamicModalObj, toggleModal, updateTaskAction } from "../../store/board.actions"
+import { setDynamicModalObj, toggleModal, updateTaskAction, onTaskEditingStart, onTaskEditingStop } from "../../store/board.actions"
 import { UpdatedPicker } from "./updated-picker"
 import { NumberPicker } from "./number-picker"
 import { FilePicker } from "./file-picker"
@@ -19,6 +19,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
     const [isClick, setIsClick] = useState(false)
     const isOpen = useSelector((storeState) => storeState.boardModule.isBoardModalOpen)
     const user = useSelector(storeState => storeState.userModule.user)
+    const editingTasks = useSelector(storeState => storeState.boardModule.editingTasks)
     const dynamicModalObj = useSelector(storeState => storeState.boardModule.dynamicModalObj)
     const elTaskPreview = useRef(null)
     const elMenuTask = useRef()
@@ -33,6 +34,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
     async function updateTask(cmpType, data, activity) {
         const taskToUpdate = structuredClone(task)
         taskToUpdate[cmpType] = data
+        if (!taskToUpdate.updatedBy) taskToUpdate.updatedBy = { imgUrl: '' }
         taskToUpdate.updatedBy.date = Date.now()
         taskToUpdate.updatedBy.imgUrl = (user && user.imgUrl) || guest
         try {
@@ -47,6 +49,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
         task.title = value
         try {
             toggleOnTyping()
+            onTaskEditingStop(board._id, task.id)
             await updateTaskAction(board, group.id, task)
         } catch (err) {
             console.log('Failed to save')
@@ -72,6 +75,9 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
     function toggleOnTyping() {
         elMenuTask.current.classList.toggle('on-typing')
         elTaskPreview.current.classList.toggle('on-typing')
+        if (elTaskPreview.current.classList.contains('on-typing')) {
+            onTaskEditingStart(board._id, task.id)
+        }
     }
 
     return (
@@ -92,6 +98,12 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
                         <TbArrowsDiagonal />
                         <span className="open-btn">Open</span>
                     </div>
+                    {editingTasks && editingTasks[task.id] && editingTasks[task.id]._id !== user?._id && (
+                        <div className="task-editing-indicator" title={`${editingTasks[task.id].fullname} is editing...`}>
+                            <img src={editingTasks[task.id].imgUrl || guest} alt="editing" className="editing-avatar" />
+                            <span className="editing-pulse"></span>
+                        </div>
+                    )}
                     <div onClick={onOpenModal} className="chat-icon">
                         {task.comments.length > 0 && <div>
                             <HiOutlineChatBubbleOvalLeft className="comment-chat" />

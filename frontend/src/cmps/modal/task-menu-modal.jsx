@@ -14,11 +14,12 @@ export function TaskMenuModal({ dynamicModalObj }) {
     const navigate = useNavigate()
     function onRemoveTask() {
         try {
-            const tasksToSave = dynamicModalObj.group.tasks.filter(task => task.id !== dynamicModalObj.task.id)
-            dynamicModalObj.group.tasks = tasksToSave
-            updateGroupAction(board, dynamicModalObj.group)
-            dynamicModalObj.isOpen = false
-            setDynamicModalObj(dynamicModalObj)
+            const groupToUpdate = structuredClone(dynamicModalObj.group)
+            groupToUpdate.tasks = groupToUpdate.tasks.filter(task => task.id !== dynamicModalObj.task.id)
+            updateGroupAction(board, groupToUpdate)
+            
+            const newDynamicModal = { ...dynamicModalObj, isOpen: false }
+            setDynamicModalObj(newDynamicModal)
         } catch (err) {
             console.log('Failed to remove task', err)
         }
@@ -27,8 +28,8 @@ export function TaskMenuModal({ dynamicModalObj }) {
     function onDuplicateTask() {
         try {
             duplicateTask(board, dynamicModalObj.group, dynamicModalObj.task)
-            dynamicModalObj.isOpen = false
-            setDynamicModalObj(dynamicModalObj)
+            const newDynamicModal = { ...dynamicModalObj, isOpen: false }
+            setDynamicModalObj(newDynamicModal)
         } catch (err) {
             console.log(err)
         }
@@ -36,14 +37,17 @@ export function TaskMenuModal({ dynamicModalObj }) {
 
     function onCreateNewTaskBelow() {
         try {
+            const groupToUpdate = structuredClone(dynamicModalObj.group)
             const newTask = boardService.getEmptyTask()
             newTask.id = utilService.makeId()
             newTask.title = 'New Task'
-            const idx = dynamicModalObj.group.tasks.indexOf(dynamicModalObj.task)
-            dynamicModalObj.group.tasks.splice(idx + 1, 0, newTask)
-            updateGroupAction(board, dynamicModalObj.group)
-            dynamicModalObj.isOpen = false
-            setDynamicModalObj(dynamicModalObj)
+            
+            const idx = groupToUpdate.tasks.findIndex(t => t.id === dynamicModalObj.task.id)
+            groupToUpdate.tasks.splice(idx + 1, 0, newTask)
+            
+            updateGroupAction(board, groupToUpdate)
+            const newDynamicModal = { ...dynamicModalObj, isOpen: false }
+            setDynamicModalObj(newDynamicModal)
         } catch (err) {
             console.log(err)
         }
