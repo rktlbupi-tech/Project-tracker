@@ -54,6 +54,7 @@ async function inviteUser(req, res) {
             from: { _id: fromUser._id, fullname: fromUser.fullname, imgUrl: fromUser.imgUrl },
             board: { _id: boardId, title: boardTitle },
             createdAt: Date.now(),
+            expiresAt: Date.now() + (1000 * 60 * 60 * 48), // 48 hours expiry
             status: 'pending'
         }
 

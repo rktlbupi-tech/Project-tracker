@@ -88,16 +88,30 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
                         <button className="icon-container"><CiSearch className="icon" /></button>
                     </form>
                     <span>Suggested people</span>
-                    {outBoardMembers.length > 0 && <ul className="out-member-list">
-                        {
-                            outBoardMembers.map(member => {
-                                return <li key={member._id} onClick={() => onInviteMember(member)}>
-                                    <img src={member.imgUrl} alt="member-img"/>
-                                    <span>{member.fullname}</span>
-                                </li>
-                            })
-                        }
-                    </ul>}
+                            {
+                                outBoardMembers.map(member => {
+                                    const isInvited = member.invitations?.some(inv => 
+                                        inv.board._id === board._id && 
+                                        inv.status === 'pending' && 
+                                        (!inv.expiresAt || inv.expiresAt > Date.now())
+                                    )
+
+                                    return (
+                                        <li 
+                                            key={member._id} 
+                                            onClick={() => !isInvited && onInviteMember(member)}
+                                            className={isInvited ? 'invited' : ''}
+                                            style={isInvited ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+                                        >
+                                            <div className="flex align-center" style={{ gap: '10px' }}>
+                                                <img src={member.imgUrl} alt="member-img"/>
+                                                <span>{member.fullname}</span>
+                                            </div>
+                                            {isInvited && <span className="invited-label" style={{ fontSize: '10px', color: '#676879', fontWeight: 'bold' }}>PENDING INVITE</span>}
+                                        </li>
+                                    )
+                                })
+                            }
                 </div>
             </section>
         </section>

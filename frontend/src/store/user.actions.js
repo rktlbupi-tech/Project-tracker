@@ -73,6 +73,12 @@ export async function loadUser(userId) {
     try {
         const user = await userService.getById(userId);
         store.dispatch({ type: SET_WATCHED_USER, user })
+        
+        // If this is the logged-in user, sync their data/invitations
+        const loggedinUser = userService.getLoggedinUser()
+        if (loggedinUser && loggedinUser._id === userId) {
+            setUser(user)
+        }
     } catch (err) {
         // showErrorMsg('Cannot load user')
         console.log('Cannot load user', err)
@@ -91,7 +97,7 @@ export async function inviteUser(invitedUserId, boardId, boardTitle) {
 export async function respondToInvitation(invitationId, status) {
     try {
         const user = await userService.updateInvitation(invitationId, status)
-        store.dispatch({ type: SET_USER, user })
+        setUser(user)
         return user
     } catch (err) {
         console.log('Cannot respond to invitation', err)
@@ -100,5 +106,6 @@ export async function respondToInvitation(invitationId, status) {
 }
 
 export function setUser(user) {
+    userService.saveLocalUser(user)
     store.dispatch({ type: SET_USER, user })
-}
+}

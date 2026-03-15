@@ -24,18 +24,26 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
     const pendingCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
 
     useEffect(() => {
+        // Sync user data with server to get latest invitations
+        if (user?._id) {
+            import('../../store/user.actions').then(actions => {
+                actions.loadUser(user._id)
+            })
+        }
+
         const onInviteReceived = (invitation) => {
             console.log('Invitation received!', invitation)
-            const updatedInvitations = [...(user?.invitations || []), invitation]
-            const updatedUser = { ...user, invitations: updatedInvitations }
-            setUser(updatedUser)
+            // Fetch the latest user data from the server (which now includes the new invitation)
+            import('../../store/user.actions').then(actions => {
+                actions.loadUser(user._id)
+            })
         }
         socketService.on('invitation-received', onInviteReceived)
         
         return () => {
              socketService.off('invitation-received', onInviteReceived)
         }
-    }, [user]) // Re-bind whenever user changes to ensure latest user object in listener
+    }, [user?._id])
 
     function onChooseIcon (icon) {
         setDisplay(icon)

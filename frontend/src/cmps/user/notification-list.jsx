@@ -5,7 +5,20 @@ import { utilService } from "../../services/util.service"
 
 export function NotificationList({ user, onClose }) {
     const invitations = user.invitations || []
-    const pendingInvitations = invitations.filter(inv => inv.status === 'pending')
+    const pendingInvitations = invitations.filter(inv => {
+        const isPending = inv.status === 'pending'
+        const isExpired = inv.expiresAt && inv.expiresAt < Date.now()
+        return isPending && !isExpired
+    })
+
+    function getExpiryText(expiresAt) {
+        if (!expiresAt) return ''
+        const diff = expiresAt - Date.now()
+        const hours = Math.floor(diff / (1000 * 60 * 60))
+        if (hours > 0) return `Expires in ${hours}h`
+        const minutes = Math.floor(diff / (1000 * 60))
+        return `Expires in ${minutes}m`
+    }
 
     async function onAction(invitationId, status) {
         try {
@@ -35,9 +48,14 @@ export function NotificationList({ user, onClose }) {
                                 <strong>{inv.from.fullname}</strong> invited you to join the board <strong>{inv.board.title}</strong>
                             </p>
                         </div>
-                        <div className="inv-actions flex">
-                            <button className="accept-btn" onClick={() => onAction(inv.id, 'accepted')}>Accept</button>
-                            <button className="reject-btn" onClick={() => onAction(inv.id, 'rejected')}>Reject</button>
+                        <div className="inv-actions flex align-center space-between" style={{ width: '100%', marginLeft: '0', paddingLeft: '44px' }}>
+                            <div className="flex gap-8">
+                                <button className="accept-btn" onClick={() => onAction(inv.id, 'accepted')}>Accept</button>
+                                <button className="reject-btn" onClick={() => onAction(inv.id, 'rejected')}>Reject</button>
+                            </div>
+                            <span className="expiry-timer" style={{ fontSize: '10px', color: '#d73a49' }}>
+                                {getExpiryText(inv.expiresAt)}
+                            </span>
                         </div>
                         <span className="time">{utilService.calculateTime(inv.createdAt)}</span>
                     </div>
