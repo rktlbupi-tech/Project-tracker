@@ -11,6 +11,7 @@ import { socketService } from '../../services/socket.service'
 import WorkspaceIcon from './workspace-icon'
 import { Tooltip } from '@mui/material'
 import { NotificationList } from '../user/notification-list'
+import { UserAvatar } from '../user-avatar'
 import { useEffect } from 'react'
 
 const logo = require('../../assets/img/logo.png')
@@ -31,17 +32,17 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
             })
         }
 
-        const onInviteReceived = (invitation) => {
-            console.log('Invitation received!', invitation)
-            // Fetch the latest user data from the server (which now includes the new invitation)
+        const onNotificationReceived = (notification) => {
+            console.log('Notification received!', notification)
+            // Fetch the latest user data from the server
             import('../../store/user.actions').then(actions => {
                 actions.loadUser(user._id)
             })
         }
-        socketService.on('invitation-received', onInviteReceived)
+        socketService.on('notification-received', onNotificationReceived)
         
         return () => {
-             socketService.off('invitation-received', onInviteReceived)
+             socketService.off('notification-received', onNotificationReceived)
         }
     }, [user?._id])
 
@@ -96,7 +97,9 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
 
             <div className='bottom'>
                 <Tooltip title="Login & Logout" arrow>
-                    <img className='logged-user-img' src={(user && user.imgUrl) ? user.imgUrl : guest} alt="" onClick={() => setIsLoginModalOpen(prev => !prev)} />
+                    <div onClick={() => setIsLoginModalOpen(prev => !prev)} style={{ cursor: 'pointer' }}>
+                        <UserAvatar user={user || { fullname: 'Guest', imgUrl: guest }} size={37.4} />
+                    </div>
                 </Tooltip>
             </div>
         </section>

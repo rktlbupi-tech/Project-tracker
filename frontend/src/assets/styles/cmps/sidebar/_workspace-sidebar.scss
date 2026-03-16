@@ -4,6 +4,7 @@
     border-right: 1px solid darken($border-color , 30%);
     color: $workspace-icon-color;
     transition: .4s;
+    z-index: 106;
 
     &.open {
         width: 230px;

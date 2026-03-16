@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import { RiUserAddLine } from 'react-icons/ri'
 import { Tooltip } from '@mui/material'
 import { FaRobot } from 'react-icons/fa'
+import { UserAvatar } from '../user-avatar'
 
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
@@ -79,13 +80,9 @@ export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescr
                             <span className='last-seen-title'>Viewing</span>
                             <div className='flex members-imgs'>
                                 {onlineUsers.slice(0, 3).map((user, idx) => (
-                                    <img 
-                                        key={user._id} 
-                                        className={`member-img${idx + 1}`} 
-                                        src={user.imgUrl || guest} 
-                                        alt={user.fullname} 
-                                        title={user.fullname}
-                                    />
+                                    <div key={user._id} className={`member-img${idx + 1}`} title={user.fullname}>
+                                        <UserAvatar user={user} size={28} />
+                                    </div>
                                 ))}
                                 {onlineUsers.length > 3 && (
                                     <div className='show-more-members'>

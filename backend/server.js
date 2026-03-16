@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
 const boardRoutes = require('./api/board/board.routes')
+const workspaceRoutes = require('./api/workspace/workspace.routes')
 const { setupSocketAPI } = require('./services/socket.service')
 const { registerSocketEvents } = require('./services/socket.events')
 
@@ -34,6 +35,7 @@ app.all('*', setupAsyncLocalStorage)
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/board', boardRoutes)
+app.use('/api/workspace', workspaceRoutes)
 setupSocketAPI(http)
 
 // Initialize Automation and Socket Event listeners

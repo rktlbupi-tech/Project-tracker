@@ -118,7 +118,7 @@
 
     &.invite {
         @include center-absolute();
-        z-index: 100;
+        z-index: 110;
         background-color: $app-bg;
         border-radius: $spacing-small;
         font-size: rem(14px);

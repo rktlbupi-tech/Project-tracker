@@ -74,8 +74,44 @@ async function updateTask(req, res) {
   try {
     const task = req.body
     const { boardId, groupId, taskId } = req.params
+    
+    // Get old board to compare members
+    const oldBoard = await boardService.getById(boardId)
+    const oldGroup = oldBoard.groups.find(g => (g.id === groupId || g._id === groupId))
+    const oldTask = oldGroup?.tasks.find(t => (t.id === taskId || t._id === taskId))
+    const oldMemberIds = oldTask?.memberIds || []
+
     const board = await boardService.updateTask(boardId, groupId, taskId, task)
     
+    // Detect new members
+    const newMemberIds = task.memberIds || []
+    const addedMemberIds = newMemberIds.filter(id => !oldMemberIds.includes(id))
+
+    if (addedMemberIds.length > 0) {
+      const fromUser = req.loggedinUser
+      const userService = require('../user/user.service')
+      
+      for (const userId of addedMemberIds) {
+        const notification = {
+          id: userService.makeId(),
+          type: 'task-assigned',
+          from: { _id: fromUser._id, fullname: fromUser.fullname, imgUrl: fromUser.imgUrl },
+          board: { _id: boardId, title: board.title },
+          task: { id: taskId, title: task.title },
+          createdAt: Date.now(),
+          status: 'pending' // For task notifications, maybe just 'unread'? Using pending for consistency
+        }
+        await userService.addNotification(userId, notification)
+        
+        // Notify via socket
+        socketService.emitToUser({
+          type: 'notification-received',
+          data: notification,
+          userId: userId
+        })
+      }
+    }
+
     // Find the specific task in the updated board to send to the automation engine
     const group = board.groups.find(g => (g.id === groupId || g._id === groupId))
     const taskToSend = group.tasks.find(t => (t.id === taskId || t._id === taskId))

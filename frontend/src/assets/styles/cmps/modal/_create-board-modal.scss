@@ -7,7 +7,7 @@
     border-radius: $spacing-small;
     box-shadow: -3px 4px 14px rgb(0 0 0 / 20%);
     font-size: rem(14px);
-    z-index: 51;
+    z-index: 110;
     border: 1px solid darken($border-color , 20%);
 
     h1 {
@@ -59,6 +59,33 @@
                 background-color: $workspace-hover;
                 border-radius: $spacing-small;
               }
+        }
+    }
+
+    .btn-primary {
+        background-color: $primary-color;
+        color: white;
+        padding: $spacing-small $spacing-large;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: $transition-smooth;
+        &:hover {
+            background-color: $primary-hover-color;
+        }
+        &:disabled {
+            background-color: $task-box-shadow-color;
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        color: $text-primary;
+        padding: $spacing-small $spacing-large;
+        border-radius: 4px;
+        transition: $transition-smooth;
+        &:hover {
+            background-color: $workspace-hover;
         }
     }
 }

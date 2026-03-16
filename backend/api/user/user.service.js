@@ -10,6 +10,7 @@ module.exports = {
     update,
     add,
     addInvitation,
+    addNotification,
     updateInvitationStatus,
     makeId
 }
@@ -101,18 +102,23 @@ async function add(user) {
     }
 }
 
-async function addInvitation(userId, invitation) {
+async function addNotification(userId, notification) {
     try {
         const collection = await dbService.getCollection('user')
         await collection.updateOne(
             { _id: ObjectId(userId) },
-            { $push: { invitations: invitation } }
+            { $push: { invitations: notification } }
         )
         return getById(userId)
     } catch (err) {
-        logger.error(`cannot add invitation to user ${userId}`, err)
+        logger.error(`cannot add notification to user ${userId}`, err)
         throw err
     }
+}
+
+async function addInvitation(userId, invitation) {
+    invitation.type = 'board-invite'
+    return addNotification(userId, invitation)
 }
 
 async function updateInvitationStatus(userId, invitationId, status) {

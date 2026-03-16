@@ -7,6 +7,7 @@ import { inviteUser } from "../../store/user.actions"
 import { VscTriangleUp } from 'react-icons/vsc'
 import { CiSearch } from 'react-icons/ci'
 import { CgClose } from 'react-icons/cg'
+import { UserAvatar } from "../user-avatar"
 
 export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
     const [filter, setFilter] = useState({ txt: '' })
@@ -70,7 +71,7 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
                     {
                         board.members.map(member => {
                             return <li key={member._id}>
-                                <img src={member.imgUrl} alt="member-img" />
+                                <UserAvatar user={member} size={34} />
                                 <span>{member.fullname}</span>
                                 <span onClick={() => onRemoveMember(member._id)} className="remove">x</span>
                             </li>
@@ -88,30 +89,32 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
                         <button className="icon-container"><CiSearch className="icon" /></button>
                     </form>
                     <span>Suggested people</span>
-                            {
-                                outBoardMembers.map(member => {
-                                    const isInvited = member.invitations?.some(inv => 
-                                        inv.board._id === board._id && 
-                                        inv.status === 'pending' && 
-                                        (!inv.expiresAt || inv.expiresAt > Date.now())
-                                    )
+                    <ul className="out-member-list">
+                        {
+                            outBoardMembers.map(member => {
+                                const isInvited = member.invitations?.some(inv => 
+                                    inv.board._id === board._id && 
+                                    inv.status === 'pending' && 
+                                    (!inv.expiresAt || inv.expiresAt > Date.now())
+                                )
 
-                                    return (
-                                        <li 
-                                            key={member._id} 
-                                            onClick={() => !isInvited && onInviteMember(member)}
-                                            className={isInvited ? 'invited' : ''}
-                                            style={isInvited ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
-                                        >
-                                            <div className="flex align-center" style={{ gap: '10px' }}>
-                                                <img src={member.imgUrl} alt="member-img"/>
-                                                <span>{member.fullname}</span>
-                                            </div>
-                                            {isInvited && <span className="invited-label" style={{ fontSize: '10px', color: '#676879', fontWeight: 'bold' }}>PENDING INVITE</span>}
-                                        </li>
-                                    )
-                                })
-                            }
+                                return (
+                                    <li 
+                                        key={member._id} 
+                                        onClick={() => !isInvited && onInviteMember(member)}
+                                        className={isInvited ? 'invited' : ''}
+                                        style={isInvited ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+                                    >
+                                        <div className="flex align-center" style={{ gap: '10px' }}>
+                                            <UserAvatar user={member} size={34} />
+                                            <span>{member.fullname}</span>
+                                        </div>
+                                        {isInvited && <span className="invited-label" style={{ fontSize: '10px', color: '#676879', fontWeight: 'bold' }}>PENDING INVITE</span>}
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
                 </div>
             </section>
         </section>

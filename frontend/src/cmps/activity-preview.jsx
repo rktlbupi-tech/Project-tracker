@@ -6,6 +6,7 @@ import { CiCalendarDate }  from 'react-icons/ci'
 import { BsPlusCircle, BsPersonPlus }  from 'react-icons/bs'
 import { FcCheckmark }  from 'react-icons/fc'
 import { TbNumbers } from "react-icons/tb"
+import { UserAvatar } from "./user-avatar"
 
 const statusImg = require('../assets/img/status.png')
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
@@ -60,9 +61,10 @@ export function ActivityPreview({ activity }) {
                         <IoTimeOutline />
                         <span>{utilService.calculateTime(activity.createdAt)}</span>
                     </div>
-                    <div className='title flex align-center'>
-                        <img src={activity.byMember.imgUrl || guest} alt="" />
-                        <span>{activity.task.title}</span>
+                    <div className='title flex align-center' style={{ gap: '8px' }}>
+                        <UserAvatar user={activity.byMember} size={24} />
+                        <span className="by-member"><strong>{activity.byMember.fullname}</strong></span>
+                        <span className="task-title">{activity.task.title}</span>
                     </div>
                 </div>
                 <div className='action flex align-center space-between'>

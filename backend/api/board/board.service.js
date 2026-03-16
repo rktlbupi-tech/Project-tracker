@@ -7,6 +7,7 @@ async function query(filterBy, loggedinUser) {
         const criteria = {}
         if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
         if (filterBy.isStarred) criteria.isStarred = filterBy.isStarred
+        if (filterBy.workspaceId) criteria.workspaceId = filterBy.workspaceId
 
         if (loggedinUser) {
             criteria.$or = [

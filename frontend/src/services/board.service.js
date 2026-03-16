@@ -69,7 +69,8 @@ function updateGroup(boardId, group) {
 function getDefaultFilterBoards() {
     return {
         title: '',
-        isStarred: false
+        isStarred: false,
+        workspaceId: ''
     }
 }
 

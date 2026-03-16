@@ -13,6 +13,7 @@ import { MainSidebar } from '../cmps/sidebar/main-sidebar'
 import { DynamicModal } from '../cmps/modal/dynamic-modal'
 import { boardService } from '../services/board.service'
 import { CreateBoard } from '../cmps/modal/create-board'
+import { CreateWorkspace } from '../cmps/modal/create-workspace'
 import { BoardHeader } from '../cmps/board/board-header'
 import { userService } from '../services/user.service'
 import { BoardModal } from '../cmps/board/board-modal'
@@ -37,6 +38,7 @@ export function BoardDetails () {
     const [boardType, setBoardType] = useState('table')
 
     const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false)
+    const [isWorkspaceCreateOpen, setIsWorkspaceCreateOpen] = useState(false)
     const [workspaceDisplay, setWorkspaceDisplay] = useState('board')
 
     const { boardId } = useParams()
@@ -79,7 +81,7 @@ export function BoardDetails () {
         <section className="board-details flex">
             <div className='sidebar flex'>
                 <MainSidebar setWorkspaceDisplay={setWorkspaceDisplay} setIsWorkspaceOpen={setIsWorkspaceOpen} setIsLoginModalOpen={setIsLoginModalOpen} />
-                <WorkspaceSidebar workspaceDisplay={workspaceDisplay} isWorkspaceOpen={isWorkspaceOpen} setIsWorkspaceOpen={setIsWorkspaceOpen} board={board} setIsCreateModalOpen={setIsCreateModalOpen} />
+                <WorkspaceSidebar workspaceDisplay={workspaceDisplay} isWorkspaceOpen={isWorkspaceOpen} setIsWorkspaceOpen={setIsWorkspaceOpen} board={board} setIsCreateModalOpen={setIsCreateModalOpen} setIsWorkspaceCreateOpen={setIsWorkspaceCreateOpen} />
             </div>
             <main className="board-main">
                 <BoardHeader boardType={boardType} setBoardType={setBoardType} board={board} onSetFilter={onSetFilter} isStarredOpen={isStarredOpen} setIsShowDescription={setIsShowDescription} setIsInviteModalOpen={setIsInviteModalOpen} setIsAutomationsOpen={setIsAutomationsOpen} />
@@ -92,8 +94,14 @@ export function BoardDetails () {
                 {boardType === 'dashboard' && <Dashboard />}
             </main>
             {isCreateModalOpen && <CreateBoard setIsModalOpen={setIsCreateModalOpen} />}
+            {isWorkspaceCreateOpen && <CreateWorkspace setIsModalOpen={setIsWorkspaceCreateOpen} />}
             {isAutomationsOpen && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
-            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
+            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || (isBoardModalOpen && isMouseOver) || isWorkspaceCreateOpen) && <div className='dark-screen' onClick={() => {
+                setIsWorkspaceCreateOpen(false)
+                setIsCreateModalOpen(false)
+                setIsInviteModalOpen(false)
+                setIsAutomationsOpen(false)
+            }}></div>}
             {isShowDescription &&
                 <>
                     <BoardDescription setIsShowDescription={setIsShowDescription} board={board} />

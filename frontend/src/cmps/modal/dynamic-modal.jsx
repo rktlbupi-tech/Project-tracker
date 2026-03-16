@@ -11,6 +11,7 @@ import { AddGroupModal } from './add-group-modal'
 import { MemberFilterModal } from './member-filter-modal'
 import { ChartTypeModal } from './chart-type-modal'
 import { BoardMenuModal } from './board-menu-modal'
+import { WorkspaceMenuModal } from './workspace-menu-modal'
 
 export function DynamicModal () {
 
@@ -18,6 +19,8 @@ export function DynamicModal () {
 
     function getDynamicModalByType (type) {
         switch (type) {
+            case 'workspace-menu':
+                return <WorkspaceMenuModal dynamicModalObj={dynamicModalObj} />
             case 'menu-group':
                 return <GroupMenuModal dynamicModalObj={dynamicModalObj} />
             case 'palette-modal':

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 import { setDynamicModalObj } from "../../store/board.actions"
 import { CiSearch } from 'react-icons/ci'
 import { VscTriangleUp } from 'react-icons/vsc'
+import { UserAvatar } from "../user-avatar"
 
 export function ModalMember({ dynamicModalObj }) {
 
@@ -64,7 +65,7 @@ export function ModalMember({ dynamicModalObj }) {
                     {
                         taskMembers.map(taskMember => {
                             return <li key={taskMember._id}>
-                                <img src={taskMember.imgUrl} alt="member-img" />
+                                <UserAvatar user={taskMember} size={30} />
                                 <span>{taskMember.fullname}</span>
                                 <span onClick={() => onRemoveMember(taskMember)} className="remove">x</span>
                             </li>
@@ -86,7 +87,7 @@ export function ModalMember({ dynamicModalObj }) {
                         {
                             outTaskMembers.map(taskMember => {
                                 return <li key={taskMember._id} onClick={() => onAddMember(taskMember)}>
-                                    <img src={taskMember.imgUrl} alt="member-img" />
+                                    <UserAvatar user={taskMember} size={30} />
                                     <span>{taskMember.fullname}</span>
                                 </li>
                             })

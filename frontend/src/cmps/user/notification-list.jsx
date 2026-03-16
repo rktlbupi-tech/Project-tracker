@@ -2,6 +2,7 @@ import React from 'react'
 import { respondToInvitation } from "../../store/user.actions"
 import { loadBoards } from "../../store/board.actions"
 import { utilService } from "../../services/util.service"
+import { UserAvatar } from "../user-avatar"
 
 export function NotificationList({ user, onClose }) {
     const invitations = user.invitations || []
@@ -43,15 +44,29 @@ export function NotificationList({ user, onClose }) {
                 {pendingInvitations.map(inv => (
                     <div key={inv.id} className="notification-item flex column">
                         <div className="inv-info flex align-center">
-                            <img src={inv.from.imgUrl} alt={inv.from.fullname} className="user-img" />
+                            <UserAvatar user={inv.from} />
                             <p>
-                                <strong>{inv.from.fullname}</strong> invited you to join the board <strong>{inv.board.title}</strong>
+                                {inv.type === 'task-assigned' ? (
+                                    <>
+                                        <strong>{inv.from.fullname}</strong> assigned you to task <strong>{inv.task.title}</strong> on board <strong>{inv.board.title}</strong>
+                                    </>
+                                ) : (
+                                    <>
+                                        <strong>{inv.from.fullname}</strong> invited you to join the board <strong>{inv.board.title}</strong>
+                                    </>
+                                )}
                             </p>
                         </div>
                         <div className="inv-actions flex align-center space-between" style={{ width: '100%', marginLeft: '0', paddingLeft: '44px' }}>
                             <div className="flex gap-8">
-                                <button className="accept-btn" onClick={() => onAction(inv.id, 'accepted')}>Accept</button>
-                                <button className="reject-btn" onClick={() => onAction(inv.id, 'rejected')}>Reject</button>
+                                {inv.type === 'task-assigned' ? (
+                                    <button className="accept-btn" style={{ backgroundColor: '#6161FF', borderColor: '#6161FF' }} onClick={() => onAction(inv.id, 'cleared')}>Got it!</button>
+                                ) : (
+                                    <>
+                                        <button className="accept-btn" onClick={() => onAction(inv.id, 'accepted')}>Accept</button>
+                                        <button className="reject-btn" onClick={() => onAction(inv.id, 'rejected')}>Reject</button>
+                                    </>
+                                )}
                             </div>
                             <span className="expiry-timer" style={{ fontSize: '10px', color: '#d73a49' }}>
                                 {getExpiryText(inv.expiresAt)}

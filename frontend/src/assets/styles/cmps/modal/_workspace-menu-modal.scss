@@ -1,0 +1,80 @@
+.workspace-menu-modal {
+    padding: $spacing-small 0;
+    min-width: 250px;
+    background: $app-bg;
+    color: $text-primary;
+    font-family: $font-family;
+
+    .menu-header {
+        padding: $spacing-small $spacing-medium;
+        font-size: 12px;
+        font-weight: 500;
+        color: $text-secondary;
+        text-transform: uppercase;
+    }
+
+    .workspace-list {
+        max-height: 300px;
+        overflow-y: auto;
+
+        .workspace-item {
+            padding: $spacing-small $spacing-medium;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            gap: $spacing-small;
+
+            &:hover {
+                background-color: $workspace-hover;
+
+                .trash-icon {
+                    opacity: 1;
+                }
+            }
+
+            &.active {
+                background-color: $workspace-board-active;
+                font-weight: 600;
+                color: $primary-color;
+            }
+
+            .check-icon {
+                font-size: 1.2rem;
+            }
+
+            .trash-icon {
+                opacity: 0;
+                color: $text-secondary;
+                transition: opacity 0.2s, color 0.2s;
+
+                &:hover {
+                    color: $accent-color;
+                }
+            }
+        }
+    }
+
+    .divider {
+        height: 1px;
+        background-color: $border-color;
+        margin: $spacing-small 0;
+    }
+
+    .add-workspace {
+        padding: $spacing-small $spacing-medium;
+        display: flex;
+        align-items: center;
+        gap: $spacing-small;
+        cursor: pointer;
+        color: $primary-color;
+        font-weight: 500;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: $workspace-hover;
+        }
+
+        svg {
+            font-size: 1.2rem;
+        }
+    }
+}

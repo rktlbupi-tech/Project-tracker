@@ -11,9 +11,14 @@ import { useCallback } from 'react'
 import WorkspaceFavorite from './workspace/workspace-favorite'
 import { Tooltip } from '@mui/material'
 
-export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setIsWorkspaceOpen, isWorkspaceOpen, setWorkspaceDisplay }) {
+export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setIsWorkspaceOpen, isWorkspaceOpen, setWorkspaceDisplay, setIsWorkspaceCreateOpen }) {
+    const currentWorkspace = useSelector(storeState => storeState.workspaceModule.currentWorkspace)
     const [filterByToEdit, setFilterByToEdit] = useState(boardService.getDefaultFilterBoards())
     const boards = useSelector(storeState => storeState.boardModule.boards)
+
+    useEffect(() => {
+        setFilterByToEdit(prev => ({ ...prev, workspaceId: currentWorkspace?._id || '' }))
+    }, [currentWorkspace])
 
     useEffect(() => {
         loadBoards(filterByToEdit)
@@ -38,7 +43,7 @@ export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setI
             </Tooltip>
             {workspaceDisplay === 'board' ?
                 (<WorkspaceBoard handleChange={handleChange}
-                    filterByToEdit={filterByToEdit} boards={boards} setIsCreateModalOpen={setIsCreateModalOpen} />)
+                    filterByToEdit={filterByToEdit} boards={boards} setIsCreateModalOpen={setIsCreateModalOpen} setIsWorkspaceCreateOpen={setIsWorkspaceCreateOpen} />)
                 :
                 (<WorkspaceFavorite boards={boards} />)}
         </section>

@@ -10,6 +10,7 @@ import { setDynamicModalObj, toggleModal, updateTaskAction, onTaskEditingStart, 
 import { UpdatedPicker } from "./updated-picker"
 import { NumberPicker } from "./number-picker"
 import { FilePicker } from "./file-picker"
+import { UserAvatar } from "../user-avatar"
 
 import { TbArrowsDiagonal } from 'react-icons/tb'
 import { BiDotsHorizontalRounded, BiMessageRoundedAdd } from 'react-icons/bi'
@@ -100,7 +101,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
                     </div>
                     {editingTasks && editingTasks[task.id] && editingTasks[task.id]._id !== user?._id && (
                         <div className="task-editing-indicator" title={`${editingTasks[task.id].fullname} is editing...`}>
-                            <img src={editingTasks[task.id].imgUrl || guest} alt="editing" className="editing-avatar" />
+                            <UserAvatar user={editingTasks[task.id]} size={20} />
                             <span className="editing-pulse"></span>
                         </div>
                     )}
