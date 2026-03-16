@@ -22,13 +22,14 @@ const transporter = nodemailer.createTransport({
 async function sendBoardInviteEmail(toEmail, fromUser, boardTitle, inviteLink) {
     try {
         const mailOptions = {
-            from: process.env.EMAIL_USER || 'your-email@gmail.com',
+            from: `"${fromUser.fullname} (via MyDay)" <${process.env.EMAIL_USER}>`,
             to: toEmail,
+            replyTo: fromUser.username, // User A's email (stored in username)
             subject: `${fromUser.fullname} has invited you to a board on MyDay!`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
                     <h2>You've been invited!</h2>
-                    <p><strong>${fromUser.fullname}</strong> has invited you to collaborate on the board: <strong>${boardTitle}</strong></p>
+                    <p><strong>${fromUser.fullname}</strong> (${fromUser.username}) has invited you to collaborate on the board: <strong>${boardTitle}</strong></p>
                     <p>Click the button below to accept the invitation and join the board.</p>
                     <div style="margin: 30px 0;">
                         <a href="${inviteLink}" style="background-color: #0073ea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
@@ -36,6 +37,8 @@ async function sendBoardInviteEmail(toEmail, fromUser, boardTitle, inviteLink) {
                         </a>
                     </div>
                     <p style="color: #777; font-size: 14px;">If you don't have an account, you'll be prompted to sign up first.</p>
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                    <p style="color: #999; font-size: 12px;">This email was sent via MyDay on behalf of ${fromUser.fullname}.</p>
                 </div>
             `
         }
