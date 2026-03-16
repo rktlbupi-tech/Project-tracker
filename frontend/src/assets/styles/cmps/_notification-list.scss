@@ -1,12 +1,12 @@
 .notification-list {
     position: fixed;
-    top: 100px;
-    left: 75px;
+    top: 155px; // Better alignment with the 3rd icon
+    left: 66px; // Flush with the purple sidebar
     width: 350px;
     background-color: white;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     border-radius: 8px;
-    z-index: 9999;
+    z-index: 10001; // Extremely high to be above everything
     max-height: 500px;
     display: flex;
     flex-direction: column;
@@ -17,7 +17,7 @@
         content: '';
         position: absolute;
         left: -8px;
-        top: 70px; /* Aligned with the bell icon */
+        top: 38px; /* Aligned with the bell icon */
         width: 0;
         height: 0;
         border-top: 8px solid transparent;

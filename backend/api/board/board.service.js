@@ -5,6 +5,9 @@ const ObjectId = require('mongodb').ObjectId
 async function query(filterBy, loggedinUser) {
     try {
         const criteria = {}
+        // logger.debug('Querying boards with loggedinUser:', loggedinUser)
+        console.log('Querying boards with loggedinUser:', loggedinUser)
+        
         if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
         if (filterBy.isStarred) criteria.isStarred = filterBy.isStarred
 
@@ -13,6 +16,8 @@ async function query(filterBy, loggedinUser) {
                 { 'createdBy._id': loggedinUser._id },
                 { 'members._id': loggedinUser._id }
             ]
+        } else {
+            return []
         }
         
         const collection = await dbService.getCollection('board')
@@ -24,10 +29,20 @@ async function query(filterBy, loggedinUser) {
     }
 }
 
-async function getById(boardId) {
+async function getById(boardId, loggedinUser) {
     try {
         const collection = await dbService.getCollection('board')
         const board = await collection.findOne({ _id: ObjectId(boardId) })
+
+        if (!board) return null
+
+        // Check permission if board is not public (assuming all are private for now)
+        if (!loggedinUser || (board.createdBy._id.toString() !== loggedinUser._id.toString() && !board.members.find(m => m._id.toString() === loggedinUser._id.toString()))) {
+            const error = new Error('Not Authorized to view this board')
+            error.status = 403
+            throw error
+        }
+
         return board
     } catch (err) {
         logger.error(`while finding board ${boardId}`, err)
@@ -35,8 +50,9 @@ async function getById(boardId) {
     }
 }
 
-async function remove(boardId) {
+async function remove(boardId, loggedinUser) {
     try {
+        await getById(boardId, loggedinUser) // This will throw if no permission
         const collection = await dbService.getCollection('board')
         await collection.deleteOne({ _id: ObjectId(boardId) })
         return boardId
@@ -57,8 +73,9 @@ async function add(board) {
     }
 }
 
-async function update(board) {
+async function update(board, loggedinUser) {
     try {
+        await getById(board._id, loggedinUser) // This will throw if no permission
         const boardToSave = {...board}
         delete boardToSave._id
         const collection = await dbService.getCollection('board')
@@ -70,9 +87,9 @@ async function update(board) {
     }
 }
 
-async function updateTask(boardId, groupId, taskId, saveTask){
+async function updateTask(boardId, groupId, taskId, saveTask, loggedinUser){
     try {
-        const board =  await getById(boardId)
+        const board =  await getById(boardId, loggedinUser)
         const group = board.groups.find(group => group.id === groupId)
         
         let targetTaskIdx = group.tasks.findIndex(task => task.id === taskId)
@@ -91,7 +108,7 @@ async function updateTask(boardId, groupId, taskId, saveTask){
         saveTask.version = (dbTask.version || 0) + 1
 
         group.tasks[targetTaskIdx] = saveTask
-        await update(board)
+        await update(board, loggedinUser)
         return board
     } catch (err) {
         logger.error(`cannot update task ${taskId}`, err)
@@ -99,14 +116,43 @@ async function updateTask(boardId, groupId, taskId, saveTask){
     }
 }
 
-async function updateGroup(boardId, groupId, saveGroup){
+async function updateGroup(boardId, groupId, saveGroup, loggedinUser){
     try {
-        const board =  await getById(boardId)
+        const board =  await getById(boardId, loggedinUser)
         board.groups = board.groups.map(group => (group.id === groupId) ? saveGroup : group)
-        await update(board)
+        await update(board, loggedinUser)
         return board
     } catch (err) {
         logger.error(`cannot update task ${groupId}`, err)
+        throw err
+    }
+}
+
+async function addMember(boardId, loggedinUser) {
+    try {
+        const collection = await dbService.getCollection('board')
+        const board = await collection.findOne({ _id: ObjectId(boardId) })
+
+        if (!board) throw new Error(`Board ${boardId} not found`)
+
+        // Check if member already exists
+        const isMember = board.members.some(member => member._id.toString() === loggedinUser._id.toString())
+        const isCreator = board.createdBy._id.toString() === loggedinUser._id.toString()
+
+        if (!isMember && !isCreator) {
+            board.members.push({
+                _id: loggedinUser._id,
+                fullname: loggedinUser.fullname,
+                imgUrl: loggedinUser.imgUrl
+            })
+            const boardToSave = { ...board }
+            delete boardToSave._id
+            await collection.updateOne({ _id: ObjectId(board._id) }, { $set: boardToSave })
+        }
+
+        return board
+    } catch (err) {
+        logger.error(`cannot add member to board ${boardId}`, err)
         throw err
     }
 }
@@ -118,5 +164,6 @@ module.exports = {
     add,
     update,
     updateTask,
-    updateGroup
+    updateGroup,
+    addMember
 }

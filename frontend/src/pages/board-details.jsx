@@ -74,7 +74,7 @@ export function BoardDetails () {
         setFilter(filterBy)
     }
 
-    if (!board) return <Loader />
+    if (boardId && !board) return <Loader />
     return (
         <section className="board-details flex">
             <div className='sidebar flex'>
@@ -82,26 +82,38 @@ export function BoardDetails () {
                 <WorkspaceSidebar workspaceDisplay={workspaceDisplay} isWorkspaceOpen={isWorkspaceOpen} setIsWorkspaceOpen={setIsWorkspaceOpen} board={board} setIsCreateModalOpen={setIsCreateModalOpen} />
             </div>
             <main className="board-main">
-                <BoardHeader boardType={boardType} setBoardType={setBoardType} board={board} onSetFilter={onSetFilter} isStarredOpen={isStarredOpen} setIsShowDescription={setIsShowDescription} setIsInviteModalOpen={setIsInviteModalOpen} setIsAutomationsOpen={setIsAutomationsOpen} />
-                {boardType === 'table' && <GroupList board={board} />}
+                {board ? (
+                    <>
+                        <BoardHeader boardType={boardType} setBoardType={setBoardType} board={board} onSetFilter={onSetFilter} isStarredOpen={isStarredOpen} setIsShowDescription={setIsShowDescription} setIsInviteModalOpen={setIsInviteModalOpen} setIsAutomationsOpen={setIsAutomationsOpen} />
+                        {boardType === 'table' && <GroupList board={board} />}
 
-                {boardType === 'kanban' &&
-                    <GroupListKanban board={board} />
-                }
-                <BoardModal setIsMouseOver={setIsMouseOver} />
-                {boardType === 'dashboard' && <Dashboard />}
+                        {boardType === 'kanban' &&
+                            <GroupListKanban board={board} />
+                        }
+                        <BoardModal setIsMouseOver={setIsMouseOver} />
+                        {boardType === 'dashboard' && <Dashboard />}
+                    </>
+                ) : (
+                    <div className="empty-board-view flex column align-center justify-center" style={{ height: '100%', gap: '20px', color: '#676879' }}>
+                         <img src="https://res.cloudinary.com/du63kkxhl/image/upload/v1700131641/empty_state_bzxvzk.png" alt="Empty" style={{ width: '200px', opacity: 0.7 }} />
+                         <div style={{ textAlign: 'center' }}>
+                            <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '10px' }}>You're not invited into any boards yet</h2>
+                            <p style={{ fontSize: '16px' }}>When you are invited to a board, it will show up here.</p>
+                         </div>
+                    </div>
+                )}
             </main>
             {isCreateModalOpen && <CreateBoard setIsModalOpen={setIsCreateModalOpen} />}
-            {isAutomationsOpen && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
+            {isAutomationsOpen && board && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
             {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
-            {isShowDescription &&
+            {isShowDescription && board &&
                 <>
                     <BoardDescription setIsShowDescription={setIsShowDescription} board={board} />
                     <div className='dark-screen'></div>
                 </>
             }
             {isLoginModalOpen && <LoginLogoutModal setIsLoginModalOpen={setIsLoginModalOpen} />}
-            {isInviteModalOpen && <ModalMemberInvite board={board} setIsInviteModalOpen={setIsInviteModalOpen} />}
+            {isInviteModalOpen && board && <ModalMemberInvite board={board} setIsInviteModalOpen={setIsInviteModalOpen} />}
             <DynamicModal />
         </section>
     )

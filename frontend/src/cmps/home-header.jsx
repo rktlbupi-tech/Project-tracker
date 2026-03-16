@@ -9,7 +9,9 @@ export function HomeHeader ({ boards }) {
                <Logo />
                 <div className='header-btns'>
                     <Link to={'/auth/login'}><button className="btn-login">Log in</button></Link>
-                    <Link to={`/board/${boards[0]._id}`}><button className='btn-start'>Get started <span className="arrow"><HiOutlineArrowRight /></span></button></Link>
+                    <Link to={boards?.length ? `/board/${boards[0]._id}` : '/auth/login'}>
+                        <button className='btn-start'>Get started <span className="arrow"><HiOutlineArrowRight /></span></button>
+                    </Link>
                 </div>
         </header>
     )

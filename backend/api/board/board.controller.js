@@ -16,31 +16,39 @@ async function getBoards(req, res) {
     res.json(boards)
   } catch (err) {
     logger.error('Failed to get boards', err)
-    res.status(500).send({ err: 'Failed to get boards' })
+    res.status(err.status || 500).send({ err: 'Failed to get boards' })
   }
 }
 
 async function getBoardById(req, res) {
   try {
     const boardId = req.params.boardId
-    const board = await boardService.getById(boardId)
+    const board = await boardService.getById(boardId, req.loggedinUser)
     res.json(board)
   } catch (err) {
     logger.error('Failed to get board', err)
-    res.status(500).send({ err: 'Failed to get board' })
+    res.status(err.status || 500).send({ err: 'Failed to get board' })
   }
 }
 
 async function addBoard(req, res) {
   try {
     const board = req.body
+    // Set creator from logged in user for security
+    if (req.loggedinUser) {
+        board.createdBy = {
+            _id: req.loggedinUser._id,
+            fullname: req.loggedinUser.fullname,
+            imgUrl: req.loggedinUser.imgUrl
+        }
+    }
     const addedBoard = await boardService.add(board)
     
     socketService.broadcast({ type: 'board-add-update', data: addedBoard, room: addedBoard._id })
     res.json(addedBoard)
   } catch (err) {
     logger.error('Failed to add board', err)
-    res.status(500).send({ err: 'Failed to add board' })
+    res.status(err.status || 500).send({ err: 'Failed to add board' })
   }
 }
 
@@ -48,13 +56,13 @@ async function addBoard(req, res) {
 async function updateBoard(req, res) {
   try {
     const board = req.body
-    const updatedBoard = await boardService.update(board)
+    const updatedBoard = await boardService.update(board, req.loggedinUser)
     
     socketService.broadcast({ type: 'board-add-update', data: updatedBoard, room: updatedBoard._id })
     res.json(updatedBoard)
   } catch (err) {
     logger.error('Failed to update board', err)
-    res.status(500).send({ err: 'Failed to update board' })
+    res.status(err.status || 500).send({ err: 'Failed to update board' })
 
   }
 }
@@ -62,11 +70,11 @@ async function updateBoard(req, res) {
 async function removeBoard(req, res) {
   try {
     const boardId = req.params.boardId
-    const removedId = await boardService.remove(boardId)
+    const removedId = await boardService.remove(boardId, req.loggedinUser)
     res.send(removedId)
   } catch (err) {
     logger.error('Failed to remove board', err)
-    res.status(500).send({ err: 'Failed to remove board' })
+    res.status(err.status || 500).send({ err: 'Failed to remove board' })
   }
 }
 
@@ -74,7 +82,7 @@ async function updateTask(req, res) {
   try {
     const task = req.body
     const { boardId, groupId, taskId } = req.params
-    const board = await boardService.updateTask(boardId, groupId, taskId, task)
+    const board = await boardService.updateTask(boardId, groupId, taskId, task, req.loggedinUser)
     
     // Find the specific task in the updated board to send to the automation engine
     const group = board.groups.find(g => (g.id === groupId || g._id === groupId))
@@ -86,7 +94,7 @@ async function updateTask(req, res) {
     res.send(board)
   } catch (err) {
     logger.error('Failed to update task', err)
-    res.status(500).send({ err: 'Failed to update task' })
+    res.status(err.status || 500).send({ err: 'Failed to update task' })
   }
 }
 
@@ -94,7 +102,7 @@ async function updateGroup(req, res) {
   try {
     const group = req.body
     const {boardId, groupId} = req.params
-    const groupToSend = await boardService.updateGroup(boardId, groupId, group)
+    const groupToSend = await boardService.updateGroup(boardId, groupId, group, req.loggedinUser)
     
     // Event emitted for the Automation Engine (which now bridges to sockets)
     eventBus.emit('GROUP_UPDATED', { boardId, group: groupToSend })
@@ -102,7 +110,26 @@ async function updateGroup(req, res) {
     res.send(groupToSend)
   } catch (err) {
     logger.error('Failed to update group', err)
-    res.status(500).send({ err: 'Failed to update group' })
+    res.status(err.status || 500).send({ err: 'Failed to update group' })
+  }
+}
+
+async function acceptInvite(req, res) {
+  try {
+    const { boardId } = req.params
+    const loggedinUser = req.loggedinUser
+
+    if (!loggedinUser) {
+        return res.status(401).send({ err: 'Unauthorized' })
+    }
+
+    const board = await boardService.addMember(boardId, loggedinUser)
+    socketService.broadcast({ type: 'board-add-update', data: board, room: board._id })
+    res.send(board)
+
+  } catch (err) {
+    logger.error('Failed to accept invite', err)
+    res.status(err.status || 500).send({ err: 'Failed to accept invite' })
   }
 }
 
@@ -145,5 +172,6 @@ module.exports = {
   updateBoard,
   removeBoard,
   updateTask,
-  updateGroup
+  updateGroup,
+  acceptInvite
 }

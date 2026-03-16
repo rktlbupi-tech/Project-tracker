@@ -19,7 +19,8 @@ export const boardService = {
     getEmptyActivity,
     getEmptyBoard,
     updateTask,
-    updateGroup
+    updateGroup,
+    acceptInvite
 }
 
 function query(filter = getDefaultFilterBoards()) {
@@ -64,6 +65,10 @@ function updateTask(boardId, groupId, task) {
 
 function updateGroup(boardId, group) {
     return httpService.put(`${BASE_URL}${boardId}/${group.id}`, group)
+}
+
+function acceptInvite(boardId) {
+    return httpService.post(`${BASE_URL}${boardId}/accept-invite`)
 }
 
 function getDefaultFilterBoards() {

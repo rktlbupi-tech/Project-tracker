@@ -55,10 +55,21 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
         let members = users.filter(user => !board.members.some(member => member._id === user._id))
         if (filter.txt) {
             const regex = new RegExp(filter.txt, 'i')
-            members = members.filter(member => regex.test(member.fullname))
+            members = members.filter(member => regex.test(member.fullname) || regex.test(member.username))
         }
 
         setOutBoardMembers(members)
+    }
+
+    async function onInviteByEmail() {
+        if (!filter.txt || !filter.txt.includes('@')) return
+        try {
+            await inviteUser(filter.txt, board._id, board.title)
+            setIsInviteModalOpen(false)
+            alert(`Email invitation sent to ${filter.txt}`)
+        } catch (err) {
+            console.log('cant invite email:', err)
+        }
     }
 
     return (
@@ -98,6 +109,24 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
                             })
                         }
                     </ul>}
+                    {filter.txt.includes('@') && outBoardMembers.length === 0 && (
+                        <div className="invite-by-email" style={{ marginTop: '10px', textAlign: 'center' }}>
+                            <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#676879' }}>No user found. Send an email invitation?</p>
+                            <button 
+                                onClick={onInviteByEmail}
+                                style={{
+                                    backgroundColor: '#0073ea',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '6px 12px',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Invite {filter.txt}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
         </section>

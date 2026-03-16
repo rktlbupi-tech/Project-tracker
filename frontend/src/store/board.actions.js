@@ -10,6 +10,7 @@ export async function loadBoards(filterBy) {
     try {
         const boards = await boardService.query(filterBy)
         store.dispatch({ type: SET_BOARDS, boards })
+        return boards
     } catch (err) {
         throw err
     }
@@ -43,6 +44,11 @@ export async function updateOptimisticBoard(newBoard, prevBoard) {
 }
 
 export async function loadBoard(boardId, filterBy) {
+    if (!boardId) {
+        store.dispatch({ type: SET_BOARD, board: null })
+        store.dispatch({ type: SET_FILTER_BOARD, filteredBoard: null })
+        return
+    }
     try {
         const board = await boardService.getById(boardId)
         const filteredBoard = boardService.getFilteredBoard(board, filterBy)
@@ -57,11 +63,14 @@ export async function loadBoard(boardId, filterBy) {
 export function setBoardFromSocket(board) {
     if (!board) return
     
-    // 1. Maintain the user's current local frontend filter if one exists
+    // 1. Update the full boards list in the store
+    store.dispatch({ type: UPDATE_BOARD, board })
+
+    // 2. Maintain the user's current local frontend filter if one exists
     const filter = store.getState().boardModule.filter
     const filteredBoard = boardService.getFilteredBoard(board, filter)
     
-    // 2. Dispatch to both board (source) and filteredBoard (view)
+    // 3. Dispatch to both board (source) and filteredBoard (view)
     store.dispatch({ type: SET_BOARD, board })
     store.dispatch({ type: SET_FILTER_BOARD, filteredBoard })
 }

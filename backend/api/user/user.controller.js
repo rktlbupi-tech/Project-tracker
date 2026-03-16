@@ -2,6 +2,7 @@ const userService = require('./user.service')
 const boardService = require('../board/board.service')
 const socketService = require('../../services/socket.service')
 const logger = require('../../services/logger.service')
+const { sendBoardInviteEmail } = require('../../services/mail.service')
 
 async function getUser(req, res) {
     try {
@@ -49,6 +50,27 @@ async function inviteUser(req, res) {
         const { invitedUserId, boardId, boardTitle } = req.body
         const fromUser = req.loggedinUser
         
+        // Check if invitedUserId is actually an email string
+        if (invitedUserId.includes('@')) {
+            const email = invitedUserId
+            
+            // Generate a simple invite token/link for the email
+            const inviteToken = Buffer.from(JSON.stringify({
+                boardId, 
+                boardTitle, 
+                fromUser: { _id: fromUser._id, fullname: fromUser.fullname }
+            })).toString('base64')
+
+            const baseUrl = process.env.CLIENT_URL || 'http://localhost:3000'
+            const inviteLink = `${baseUrl}/invite?token=${inviteToken}`
+            
+            // Send email
+            await sendBoardInviteEmail(email, fromUser, boardTitle, inviteLink)
+            
+            res.send({ msg: 'Email invitation sent successfully' })
+            return
+        }
+
         const invitation = {
             id: userService.makeId(),
             from: { _id: fromUser._id, fullname: fromUser.fullname, imgUrl: fromUser.imgUrl },

@@ -8,16 +8,28 @@ import HomeTeaser from '../cmps/home-teaser'
 import HomeScreenShot from '../cmps/home-screenshots'
 import StartedButton from '../cmps/custom/getstarted-btn'
 
+import { useNavigate } from 'react-router-dom'
+
 const homeImg = require('../assets/img/home.avif')
 
 export default function HomePage () {
     const boards = useSelector(storeState => storeState.boardModule.boards)
+    const user = useSelector(storeState => storeState.userModule.user)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            if (boards.length) navigate(`/board/${boards[0]._id}`)
+            else navigate('/board')
+        }
+    }, [user, boards])
 
     useEffect(() => {
         loadBoards()
     }, [])
 
-    if (!boards.length) return <Loader />
+    const boardId = boards[0]?._id || ''
+    
     return (
             <Suspense fallback={<Loader />}>
                 <HomeHeader boards={boards} />
@@ -31,14 +43,14 @@ export default function HomePage () {
                             <h2 className='secondary-title'>Start managing with MyDay Work OS</h2>
                         </div>
                         <div className='get-started'>
-                            <StartedButton boardId={boards[0]._id} />
+                            <StartedButton boardId={boardId} />
                             <p className='home-paragraph'>No credit card needed <BsStars /> Unlimited time on Free Plan</p>
                         </div>
                     </div>
                     <img className="hero" src={homeImg} alt="hero-img" />
                 </section >
                 <HomeTeaser />
-                <HomeScreenShot boardId={boards[0]._id} />
+                <HomeScreenShot boardId={boardId} />
             </Suspense>
     )
 }
