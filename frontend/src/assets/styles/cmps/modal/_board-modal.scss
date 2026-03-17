@@ -61,12 +61,12 @@
 
                 &:focus-visible {
                     outline: none;
-                    background-color: white;
+                    background-color: $bg-primary;
                     box-shadow: 0 0 0 2px $primary-color;
                 }
 
                 &:hover {
-                    background-color: rgba(0,0,0,0.03);
+                    background-color: var(--workspace-hover);
                 }
             }
         }
@@ -112,7 +112,7 @@
             width: 6px;
         }
         &::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.1);
+            background-color: var(--text-secondary);
             border-radius: 10px;
         }
 
@@ -124,13 +124,13 @@
             align-items: center;
             border-radius: 8px;
             color: $text-secondary;
-            background-color: white;
+            background-color: $bg-primary;
             cursor: pointer;
             transition: $transition-smooth;
 
             &:hover {
                 border-color: $primary-color;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                box-shadow: $glass-shadow;
             }
         }
 
@@ -138,8 +138,8 @@
             border: 1px solid $primary-color;
             border-radius: 8px;
             overflow: hidden;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background-color: $bg-primary;
+            box-shadow: $glass-shadow;
 
             .style-txt {
                 display: flex;
@@ -156,7 +156,7 @@
                     transition: $transition-smooth;
 
                     &:hover {
-                        background-color: white;
+                        background-color: $bg-secondary;
                         color: $primary-color;
                     }
                 }
@@ -170,6 +170,8 @@
                 resize: vertical;
                 font-family: inherit;
                 font-size: rem(14px);
+                background-color: transparent;
+                color: $text-primary;
 
                 &:focus {
                     outline: none;
@@ -242,7 +244,7 @@
             width: 6px;
         }
         &::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.1);
+            background-color: var(--text-secondary);
             border-radius: 10px;
         }
     }

@@ -32,7 +32,7 @@
                 display: flex;
                 align-items: center;
                 gap: $spacing-small;
-                background-color: $member-modal-item-bg;
+                background-color: $bg-secondary;
                 margin: $spacing-xs;
                 border-radius: 8px;
 
@@ -55,7 +55,7 @@
                 padding: $spacing-xs $spacing-xs;
                 width: 320px;
                 border-radius: 8px;
-                border: 2px solid darken($border-color , 20%);
+                border: 2px solid $border-color;
 
                 @include for-mobile-layout() {
                     & {
@@ -75,7 +75,7 @@
                 .icon-container {
                     @include center-flex();
                     margin: 0;
-                    background-color: white;
+                    background-color: $bg-primary;
                     border-radius: 8px;
                     width: 24px;
                     height: 24px;
@@ -87,7 +87,7 @@
                     }
 
                     .icon {
-                        color: black;
+                        color: $text-primary;
                     }
                 }
             }
@@ -124,7 +124,7 @@
         font-size: rem(14px);
         padding: $spacing-medium;
         box-shadow: -3px 4px 14px rgb(0 0 0 / 20%);
-        border: 1px solid darken($border-color , 20%);
+        border: 1px solid $border-color;
       
 
         .modal-member-content {
@@ -164,7 +164,7 @@
     .triangle-icon {
         position: absolute;
         top: -12px;
-        color: white;
+        color: $bg-primary;
         @include for-mobile-layout() {
             & {
                right: 75px

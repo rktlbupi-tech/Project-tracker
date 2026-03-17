@@ -1,7 +1,7 @@
 * {
     box-sizing: border-box;
     scrollbar-width: thin;
-    scrollbar-color: #878787 #D9D9D9;
+    scrollbar-color: var(--text-secondary) var(--bg-secondary);
     
     &::-webkit-scrollbar {
         width: 8px;
@@ -9,13 +9,17 @@
     }
     
     &::-webkit-scrollbar-track {
-        background: #D9D9D9;
+        background: var(--bg-secondary);
     }
     
     &::-webkit-scrollbar-thumb {
         border-radius: 25px;
-        background-color: #A6A5A5;
+        background-color: var(--text-secondary);
         cursor: pointer;
+        
+        &:hover {
+            background-color: var(--text-primary);
+        }
     }
 }
 
@@ -29,6 +33,7 @@
 
 html {
     line-height: 1.6;
+    background-color: $bg-primary;
 }
 
 main {
@@ -44,6 +49,17 @@ h6 {
     margin: 0;
     padding: 0;
     font-family: $title-font-family;
+    color: $text-primary;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+    background: transparent;
+    font-size: rem(14px);
+    color: $text-primary;
 }
 
 body {
@@ -51,6 +67,9 @@ body {
     margin: 0;
     padding: 0;
     font-family: $font-family;
+    background-color: $bg-primary;
+    color: $text-primary;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 img {
@@ -99,11 +118,11 @@ button {
 blockquote {
     margin: 0;
     padding: 0;
-    display: flex;
-    align-items: center;
     cursor: text;
+    transition: $transition-smooth;
+    color: $text-primary;
 
     &:focus-visible {
-        outline: 1px solid darken($border-color , 20%);
+        outline: 1px solid $primary-color;
     }
 }

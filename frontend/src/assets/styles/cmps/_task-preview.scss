@@ -10,7 +10,7 @@
 
     &:hover {
         background-color: $task-hover-color;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: $glass-shadow;
         z-index: 10;
         
         .task-menu .icon {
@@ -56,7 +56,7 @@
         }
 
         .icon:hover {
-            background-color: $layout-border-color;
+            background-color: $workspace-hover;
             color: $primary-color;
         }
     }
@@ -72,7 +72,7 @@
         transition: $transition-smooth;
 
         &:hover {
-            border-color: darken($border-color, 10%);
+            border-color: $primary-color;
         }
     }
 
@@ -97,7 +97,7 @@
             gap: 4px;
 
             &:hover {
-                color: darken($primary-color, 10%);
+                color: $link-color;
             }
 
             @include for-mobile-layout() {
@@ -117,7 +117,7 @@
                 height: 24px;
                 border-radius: 50%;
                 object-fit: cover;
-                border: 2px solid #ffffff;
+                border: 2px solid $bg-primary;
                 z-index: 2;
             }
 
@@ -156,7 +156,7 @@
 
             &:hover {
                 color: $primary-color;
-                background-color: rgba($primary-color, 0.05);
+                background-color: var(--workspace-hover);
             }
 
             .icon:hover {
@@ -182,7 +182,7 @@
                 height: 16px;
                 margin: 0;
                 cursor: pointer;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                box-shadow: $glass-shadow;
             }
 
             .comment-chat {
@@ -205,6 +205,7 @@
         margin-left: 12px;
         cursor: text;
         transition: $transition-smooth;
+        color: $text-primary;
 
         @include for-mobile-layout() {
             & {
@@ -214,12 +215,16 @@
 
         &:focus-visible {
             outline: none;
-            background-color: white;
+            background-color: $bg-primary;
             box-shadow: 0 0 0 2px $primary-color;
+            overflow: visible;
+            white-space: pre-wrap;
+            position: relative;
+            z-index: 50;
         }
 
         &:hover {
-            background-color: rgba(0,0,0,0.02);
+            background-color: var(--workspace-hover);
         }
     }
 

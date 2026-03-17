@@ -5,7 +5,9 @@
     height: rem(72px);
     position: sticky;
     top: 0;
-    background: #ffffff;
+    background: $bg-primary;
+    color: $text-primary;
+    border-bottom: 1px solid $border-color;
 
     nav {
         height: 100%;
@@ -46,8 +48,8 @@
         }
 
         .btn-login {
-            background-color: $app-bg;
-            color: #535768;
+            background-color: transparent;
+            color: $text-secondary;
             padding: $spacing-small $spacing-medium;
             font-size: rem(14px);
             border-radius: 8px;
@@ -55,8 +57,8 @@
             margin-right: $spacing-medium;
 
             &:hover {
-                color: #5034FF;
-                background-color: #F0F3FF;
+                color: $primary-color;
+                background-color: var(--workspace-hover);
             }
         }
     }

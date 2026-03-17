@@ -1,6 +1,5 @@
 import { httpService } from './http.service.js'
 import { userService } from './user.service.js'
-import { utilService } from './util.service.js'
 
 const BASE_URL = 'board/'
 

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
 import { AiOutlineStar, AiOutlineMenu } from 'react-icons/ai'
+import { BsSun, BsMoon } from 'react-icons/bs'
 import { VscTriangleLeft } from 'react-icons/vsc'
 import { IoNotificationsOutline } from 'react-icons/io5'
 import { closeDynamicModal } from '../../store/board.actions'
@@ -19,7 +20,17 @@ const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/gue
 export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWorkspaceOpen }) {
     const [display, setDisplay] = useState('board')
     const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
     const user = useSelector(storeState => storeState.userModule.user)
+
+    useEffect(() => {
+        document.documentElement.className = theme === 'dark' ? 'theme-dark' : ''
+        localStorage.setItem('theme', theme)
+    }, [theme])
+
+    function toggleTheme() {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light')
+    }
     
     const pendingCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
 
@@ -86,7 +97,12 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
                 <NotificationList user={user} onClose={() => setIsNotificationOpen(false)} />
             )}
 
-            <div className='bottom'>
+            <div className='bottom flex column align-center' style={{ gap: '16px' }}>
+                <Tooltip title={`${theme === 'light' ? 'Dark' : 'Light'} mode`} arrow>
+                    <div className="theme-toggle-btn icon-container" onClick={toggleTheme}>
+                        {theme === 'light' ? <BsMoon /> : <BsSun />}
+                    </div>
+                </Tooltip>
                 <Tooltip title="Login & Logout" arrow>
                     <img className='logged-user-img' src={(user && user.imgUrl) ? user.imgUrl : guest} alt="" onClick={() => setIsLoginModalOpen(prev => !prev)} />
                 </Tooltip>

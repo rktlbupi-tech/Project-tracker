@@ -2,8 +2,9 @@
   background-image: $home-bg;
   margin: 0;
   padding-top: rem(72px);
-  color: $app-bg;
+  color: $text-primary;
   font-family: $title-font-family;
+  background-color: $bg-primary;
 
   .home-content {
     padding-top: $spacing-xxl;
@@ -27,6 +28,7 @@
         font-weight: 600;
         background: linear-gradient(360deg, #adadad 53.95%, #8080e0 121.37%);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: $spacing-large;
         font-size: rem(30px);

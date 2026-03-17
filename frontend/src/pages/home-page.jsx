@@ -40,7 +40,7 @@ export default function HomePage () {
                                 <span>A Platform Built For A</span>
                                 <span>New Way Of Working</span>
                             </h1>
-                            <h2 className='secondary-title'>Start managing with MyDay Work OS</h2>
+                            <h2 className='secondary-title'>Start managing with Workio Work OS</h2>
                         </div>
                         <div className='get-started'>
                             <StartedButton boardId={boardId} />

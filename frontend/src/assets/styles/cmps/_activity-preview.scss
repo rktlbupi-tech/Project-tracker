@@ -1,7 +1,7 @@
 .activity-preview {
     display: flex;
     padding: $spacing-small 0 $spacing-small 0;
-    border-bottom: 1px solid $task-box-shadow-color;
+    border-bottom: 1px solid $border-color;
     margin: 0 25px 0 25px;
     gap: 5%;
     font-size: rem(16px);
@@ -124,7 +124,7 @@
 
         .icon {
             font-size: rem(35px);
-            color: $color-explosive;
+            color: $text-secondary;
             margin: 0 $spacing-xs;
         }
 

@@ -92,7 +92,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
                 <div className="task-title picker flex align-center space-between">
                     <blockquote contentEditable onFocus={toggleOnTyping}
                         onBlur={onUpdateTaskTitle} suppressContentEditableWarning={true}>
-                        <span>{task.title}</span>
+                        {task.title}
                     </blockquote>
                     <div className="open-task-details " onClick={onOpenModal}>
                         <TbArrowsDiagonal />

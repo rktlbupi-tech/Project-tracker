@@ -85,7 +85,7 @@
 
         &:has(:focus-visible) {
             border: .5px solid $board-btn;
-            background-color: white;
+            background-color: $bg-primary;
             outline: none;
         }
 
