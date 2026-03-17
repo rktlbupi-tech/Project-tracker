@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import { loggerService } from './logger.service'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.NODE_ENV === 'production'
     ? '/api/'
@@ -12,13 +13,7 @@ const axios = Axios.create({
 // Request Interceptor
 axios.interceptors.request.use(
     (config) => {
-        console.log(
-            `🚀 %c[API Request] %c${config.method?.toUpperCase()} %c${config.url}`,
-            "color: #FF6B00; font-weight: bold;",
-            "color: #1B2D1F; font-weight: bold;",
-            "color: #868E96;",
-            config.data || ""
-        );
+        loggerService.debug(`API Request: ${config.method?.toUpperCase()} ${config.url}`, config.data || "")
         return config;
     },
     (error) => {
@@ -29,26 +24,14 @@ axios.interceptors.request.use(
 // Response Interceptor
 axios.interceptors.response.use(
     (response) => {
-        console.log(
-            `✅ %c[API Response]  %c${response.status} %c${response.config.url}`,
-            "color: #6CC51D; font-weight: bold;",
-            "color: #1B2D1F; font-weight: bold;",
-            "color: #868E96;",
-            response.data
-        );
+        loggerService.info(`API Response: ${response.status} ${response.config.url}`, response.data)
         return response;
     },
     (error) => {
         const status = error.response?.status || "Network Error"
         const url = error.config?.url || "Unknown URL"
         
-        console.log(
-            `❌ %c[API Error] %c${status} %c${url}`,
-            "color: #FA5252; font-weight: bold;",
-            "color: #1B2D1F; font-weight: bold;",
-            "color: #868E96;",
-            error.response?.data || error.message
-        );
+        loggerService.error(`API Error: ${status} ${url}`, error.response?.data || error.message)
 
         if (error.response && error.response.status === 401) {
             sessionStorage.clear()

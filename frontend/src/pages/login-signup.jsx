@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ImgUploader } from '../cmps/login/img-uploader'
 import { LoginPageHeader } from '../cmps/login/login-page-header'
 import { Link, useNavigate } from 'react-router-dom'
@@ -8,6 +8,7 @@ import { loadUsers, login, signup } from '../store/user.actions'
 import { loadBoards } from '../store/board.actions'
 import { boardService } from '../services/board.service'
 import { useGoogleLogin } from '@react-oauth/google'
+import { loggerService } from '../services/logger.service'
 
 export function LoginSignup() {
     const [credentials, setCredentials] = useState({ username: '', password: '', fullname: '' })
@@ -21,14 +22,65 @@ export function LoginSignup() {
         onSuccess: codeResponse => {
             setGoogleUser(codeResponse)
         },
-        onError: errorResponse => console.log(errorResponse)
+        onError: errorResponse => loggerService.error('Google login error', errorResponse)
     })
+
+    const checkGoogleCredentials = useCallback(async (credentials) => {
+        try {
+            const user = users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
+            if (user) {
+                await login(user)
+            } else {
+                await signup({
+                    username: credentials.email,
+                    password: credentials.id,
+                    fullname: credentials.name,
+                    imgUrl: credentials.picture
+                })
+            }
+
+            // Check for pending invite
+            const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
+            if (pendingBoardId) {
+                await boardService.acceptInvite(pendingBoardId)
+                sessionStorage.removeItem('pendingInviteToken')
+                sessionStorage.removeItem('pendingInviteBoardId')
+                navigate(`/board/${pendingBoardId}`)
+                return;
+            }
+
+            const fetchedBoards = await loadBoards()
+            if (fetchedBoards && fetchedBoards.length > 0) {
+                navigate(`/board/${fetchedBoards[0]._id}`)
+            } else {
+                navigate(`/board/`)
+            }
+        } catch (err) {
+            loggerService.error('Error with Google credentials:', err)
+        }
+    }, [users, navigate])
+
+    const onGoogleLogin = useCallback(async () => {
+        try {
+            if (googleUser) {
+                const user = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleUser.access_token}`, {
+                    headers: {
+                        Authorization: `Bearer ${googleUser.access_token}`,
+                        Accept: 'application/json'
+                    }
+                })
+                await checkGoogleCredentials(user.data)
+            }
+        } catch (error) {
+            loggerService.error('Signup Error:', error)
+        }
+    }, [googleUser, checkGoogleCredentials])
 
     useEffect(() => {
         if (!users.length) loadUsers()
         if (!boards.length) loadBoards()
         onGoogleLogin()
-    }, [googleUser])
+    }, [googleUser, onGoogleLogin, users.length, boards.length])
 
     function handleChange(ev) {
         const field = ev.target.name
@@ -64,7 +116,7 @@ export function LoginSignup() {
                 navigate(`/board/`)
             }
         } catch (err) {
-            console.error('Error in login/signup:', err)
+            loggerService.error('Error in login/signup:', err)
         }
     }
 
@@ -76,56 +128,7 @@ export function LoginSignup() {
         setCredentials({ ...credentials, imgUrl })
     }
 
-    async function onGoogleLogin() {
-        try {
-            if (googleUser) {
-                const user = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleUser.access_token}`, {
-                    headers: {
-                        Authorization: `Bearer ${googleUser.access_token}`,
-                        Accept: 'application/json'
-                    }
-                })
-                await checkGoogleCredentials(user.data)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
-    async function checkGoogleCredentials(credentials) {
-        try {
-            const user = users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
-            if (user) {
-                await login(user)
-            } else {
-                await signup({
-                    username: credentials.email,
-                    password: credentials.id,
-                    fullname: credentials.name,
-                    imgUrl: credentials.picture
-                })
-            }
-
-            // Check for pending invite
-            const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
-            if (pendingBoardId) {
-                await boardService.acceptInvite(pendingBoardId)
-                sessionStorage.removeItem('pendingInviteToken')
-                sessionStorage.removeItem('pendingInviteBoardId')
-                navigate(`/board/${pendingBoardId}`)
-                return;
-            }
-
-            const fetchedBoards = await loadBoards()
-            if (fetchedBoards && fetchedBoards.length > 0) {
-                navigate(`/board/${fetchedBoards[0]._id}`)
-            } else {
-                navigate(`/board/`)
-            }
-        } catch (err) {
-            console.error('Error with Google credentials:', err)
-        }
-    }
 
     return (
         // TODO: Change header to the original header(option)

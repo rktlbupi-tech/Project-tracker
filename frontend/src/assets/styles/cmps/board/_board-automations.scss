@@ -131,21 +131,48 @@
                     }
                 }
 
-                .toggle-btn {
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    border: 1px solid $border-color;
-                    background: $bg-primary;
-                    color: $text-primary;
-                    cursor: pointer;
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    transition: $transition-smooth;
+                .automation-actions {
+                    gap: 12px;
 
-                    &.active {
-                        background: $secondary-color;
-                        color: white;
-                        border-color: $secondary-color;
+                    .toggle-btn {
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        border: 1px solid $border-color;
+                        background: $bg-primary;
+                        color: $text-primary;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 0.85rem;
+                        transition: $transition-smooth;
+
+                        &.active {
+                            background: $secondary-color;
+                            color: white;
+                            border-color: $secondary-color;
+                        }
+
+                        &:hover {
+                            transform: scale(1.05);
+                        }
+                    }
+
+                    .btn-remove-automation {
+                        background: none;
+                        border: none;
+                        color: $text-secondary;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 6px;
+                        border-radius: 4px;
+                        transition: $transition-smooth;
+
+                        &:hover {
+                            color: $accent-color;
+                            background-color: rgba($accent-color, 0.1);
+                        }
                     }
                 }
             }

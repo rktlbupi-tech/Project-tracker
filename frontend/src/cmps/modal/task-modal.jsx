@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 
@@ -12,6 +12,7 @@ import { TbAlignRight, TbAlignCenter, TbAlignLeft } from 'react-icons/tb'
 
 import { boardService } from "../../services/board.service"
 import { utilService } from "../../services/util.service"
+import { loggerService } from "../../services/logger.service"
 import { CommentPreview } from "../task/comment-preview"
 import { ActivityPreview } from "../activity-preview"
 import { socketService, SOCKET_EMIT_SEND_MSG, SOCKET_EMIT_SET_TOPIC, SOCKET_EVENT_ADD_MSG } from "../../services/socket.service"
@@ -26,6 +27,16 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
     const [currTask, setCurrTask] = useState(task)
     const navigate = useNavigate()
 
+    const addComment = useCallback((comment) => {
+        currTask.comments.unshift(comment)
+        setCurrTask({ ...currTask })
+    }, [currTask])
+
+    const loadTaskActivity = useCallback(() => {
+        const taskActivities = board.activities.filter(activity => activity.task.id === task.id)
+        setTaskActivities(taskActivities)
+    }, [board.activities, task.id])
+
     useEffect(() => {
         loadTaskActivity()
         socketService.emit(SOCKET_EMIT_SET_TOPIC, task.id)
@@ -34,17 +45,7 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
         return () => {
             socketService.off(SOCKET_EVENT_ADD_MSG, addComment)
         }
-    }, [])
-
-    function addComment(comment) {
-        currTask.comments.unshift(comment)
-        setCurrTask({ ...currTask })
-    }
-
-    function loadTaskActivity() {
-        const taskActivities = board.activities.filter(activity => activity.task.id === task.id)
-        setTaskActivities(taskActivities)
-    }
+    }, [task.id, loadTaskActivity, addComment])
 
     function onCloseModal() {
         navigate(`/board/${board._id}`)
@@ -59,7 +60,7 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
         try {
             await updateTaskAction(board, groupId, task)
         } catch (err) {
-            console.log('Failed to save')
+            loggerService.error('Failed to save task title', err)
         }
     }
 
@@ -77,7 +78,7 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
             setCurrTask({ ...currTask })
             setComment(boardService.getEmptyComment())
         } catch (err) {
-            console.log('err:', err)
+            loggerService.error('Failed to add comment', err)
         }
     }
 
@@ -93,7 +94,7 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
             updateTaskAction(board, groupId, currTask)
             setCurrTask({ ...currTask })
         } catch (err) {
-            console.log('err:', err)
+            loggerService.error('Failed to remove comment', err)
         }
     }
 
@@ -129,7 +130,7 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
             updateTaskAction(board, groupId, task)
             setCurrTask({ ...currTask })
         } catch (err) {
-            console.log('err:', err)
+            loggerService.error('Failed to edit comment', err)
         }
     }
     return <section className='task-modal'>
