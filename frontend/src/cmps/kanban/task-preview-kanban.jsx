@@ -18,7 +18,7 @@ import { StatusPicker } from "../task/status-picker"
 import { MemberPicker } from "../task/member-picker"
 import { PriorityPicker } from "../task/priority-picker"
 
-export function TaskPreviewKanban({ task, group, board , isTaskModalOpen ,setIsTaskModalOpen}) {
+export function TaskPreviewKanban({ task, group, board, isTaskModalOpen, setIsTaskModalOpen }) {
     const user = useSelector(storeState => storeState.userModule.user)
     const navigate = useNavigate()
     const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
@@ -68,13 +68,13 @@ export function TaskPreviewKanban({ task, group, board , isTaskModalOpen ,setIsT
             console.log(err)
         }
     }
- 
+
     return (
         <section className={`task-preview-kanban ${isTaskModalOpen ? ' modal-open' : ''}`}>
 
             {isTaskModalOpen && <TaskMenuModal taskId={task.id} onRemoveTask={onRemoveTask} onDuplicateTask={onDuplicateTask}
-                 onCreateNewTaskBelow={onCreateNewTaskBelow} />}
-            
+                onCreateNewTaskBelow={onCreateNewTaskBelow} />}
+
             {board.cmpsOrder.map((cmp, idx) => {
                 return (
                     <DynamicCmp

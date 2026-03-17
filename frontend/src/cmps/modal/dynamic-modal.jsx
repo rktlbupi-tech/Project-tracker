@@ -12,11 +12,11 @@ import { MemberFilterModal } from './member-filter-modal'
 import { ChartTypeModal } from './chart-type-modal'
 import { BoardMenuModal } from './board-menu-modal'
 
-export function DynamicModal () {
+export function DynamicModal() {
 
     const dynamicModalObj = useSelector(storeState => storeState.boardModule.dynamicModalObj)
 
-    function getDynamicModalByType (type) {
+    function getDynamicModalByType(type) {
         switch (type) {
             case 'menu-group':
                 return <GroupMenuModal dynamicModalObj={dynamicModalObj} />
@@ -46,10 +46,13 @@ export function DynamicModal () {
         }
     }
 
-    function isDynamicModalOpen () {
-        if (dynamicModalObj.isOpen && dynamicModalObj.type === 'add-column' && dynamicModalObj.columns.length === 0) return false
+    function isDynamicModalOpen() {
+        if (!dynamicModalObj) return false
+        if (dynamicModalObj.isOpen && dynamicModalObj.type === 'add-column' && dynamicModalObj.columns?.length === 0) return false
         return dynamicModalObj.isOpen
     }
+
+    if (!dynamicModalObj) return null
 
     return (
         <>

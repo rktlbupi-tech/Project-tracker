@@ -1,4 +1,4 @@
-import { useState, useRef} from "react"
+import { useState, useRef } from "react"
 import { useSelector } from "react-redux"
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
@@ -15,7 +15,7 @@ import { BsFillCircleFill } from 'react-icons/bs'
 import { BiDotsHorizontalRounded } from 'react-icons/bi'
 import { AiOutlinePlus } from 'react-icons/ai'
 
-export function GroupPreview ({ group, board, idx }) {
+export function GroupPreview({ group, board, idx }) {
     const [taskToEdit, setTaskToEdit] = useState(boardService.getEmptyTask())
     const [isTyping, setIsTyping] = useState(false)
     const [isShowColorPicker, setIsShowColorPicker] = useState(false)
@@ -29,7 +29,7 @@ export function GroupPreview ({ group, board, idx }) {
     const elMainGroup = useRef()
     const elAddColumn = useRef()
 
-    function loadColumns () {
+    function loadColumns() {
         const columns = board.cmpsOption.filter(cmpOption => {
             return !board.cmpsOrder.includes(cmpOption)
         })
@@ -37,26 +37,26 @@ export function GroupPreview ({ group, board, idx }) {
     }
 
 
-    function onToggleMenuModal () {
+    function onToggleMenuModal() {
         const isOpen = dynamicModalObj?.group?.id === group.id && dynamicModalObj?.type === 'menu-group' ? !dynamicModalObj.isOpen : true
         const { x, y, height, width } = elMainGroup.current.getClientRects()[0]
         setDynamicModalObj({ isOpen, pos: { x: (x + width / 2), y: (y + height) }, type: 'menu-group', group: group })
     }
 
-    function onTogglePalette () {
+    function onTogglePalette() {
         const isOpen = dynamicModalObj?.group?.id === group.id && dynamicModalObj?.type === 'palette-modal' ? !dynamicModalObj.isOpen : true
         const { x, y, height, width } = elMainGroup.current.getClientRects()[0]
         setDynamicModalObj({ isOpen, pos: { x: (x + width / 2), y: (y + height) }, type: 'palette-modal', group: group })
     }
 
-    function toggleColumnModal () {
+    function toggleColumnModal() {
         const columns = loadColumns()
         const isOpen = dynamicModalObj?.group?.id === group.id && dynamicModalObj?.type === 'add-column' ? !dynamicModalObj.isOpen : true
         const { x, y, height } = elAddColumn.current.getClientRects()[0]
         setDynamicModalObj({ isOpen, pos: { x: (x - 225), y: (y + height) }, type: 'add-column', group, columns })
     }
 
-    async function onSave (ev) {
+    async function onSave(ev) {
         const value = ev.target.innerText
         group.title = value
         try {
@@ -68,12 +68,12 @@ export function GroupPreview ({ group, board, idx }) {
         }
     }
 
-    function handleChange ({ target }) {
+    function handleChange({ target }) {
         let { value, name: field } = target
         setTaskToEdit((prevTask) => ({ ...prevTask, [field]: value }))
     }
 
-    function onAddTask (ev) {
+    function onAddTask(ev) {
         ev.preventDefault()
         if (!taskToEdit.title) return
         const activity = boardService.getEmptyActivity()
@@ -86,7 +86,7 @@ export function GroupPreview ({ group, board, idx }) {
     }
 
 
-    async function handleCheckboxChange (task) {
+    async function handleCheckboxChange(task) {
         try {
             if (selectedTasks.includes(task)) {
                 selectedTasks.splice(selectedTasks.indexOf(task), 1)
@@ -101,13 +101,13 @@ export function GroupPreview ({ group, board, idx }) {
         }
     }
 
-    function onClickMainCheckbox () {
+    function onClickMainCheckbox() {
         if (isMainCheckbox.isActive) setSelectedTasks([])
         else setSelectedTasks(group.tasks)
         setIsMainCheckbox({ isActive: !isMainCheckbox.isActive })
     }
 
-    function addCheckActivity (isCheckBoxDown, task) {
+    function addCheckActivity(isCheckBoxDown, task) {
         const activity = boardService.getEmptyActivity()
         activity.task = { id: task.id, title: task.title }
         activity.action = 'check'
@@ -116,14 +116,14 @@ export function GroupPreview ({ group, board, idx }) {
         addActivity(board, activity)
     }
 
-    function getSumOfTasks () {
+    function getSumOfTasks() {
         const sum = group.tasks.length
         if (sum > 1) return sum + ' items'
         else if (sum === 1) return 1 + ' item'
         else return 'No items'
     }
 
-    function getAddColumnClassName () {
+    function getAddColumnClassName() {
         return dynamicModalObj.isOpen === true && dynamicModalObj.type === 'add-column' && dynamicModalObj?.group?.id === group.id
     }
 
@@ -148,37 +148,37 @@ export function GroupPreview ({ group, board, idx }) {
                         </div>
                     </div>
                     <div className="group-preview-content" >
-                            <Droppable droppableId={`column-${group.id || group._id}`} direction="horizontal" type="column">
-                                {(droppableProvided) => {
-                                    return <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} className={`title-container flex ${!board.description ? ' not-des' : ''}`}>
-                                        <div className="sticky-div titles flex" style={{ borderColor: group.color }}>
-                                            <div className="hidden"></div>
-                                            <div className="check-box"  >
-                                                <input type="checkbox" checked={isMainCheckbox.isActive} onChange={onClickMainCheckbox} />
-                                            </div>
-                                            <div className="task title">Task</div>
+                        <Droppable droppableId={`column-${group.id || group._id}`} direction="horizontal" type="column">
+                            {(droppableProvided) => {
+                                return <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} className={`title-container flex ${!board.description ? ' not-des' : ''}`}>
+                                    <div className="sticky-div titles flex" style={{ borderColor: group.color }}>
+                                        <div className="hidden"></div>
+                                        <div className="check-box"  >
+                                            <input type="checkbox" checked={isMainCheckbox.isActive} onChange={onClickMainCheckbox} />
                                         </div>
-                                        {board.cmpsOrder.map((title, idx) =>
-                                            <Draggable key={title + (group.id || group._id)} draggableId={title + (group.id || group._id)} index={idx}>
-                                                {(provided, snapshot) => {
-                                                    return (
-                                                        <li ref={provided.innerRef}
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps} className={title + ' cmp-order-title title'} key={idx}>
-                                                            <TitleGroupPreview title={title} group={group} board={board} />
-                                                        </li>
-                                                    )
-                                                }}
-                                            </Draggable>
-                                        )}
-                                        <div ref={elAddColumn} className="add-picker-task flex align-items" onClick={toggleColumnModal}>
-                                            <span className={`add-btn ${getAddColumnClassName() ? 'active' : ''}`}>
-                                                <AiOutlinePlus className={`${getAddColumnClassName() ? 'plus' : 'close'}`} />
-                                            </span>
-                                        </div>
+                                        <div className="task title">Task</div>
                                     </div>
-                                }}
-                            </Droppable>
+                                    {board.cmpsOrder.map((title, idx) =>
+                                        <Draggable key={title + (group.id || group._id)} draggableId={title + (group.id || group._id)} index={idx}>
+                                            {(provided, snapshot) => {
+                                                return (
+                                                    <li ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps} className={title + ' cmp-order-title title'} key={idx}>
+                                                        <TitleGroupPreview title={title} group={group} board={board} />
+                                                    </li>
+                                                )
+                                            }}
+                                        </Draggable>
+                                    )}
+                                    <div ref={elAddColumn} className="add-picker-task flex align-items" onClick={toggleColumnModal}>
+                                        <span className={`add-btn ${getAddColumnClassName() ? 'active' : ''}`}>
+                                            <AiOutlinePlus className={`${getAddColumnClassName() ? 'plus' : 'close'}`} />
+                                        </span>
+                                    </div>
+                                </div>
+                            }}
+                        </Droppable>
                         <Droppable droppableId={group.id || group._id} type='task'>
                             {(droppableProvided) => (
                                 <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} >

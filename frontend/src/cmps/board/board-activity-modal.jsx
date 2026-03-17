@@ -15,7 +15,7 @@ export function BoardActivityModal({ board, activityLog }) {
     useEffect(() => {
         loadTasks()
     }, [])
-    
+
     function onCloseModal() {
         navigate(`/board/${board._id}`)
         toggleModal(true)
@@ -54,17 +54,17 @@ export function BoardActivityModal({ board, activityLog }) {
             console.log('err:', err)
         }
     }
-    
+
     return (
         <section className="board-activity-modal">
             <div className="board-activity-header">
-                    <CgClose className="close-btn" onClick={onCloseModal} />
-                    <h3 className="board-title">{board.title} <span>Log</span></h3>
-                    <div className="views flex">
+                <CgClose className="close-btn" onClick={onCloseModal} />
+                <h3 className="board-title">{board.title} <span>Log</span></h3>
+                <div className="views flex">
                     <span className={view === 'activity' ? 'active' : ''} onClick={() => setView('activity')}>Activity</span>
-                        <span className={view === 'last-viewed' ? 'active' : ''} onClick={() => setView('last-viewed')}>Last Viewed</span>
-                        <span className={view === 'updates' ? 'active' : ''} onClick={() => setView('updates')}>Updates</span>
-                    </div>
+                    <span className={view === 'last-viewed' ? 'active' : ''} onClick={() => setView('last-viewed')}>Last Viewed</span>
+                    <span className={view === 'updates' ? 'active' : ''} onClick={() => setView('updates')}>Updates</span>
+                </div>
             </div>
             <div className="board-activity-content">
                 {view === 'activity' &&
@@ -82,7 +82,7 @@ export function BoardActivityModal({ board, activityLog }) {
                         {(() => {
                             const usersMap = {}
                             board.members.forEach(m => usersMap[m._id] = { ...m, lastViewed: null })
-                            
+
                             board.activities.forEach(activity => {
                                 if (activity.byMember) {
                                     const userId = activity.byMember._id
@@ -93,7 +93,7 @@ export function BoardActivityModal({ board, activityLog }) {
                                     }
                                 }
                             })
-                            
+
                             return Object.values(usersMap).map(member => {
                                 return <li key={member._id}> <LastViewed member={member} /> </li>
                             })
@@ -103,12 +103,12 @@ export function BoardActivityModal({ board, activityLog }) {
                 {view === 'updates' &&
                     <section className="update">
                         <div className="comments-list">
-                        {tasks.map(task => {
-                            return task.comments.map(comment => {
-                                return <li key={comment._id}><CommentPreview onRemoveComment={onRemoveComment} comment={comment} onEditComment={onEditComment} taskId={task.id}/></li>
-                            })
-                            
-                        })} 
+                            {tasks.map(task => {
+                                return task.comments.map(comment => {
+                                    return <li key={comment._id}><CommentPreview onRemoveComment={onRemoveComment} comment={comment} onEditComment={onEditComment} taskId={task.id} /></li>
+                                })
+
+                            })}
                         </div>
                     </section>
                 }
