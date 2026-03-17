@@ -14,6 +14,8 @@ import { Tooltip } from '@mui/material'
 import { NotificationList } from '../user/notification-list'
 import { useEffect } from 'react'
 
+import { loggerService } from '../../services/logger.service'
+
 const logo = require('../../assets/img/logo.png')
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
@@ -36,7 +38,7 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
 
     useEffect(() => {
         const onInviteReceived = (invitation) => {
-            console.log('Invitation received!', invitation)
+            loggerService.debug('Invitation received!', invitation)
             const updatedInvitations = [...(user?.invitations || []), invitation]
             const updatedUser = { ...user, invitations: updatedInvitations }
             setUser(updatedUser)

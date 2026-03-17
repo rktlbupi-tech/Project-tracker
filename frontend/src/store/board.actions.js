@@ -7,6 +7,7 @@ import { SET_USER } from "./user.reducer.js"
 import { utilService } from '../services/util.service.js'
 import { socketService, SOCKET_EMIT_SEND_UPDATE_BOARD } from '../services/socket.service.js'
 import { toast } from 'react-toastify'
+import { loggerService } from '../services/logger.service.js'
 
 export async function loadBoards(filterBy) {
     try {
@@ -14,6 +15,7 @@ export async function loadBoards(filterBy) {
         store.dispatch({ type: SET_BOARDS, boards })
         return boards
     } catch (err) {
+        loggerService.error('Cannot load boards', err)
         throw err
     }
 }
@@ -57,7 +59,7 @@ export async function loadBoard(boardId, filterBy) {
         store.dispatch({ type: SET_BOARD, board })
         store.dispatch({ type: SET_FILTER_BOARD, filteredBoard })
     } catch (err) {
-        console.log('Had issues loading', err)
+        loggerService.error('Had issues loading board', err)
         throw err
     }
 }
@@ -102,7 +104,7 @@ export async function removeBoard(boardId) {
         await boardService.remove(boardId)
         store.dispatch({ type: REMOVE_BOARD, boardId })
     } catch (err) {
-        console.log('cant remove', err)
+        loggerService.error('Cannot remove board', err)
         throw err
     }
 }
@@ -114,7 +116,7 @@ export async function saveBoard(board) {
         store.dispatch({ type, board: newBoard })
         return board
     } catch (err) {
-        console.error('cant save board:', err)
+        loggerService.error('Cannot save board:', err)
         throw err
     }
 }
@@ -271,7 +273,7 @@ export async function updateGroupAction(filteredBoard, saveGroup) {
         // Rollback on failure
         store.dispatch({ type: SET_BOARD, board: prevBoard })
         store.dispatch({ type: SET_FILTER_BOARD, filteredBoard: prevFilteredBoard })
-        console.error('Failed to update group, rolling back:', err)
+        loggerService.error('Failed to update group, rolling back:', err)
         throw err
     }
 }
@@ -314,22 +316,38 @@ export async function updateTaskAction(filteredBoard, groupId, saveTask, activit
             toast.error('Failed to update task.')
         }
         
-        console.error('Failed to update task, rolling back:', err)
+        loggerService.error('Failed to update task, rolling back:', err)
         throw err
     }
 }
 
 export async function toggleStarred(boardId) {
+    const { user } = store.getState().userModule
+    if (!user) return
+
+    // Optimistic Update
+    const updatedUser = structuredClone(user)
+    if (!updatedUser.starredBoardIds) updatedUser.starredBoardIds = []
+    
+    const boardIdStr = boardId.toString()
+    const idx = updatedUser.starredBoardIds.indexOf(boardIdStr)
+    
+    if (idx === -1) {
+        updatedUser.starredBoardIds.push(boardIdStr)
+    } else {
+        updatedUser.starredBoardIds.splice(idx, 1)
+    }
+
+    store.dispatch({ type: SET_USER, user: updatedUser })
+
     try {
-        const user = await userService.toggleStarred(boardId)
-        store.dispatch({ type: SET_USER, user })
-        
-        // We don't want to force a reload with a default filter because it might 
-        // override the current view in the sidebar. The components that need
-        // to update should listen to SET_USER or re-query based on their own filters.
-        
+        const savedUser = await userService.toggleStarred(boardId)
+        // Sync with actual server data (in case server logic differs)
+        store.dispatch({ type: SET_USER, user: savedUser })
     } catch (err) {
-        console.error('Failed to toggle star:', err)
+        loggerService.error('Failed to toggle star, rolling back:', err)
+        // Rollback on error
+        store.dispatch({ type: SET_USER, user })
         throw err
     }
 }

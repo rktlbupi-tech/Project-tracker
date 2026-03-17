@@ -2,6 +2,7 @@ import React from 'react'
 import { respondToInvitation } from "../../store/user.actions"
 import { loadBoards } from "../../store/board.actions"
 import { utilService } from "../../services/util.service"
+import { loggerService } from "../../services/logger.service"
 
 export function NotificationList({ user, onClose }) {
     const invitations = user.invitations || []
@@ -15,7 +16,7 @@ export function NotificationList({ user, onClose }) {
                 loadBoards()
             }
         } catch (err) {
-            console.log('Had issues responding to invitation', err)
+            loggerService.error('Had issues responding to invitation', err)
         }
     }
 

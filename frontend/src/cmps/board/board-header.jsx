@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import { RiUserAddLine } from 'react-icons/ri'
 import { Tooltip } from '@mui/material'
 import { FaRobot } from 'react-icons/fa'
+import { loggerService } from '../../services/logger.service'
 
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
@@ -30,7 +31,7 @@ export function BoardHeader({ board, onSetFilter, setIsShowDescription, setIsInv
             saveBoard(board)
             loadBoards()
         } catch (err) {
-            console.log('Failed to save')
+            loggerService.error('Failed to save board title', err)
         }
     }
 
@@ -38,7 +39,7 @@ export function BoardHeader({ board, onSetFilter, setIsShowDescription, setIsInv
         try {
             toggleStarred(board._id)
         } catch (err) {
-            console.log('Failed to toggle star:', err)
+            loggerService.error('Failed to toggle star:', err)
         }
     }
 

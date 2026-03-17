@@ -1,5 +1,6 @@
 import io from 'socket.io-client'
 import { userService } from './user.service'
+import { loggerService } from './logger.service'
 
 export const SOCKET_EVENT_ADD_MSG = 'chat-add-msg'
 export const SOCKET_EMIT_SEND_MSG = 'chat-send-msg'
@@ -29,12 +30,17 @@ function createSocketService() {
   const socketService = {
     setup() {
       socket = io(baseUrl)
+      loggerService.debug(`Socket setup with ${baseUrl}`)
       setTimeout(()=>{
         const user = userService.getLoggedinUser()
-        if (user) this.login(user._id)
+        if (user) {
+          loggerService.debug(`Auto-logging in socket for user: ${user._id}`)
+          this.login(user._id)
+        }
       }, 500)
     },
     on(eventName, cb) {
+      loggerService.debug(`Socket.on: ${eventName}`)
       socket.on(eventName, cb)
     },
     off(eventName, cb = null) {
@@ -43,6 +49,7 @@ function createSocketService() {
       else socket.off(eventName, cb)
     },
     emit(eventName, data) {
+      loggerService.debug(`Socket.emit: ${eventName}`, data)
       socket.emit(eventName, data)
     },
     login(userId, user = null) {
@@ -50,6 +57,7 @@ function createSocketService() {
       if (user) socket.emit(SOCKET_EMIT_SET_USER_PRESENCE, user)
     },
     logout() {
+      loggerService.debug('Socket logout')
       socket.emit(SOCKET_EMIT_LOGOUT)
     },
     terminate() {

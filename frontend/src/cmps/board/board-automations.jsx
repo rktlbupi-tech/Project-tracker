@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { IoCloseOutline } from 'react-icons/io5'
+import { IoCloseOutline, IoTrashOutline } from 'react-icons/io5'
 import { FaRobot, FaPlus } from 'react-icons/fa'
 import { updateOptimisticBoard } from '../../store/board.actions'
 import { utilService } from '../../services/util.service'
+
+import { loggerService } from '../../services/logger.service'
 
 export function BoardAutomations({ board, setIsAutomationsOpen }) {
     const [isCreating, setIsCreating] = useState(false)
@@ -52,8 +54,20 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
             try {
                 await updateOptimisticBoard(newBoard, board)
             } catch (err) {
-                console.error('Failed to toggle automation:', err)
+                loggerService.error('Failed to toggle automation:', err)
             }
+        }
+    }
+
+    async function onRemoveAutomation(automationId) {
+        const newBoard = structuredClone(board)
+        newBoard.automations = newBoard.automations.filter(a => a.id !== automationId)
+        
+        try {
+            await updateOptimisticBoard(newBoard, board)
+            loggerService.info('Automation removed successfully')
+        } catch (err) {
+            loggerService.error('Failed to remove automation:', err)
         }
     }
 
@@ -91,12 +105,21 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
                                             <span className="when-label">When</span> <span className="highlight tag">{auto.trigger}</span> 
                                             <span className="then-label">Then</span> <span className="highlight tag">{auto.action}</span>
                                         </div>
-                                        <button 
-                                            className={`toggle-btn ${auto.isActive ? 'active' : ''}`} 
-                                            onClick={() => onToggleAutomation(auto.id)}
-                                        >
-                                            {auto.isActive ? 'On' : 'Off'}
-                                        </button>
+                                        <div className="automation-actions flex align-center">
+                                            <button 
+                                                className={`toggle-btn ${auto.isActive ? 'active' : ''}`} 
+                                                onClick={() => onToggleAutomation(auto.id)}
+                                            >
+                                                {auto.isActive ? 'On' : 'Off'}
+                                            </button>
+                                            <button 
+                                                className="btn-remove-automation"
+                                                onClick={() => onRemoveAutomation(auto.id)}
+                                                title="Remove Automation"
+                                            >
+                                                <IoTrashOutline />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))
                             )}

@@ -4,6 +4,7 @@ import { store } from '../store/store.js'
 // import { showErrorMsg } from '../services/event-bus.service.js'
 import { LOADING_DONE, LOADING_START } from "./system.reducer.js";
 import { REMOVE_USER, SET_USER, SET_USERS, SET_WATCHED_USER } from "./user.reducer.js";
+import { loggerService } from "../services/logger.service.js";
 
 export async function loadUsers() {
     try {
@@ -11,7 +12,7 @@ export async function loadUsers() {
         const users = await userService.getUsers()
         store.dispatch({ type: SET_USERS, users })
     } catch (err) {
-        console.log('UserActions: err in loadUsers', err)
+        loggerService.error('UserActions: err in loadUsers', err)
     } finally {
         store.dispatch({ type: LOADING_DONE })
     }
@@ -23,7 +24,7 @@ export async function removeUser(userId) {
         await userService.remove(userId)
         store.dispatch({ type: REMOVE_USER, userId })
     } catch (err) {
-        console.log('UserActions: err in removeUser', err)
+        loggerService.error('UserActions: err in removeUser', err)
     }
 }
 
@@ -36,13 +37,13 @@ export async function login(credentials) {
         })
         return user
     } catch (err) {
-        console.log('Cannot login', err)
+        loggerService.error('Cannot login', err)
         throw err
     }
 }
 
 export async function signup(credentials) {
-    console.log(credentials)
+    loggerService.debug('Signup data:', credentials)
     try {
         const user = await userService.signup(credentials)
         store.dispatch({
@@ -51,7 +52,7 @@ export async function signup(credentials) {
         })
         return user
     } catch (err) {
-        console.log('Cannot signup', err)
+        loggerService.error('Cannot signup', err)
         throw err
     }
 }
@@ -64,7 +65,7 @@ export async function logout() {
             user: null
         })
     } catch (err) {
-        console.log('Cannot logout', err)
+        loggerService.error('Cannot logout', err)
         throw err
     }
 }
@@ -75,7 +76,7 @@ export async function loadUser(userId) {
         store.dispatch({ type: SET_WATCHED_USER, user })
     } catch (err) {
         // showErrorMsg('Cannot load user')
-        console.log('Cannot load user', err)
+        loggerService.error('Cannot load user', err)
     }
 }
 
@@ -83,7 +84,7 @@ export async function inviteUser(invitedUserId, boardId, boardTitle) {
     try {
         await userService.invite(invitedUserId, boardId, boardTitle)
     } catch (err) {
-        console.log('Cannot invite user', err)
+        loggerService.error('Cannot invite user', err)
         throw err
     }
 }
@@ -94,7 +95,7 @@ export async function respondToInvitation(invitationId, status) {
         store.dispatch({ type: SET_USER, user })
         return user
     } catch (err) {
-        console.log('Cannot respond to invitation', err)
+        loggerService.error('Cannot respond to invitation', err)
         throw err
     }
 }

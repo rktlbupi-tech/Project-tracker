@@ -10,6 +10,7 @@ import { setDynamicModalObj, toggleModal, updateTaskAction, onTaskEditingStart, 
 import { UpdatedPicker } from "./updated-picker"
 import { NumberPicker } from "./number-picker"
 import { FilePicker } from "./file-picker"
+import { loggerService } from "../../services/logger.service"
 
 import { TbArrowsDiagonal } from 'react-icons/tb'
 import { BiDotsHorizontalRounded, BiMessageRoundedAdd } from 'react-icons/bi'
@@ -40,7 +41,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
         try {
             await updateTaskAction(board, group.id, taskToUpdate, activity)
         } catch (err) {
-            console.log(err)
+            loggerService.error('Error updating task field', err)
         }
     }
 
@@ -52,7 +53,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
             onTaskEditingStop(board._id, task.id)
             await updateTaskAction(board, group.id, task)
         } catch (err) {
-            console.log('Failed to save')
+            loggerService.error('Failed to save task title', err)
         }
     }
 

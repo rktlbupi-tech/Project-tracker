@@ -12,6 +12,13 @@ app.use(cookieParser())
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ limit: '10mb', extended: true }))
 
+// Request Logging Middleware
+const logger = require('./services/logger.service')
+app.use((req, res, next) => {
+    logger.debug(`[${req.method}] ${req.url}`)
+    next()
+})
+
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, 'public')))
 } else {
@@ -46,7 +53,7 @@ app.get('/**', (req, res) => {
 })
 
 
-const logger = require('./services/logger.service')
+
 const port = process.env.PORT || 3031
 
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
