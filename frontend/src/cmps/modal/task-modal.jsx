@@ -133,7 +133,7 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
         }
     }
     return <section className='task-modal'>
-        <div className="task-modal-header flex column">
+        <div className="task-modal-header">
             <CgClose className="close-btn" onClick={onCloseModal} />
             <div className="title">
                 <blockquote contentEditable onBlur={onUpdateTaskTitle} suppressContentEditableWarning={true}>

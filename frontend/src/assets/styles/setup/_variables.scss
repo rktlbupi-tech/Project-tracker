@@ -1,4 +1,97 @@
-//home page
+// Core Brand Colors (Fixed)
+$primary-color: #6161FF;
+$primary-gradient: linear-gradient(135deg, #6161FF 0%, #3a3ab3 100%);
+$secondary-color: #00ca72;
+$accent-color: #ff3d71;
+$info-color: #00d3ee;
+$warning-color: #ffaa00;
+
+:root {
+    // Light Mode (Default)
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f7fb;
+    --bg-surface: rgba(255, 255, 255, 0.7);
+    --bg-surface-hover: rgba(255, 255, 255, 0.9);
+    
+    --text-primary: #323338;
+    --text-secondary: #676879;
+    --border-color: #d0d4e466;
+    
+    --sidebar-main-bg: #1e2235;
+    --sidebar-workspace-bg: #f5f6f8;
+    --workspace-board-active: #e8f0fe;
+    --workspace-hover: #f5f6f8;
+    
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: rgba(31, 38, 135, 0.1);
+}
+
+.theme-dark {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-surface: rgba(30, 30, 30, 0.7);
+    --bg-surface-hover: rgba(45, 45, 45, 0.9);
+    
+    --text-primary: #e1e1e1;
+    --text-secondary: #a0a0a0;
+    --border-color: rgba(255, 255, 255, 0.1);
+    
+    --sidebar-main-bg: #0a0a0a;
+    --sidebar-workspace-bg: #181818;
+    --workspace-board-active: #2a2a2a;
+    --workspace-hover: #1f1f1f;
+    
+    --glass-bg: rgba(0, 0, 0, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: rgba(0, 0, 0, 0.5);
+}
+
+// SCSS Variables now pointing to CSS variables for dynamic themes
+$bg-primary: var(--bg-primary);
+$bg-secondary: var(--bg-secondary);
+$bg-surface: var(--bg-surface);
+$bg-surface-hover: var(--bg-surface-hover);
+
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$border-color: var(--border-color);
+
+$sidebar-main-bg: var(--sidebar-main-bg);
+$sidebar-workspace-bg: var(--sidebar-workspace-bg);
+$workspace-board-active: var(--workspace-board-active);
+$workspace-hover: var(--workspace-hover);
+
+// Glassmorphism
+$glass-bg: var(--glass-bg);
+$glass-blur: blur(12px);
+$glass-border: 1px solid var(--glass-border);
+$glass-shadow: 0 8px 32px 0 var(--glass-shadow);
+
+// Typography
+$font-family: "Inter", "Figtree", "Roboto", "Rubik", "Noto Kufi Arabic", "Noto Sans JP", sans-serif;
+$header-font-family: "Poppins", sans-serif;
+$title-font-family: "Poppins", "Roboto", "Rubik", "Noto Kufi Arabic", "Noto Sans JP", sans-serif;
+
+// Transitions
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-bounce: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+// Board Specific (preserving functionality but updating look)
+$board-btn-bg: $primary-color;
+$primary-text-color: $text-primary;
+$workspace-icon-color: $text-secondary;
+$link-color: #0073ea;
+$board-btn: #0073ea;
+$board-btn-hover: #005fb8;
+$primary-hover-color: #005fb8;
+$task-box-shadow-color: rgba(0, 0, 0, 0.2);
+$member-modal-item-bg: #e1e4e8;
+$sidebar-menu-icon-color: $text-secondary;
+$menu-icon-color: $text-secondary;
+$primary-selected-color: #0073ea;
+
+// Existing variables (keeping for compatibility)
 $home-bg: -webkit-linear-gradient(rgb(21 21 59) 0%, rgb(15, 16, 72) 100%);
 $home-secondary-bg: -webkit-linear-gradient(rgb(17 17 66) 6%, rgb(21, 21, 59) 36%, rgb(21, 21, 59) 57%);
 $home-tertiary-bg: -webkit-linear-gradient(rgb(21 21 59) 0%, rgb(15, 16, 72) 100%);
@@ -8,66 +101,32 @@ $home-btn-bg-gradient: linear-gradient(90deg, #5034FF 25.69%, #B4B4FF 100%);
 $home-btn-bg-gradient-hover: linear-gradient(90deg, #432CD5 25.69%, #9797D5 100%);
 $gray-color: #b7b7b7;
 
-$app-bg: #ffffff;
+$app-bg: $bg-primary;
 $login-bg : #f7f7f7;
 
-//board page
-$border-color: #d0d4e466;
-$sidebar-workspace-bg: #F6F7FB;
-$sidebar-main-bg: #292f4c;
-$menu-icon-color: #6c6cff;
-$workspace-width: 255px;
-$workspace-icon-color: #676879;
-$workspace-hover: #dcdfec;
-$workspace-board-active: #cce5ff;
-$board-btn: #0073ea;
-$link-color: #1f76c2;
-$primary-hover-color: #0060b9;
-$primary-selected-color: #cce5ff;
-$primary-selected-hover-color: #aed4fc;
-$text-color-on-primary: #ffffff;
-$primary-text-color: #323338;
-$layout-border-color: #d0d4e4;
+$layout-border-color: $border-color;
 $chat-icon-color: #c5c7d0;
 $dark-black: #1f1f21;
 $react-modal-background: rgba(41, 47, 76, 0.7);
 $card-selected-background-color: #d9f0ff;
-$board-description-bg: #f5f6f8;
+$board-description-bg: $bg-secondary;
 
 // Groups
-$cell-height: 36px;
+$cell-height: 40px;
 $cell-width: 140px;
 $cell-width-task: 336px;
-$cell-width-person: 87px;
-$cell-width-conversation: 65px;
-$cell-width-checkbox: 32px;
-$member-modal-item-bg: #e5f4ff;
-$task-hover-color: #f4f5f8;
-$task-box-shadow-color: #c3c6d4;
+$cell-width-person: 90px;
+$cell-width-checkbox: 40px;
+$task-hover-color: $bg-secondary;
 
-// done green
+// Colors
 $color-done-green: #00c875;
 $color-done-green-hover: #0f9b63;
-$color-done-green-selected: #80e3ba;
-$color-done-green-selected-with-opacity: rgba(128, 227, 186, 0.6);
-
-// Egg Yolk
 $color-egg_yolk: #ffcb00;
-$color-egg_yolk-hover: #c29e11;
-$color-egg_yolk-selected: #ffe580;
-$color-egg_yolk-rgb: rgb(255,213,51);
-
-// Light Blue
 $color-bright-blue: #579bfc;
-$color-bright-blue-hover: #4c7cc1;
-$color-bright-blue-selected: #abcdfd;
-
-// Explosive
 $color-explosive: #c4c4c4;
-$color-explosive-hover: #98999a;
-$color-explosive-selected: #e1e1e1;
 
-//Spacings
+// Spacings
 $spacing-xs: 4px;
 $spacing-small: 8px;
 $spacing-medium: 16px;
@@ -75,10 +134,6 @@ $spacing-large: 24px;
 $spacing-xl: 32px;
 $spacing-xxl: 48px;
 $spacing-xxxl: 64px;
-
-// - Font family
-$font-family: "Figtree", "Roboto", "Rubik", "Noto Kufi Arabic", "Noto Sans JP", "sans-serif";
-$title-font-family: "Poppins", "Roboto", "Rubik", "Noto Kufi Arabic", "Noto Sans JP", "sans-serif";
 
 // Breakpoints
 $mobile-breakpoint: 460px;

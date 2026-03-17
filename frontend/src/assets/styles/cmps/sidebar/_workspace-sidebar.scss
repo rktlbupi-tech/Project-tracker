@@ -1,7 +1,7 @@
 .workspace-sidebar {
     position: relative;
     background-color: $sidebar-workspace-bg ;
-    border-right: 1px solid darken($border-color , 30%);
+    border-right: 1px solid $border-color;
     color: $workspace-icon-color;
     transition: .4s;
 
@@ -27,7 +27,7 @@
 
     .workspace-sidebar-items {
         margin: $spacing-medium $spacing-medium 18px $spacing-medium;
-        border-bottom: 1px solid darken($border-color , 30%);
+        border-bottom: 1px solid $border-color;
         gap: 10px;
     }
 
@@ -98,7 +98,7 @@
                 position: absolute;
                 font-size: rem(18px);
                 z-index: 2;
-                color: black;
+                color: $text-primary;
                 bottom: -1px;
                 right: 64px;
             }
@@ -151,7 +151,7 @@
 
             &:has(:focus-visible) {
                 border: .5px solid $board-btn;
-                background-color: white;
+                background-color: $bg-primary;
                 outline: none;
             }
 
@@ -193,8 +193,9 @@
         left: calc(100% - 14px);
         padding: $spacing-xs;
         border-radius: 20px;
-        border: 1px solid #c3c6d4;
-        background-color: #fff;
+        border: 1px solid $border-color;
+        background-color: $bg-primary;
+        color: $text-primary;
         z-index: 50;
         cursor: pointer;
         transition: .2s;

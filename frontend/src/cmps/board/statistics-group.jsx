@@ -28,9 +28,23 @@ export function StatisticGroup({ cmpType, group, board }) {
             case 'member-picker':
                 return
             case 'status-picker':
-                return <GetStatisticsLabel statisticLabels={getStatisticsStatus('status')} />
+                return (
+                    <div className="statistic-group-container flex column">
+                        <span className="statistic-label">Status Summary</span>
+                        <div className="statistic-bar flex">
+                            <GetStatisticsLabel statisticLabels={getStatisticsStatus('status')} />
+                        </div>
+                    </div>
+                )
             case 'priority-picker':
-                return <GetStatisticsLabel statisticLabels={getStatisticsStatus('priority')} />
+                return (
+                    <div className="statistic-group-container flex column">
+                        <span className="statistic-label">Priority Summary</span>
+                        <div className="statistic-bar flex">
+                            <GetStatisticsLabel statisticLabels={getStatisticsStatus('priority')} />
+                        </div>
+                    </div>
+                )
             case 'date-picker':
                 return []
             case 'number-picker':

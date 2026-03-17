@@ -9,8 +9,9 @@
     z-index: 100;
     border-radius: 5px;
     pointer-events: auto;
-    background-color: $app-bg;
-    box-shadow: 0px 15px 50px rgba(0, 0, 0, 0.3);
+    background-color: $bg-primary;
+    box-shadow: $glass-shadow;
+    border: 1px solid $border-color;
 
     @include for-mobile-layout() {
         & {
@@ -108,7 +109,7 @@
                 .icon {
                     font-size: rem(18px);
                     margin: 0 auto;
-                    color: darken($workspace-icon-color , 20%);
+                    color: $text-secondary;
                 }
             }
 
@@ -123,7 +124,7 @@
             @include center-flex();
             width: 63px;
             height: 100%;
-            border-left: 2px solid $task-box-shadow-color;
+            border-left: 2px solid $border-color;
 
             &:hover {
                 .icon {
@@ -133,7 +134,7 @@
 
             .icon {
                 font-size: rem(26px);
-                color: black;
+                color: $text-primary;
             }
 
             @include for-mobile-layout() {

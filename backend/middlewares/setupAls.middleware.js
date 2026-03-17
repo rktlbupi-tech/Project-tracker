@@ -10,6 +10,7 @@ async function setupAsyncLocalStorage(req, res, next) {
     if (loggedinUser) {
       const alsStore = asyncLocalStorage.getStore()
       alsStore.loggedinUser = loggedinUser
+      req.loggedinUser = loggedinUser
     }
     next()
   })

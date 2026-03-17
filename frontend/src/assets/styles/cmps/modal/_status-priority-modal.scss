@@ -21,7 +21,7 @@
         .edit-labels-btn {
             padding: 0 $spacing-medium $spacing-small $spacing-medium;
             @include center-flex();
-            border-top: 1px solid darken($border-color , 20%);
+            border-top: 1px solid $border-color;
 
             button {
                 width: 152px;
@@ -41,7 +41,7 @@
 
     .triangle-icon {
         position: absolute;
-        color: white;
+        color: $bg-primary;
         top: -12px;
         right: 95px;
     }

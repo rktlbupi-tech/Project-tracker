@@ -101,11 +101,7 @@ function getEmptyTask() {
 function getEmptyComment() {
     return {
         "archivedAt": Date.now(),
-        "byMember": {
-            "_id": "m101",
-            "fullname": "Tal Tarablus",
-            "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-        }, "txt": "",
+        "byMember": userService.getLoggedinUser(), "txt": "",
         "style": {
             "textDecoration": "none",
             "fontWeight": "normal",
@@ -119,11 +115,7 @@ function getEmptyActivity() {
     return {
         "action": "status",
         "createdAt": Date.now(),
-        "byMember": userService.getLoggedinUser() || {
-            "_id": "u101",
-            "fullname": "Abi Abambi",
-            "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-        },
+        "byMember": userService.getLoggedinUser(),
         "task": {
             "id": "c101",
             "title": "Replace Logo"
@@ -155,17 +147,7 @@ function getEmptyBoard() {
                 "color": "#e2445c"
             }
         ],
-        "members": [
-            {
-                "_id": "m101",
-                "fullname": "Tal Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-            },
-            {
-                "_id": "m102",
-                "fullname": "Idan David",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673820094/%D7%A2%D7%99%D7%93%D7%9F_jranbo.jpg"
-            }],
+        "members": [],
         "groups": [],
         "activities": [],
         "cmpsOrder": ["status-picker", "member-picker", "date-picker", 'priority-picker']
@@ -176,186 +158,6 @@ function _createBoards() {
     let boards = utilService.loadFromStorage(STORAGE_KEY)
     if (!boards) {
         boards = []
-        boards.push(
-            {
-                "_id": "b101",
-                "title": "Robot dev proj",
-                "archivedAt": 1589983468418,
-                "isStarred": false,
-                "createdBy": {
-                    "_id": "m102",
-                    "fullname": "Idan David",
-                    "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673820094/%D7%A2%D7%99%D7%93%D7%9F_jranbo.jpg"
-                },
-                "labels": [
-                    {
-                        "id": "l101",
-                        "title": "Done",
-                        "color": "#00c875"
-                    },
-                    {
-                        "id": "l102",
-                        "title": "Progress",
-                        "color": "#fdab3d"
-                    },
-                    {
-                        "id": "l103",
-                        "title": "Stuck",
-                        "color": "#e2445c"
-                    },
-                    {
-                        "id": "l104",
-                        "title": "Low",
-                        "color": "#ffcb00"
-                    },
-                    {
-                        "id": "l105",
-                        "title": "Medium",
-                        "color": "#a25ddc"
-                    },
-                    {
-                        "id": "l106",
-                        "title": "High",
-                        "color": "#e2445c"
-                    },
-                    {
-                        "id": "l107",
-                        "title": "",
-                        "color": "#c4c4c4"
-                    },
-                ],
-                "members": [
-                    {
-                        "id": "m101",
-                        "fullname": "Tal Tarablus",
-                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-                    },
-                    {
-                        "id": "m102",
-                        "fullname": "Idan David",
-                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673820094/%D7%A2%D7%99%D7%93%D7%9F_jranbo.jpg"
-                    },
-                    {
-                        "id": "m103",
-                        "fullname": "Ofek Tarablus",
-                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069458/image_exxnux.png"
-                    },
-                    {
-                        "id": "m104",
-                        "fullname": "Ofer Tarablus",
-                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069496/me_dpbzfs.jpg"
-                    }
-                ],
-                "groups": [{
-                    "id": "g101",
-                    "title": "Group 1",
-                    "archivedAt": 1589983468418,
-                    "tasks": [
-                        {
-                            "id": "c101",
-                            "title": "Replace logo",
-                            "status": "Stuck",
-                            "priority": "Medium",
-                            "memberIds": ["m101", "m102", "m103"],
-                            "dueDate": 1615621,
-                            "comments": [
-                                {
-                                    "id": "a101",
-                                    "archivedAt": 1589983468418,
-                                    "byMember": {
-                                        "_id": "m101",
-                                        "fullname": "Tal Tarablus",
-                                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-                                    }, "txt": "babababababaababaab",
-                                    "style": {
-                                        "textDecoration": "none",
-                                        "fontWeight": "normal",
-                                        "fontStyle": "normal",
-                                        "textAlign": "Left"
-                                    }
-                                },
-                                {
-                                    "id": "a102",
-                                    "archivedAt": 1589983468418,
-                                    "byMember": {
-                                        "_id": "m102",
-                                        "fullname": "Idan David",
-                                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673820094/%D7%A2%D7%99%D7%93%D7%9F_jranbo.jpg"
-                                    }, "txt": "bababa",
-                                    "style": {
-                                        "textDecoration": "none",
-                                        "fontWeight": "normal",
-                                        "fontStyle": "normal",
-                                        "textAlign": "Left"
-                                    }
-                                },
-                                {
-                                    "id": "a103",
-                                    "archivedAt": 1589983468418,
-                                    "byMember": {
-                                        "_id": "m102",
-                                        "fullname": "Tal Tarablus",
-                                        "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-                                    }, "txt": "baba",
-                                    "style": {
-                                        "textDecoration": "none",
-                                        "fontWeight": "normal",
-                                        "fontStyle": "normal",
-                                        "textAlign": "Left"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "id": "c102",
-                            "title": "Add Samples",
-                            "status": "Done",
-                            "priority": "Low",
-                            "memberIds": ["m101"],
-                            "dueDate": 16156211111,
-                            "comments": []
-                        },
-                    ],
-                    "color": '#66ccff'
-                },
-                {
-                    "id": "g102",
-                    "title": "Group 2",
-                    "tasks": [
-                        {
-                            "id": "c103",
-                            "title": "Help me",
-                            "status": "Done",
-                            "priority": "High",
-                            "memberIds": ["m101", "m102", "m103"],
-                            "dueDate": 16156215211,
-                            "comments": []
-                        },
-                        {
-                            "id": "c104",
-                            "title": "Help me",
-                            "status": "Done",
-                            "priority": "High",
-                            "memberIds": ["m103"],
-                            "dueDate": 16156215211,
-                            "comments": []
-                        },
-                        {
-                            "id": "c105",
-                            "title": "Help me",
-                            "status": "Progress",
-                            "priority": "Low",
-                            "memberIds": ["m101", "m103"],
-                            "dueDate": 16156215211,
-                            "comments": []
-                        }
-                    ],
-                    "color": '#a25ddc'
-                }],
-                "activities": [],
-                "cmpsOrder": ["member-picker", "status-picker", "date-picker", 'priority-picker']
-            }
-        )
         utilService.saveToStorage(STORAGE_KEY, boards)
     }
 }

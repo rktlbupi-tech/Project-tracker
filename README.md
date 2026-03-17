@@ -1,7 +1,7 @@
 
-# MyDay - pixel perfect, E2E clone of Monday (React + Node.js). 
+# Workio - pixel perfect, E2E clone of Monday (React + Node.js). 
 
-Table-style task management board app inspired by Monday.com, [Here is my project link](https://monday-8oy3.onrender.com/ "MyDay link").
+Table-style task management board app inspired by Monday.com, [Here is my project link](https://monday-8oy3.onrender.com/ "Workio link").
 
 For those of you who are already familliar with Monday, we added some intersting and unique features - [features](#application-features).
 If you are not familliar with the App, read about it [here](#monday-description).

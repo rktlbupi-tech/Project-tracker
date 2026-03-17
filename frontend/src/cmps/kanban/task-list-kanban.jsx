@@ -9,14 +9,14 @@ export function TaskListKanban({ board, group }) {
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
 
     return (
-        <Droppable droppableId={group.id} type="task" >
+        <Droppable droppableId={group.id || group._id} type="task" >
             {(provided) => (
                 <div ref={provided.innerRef}
                     {...provided.droppableProps}>
                     <ul className="task-list-content-kanban" >
                         {group.tasks.map((task, idx) => {
                             return <li key={task.id} className="task-container" onClick={(ev) => { ev.stopPropagation() }}>
-                                <Draggable draggableId={task.id} index={idx} key={task.id} type="task">
+                                <Draggable draggableId={`${task.id || task._id}`} index={idx} key={task.id || task._id} type="task">
                                     {(provided) => (
                                         <div {...provided.draggableProps}{...provided.dragHandleProps} ref={provided.innerRef} className="flex column">
                                             <TaskTitleKanban task={task} group={group} board={board} />

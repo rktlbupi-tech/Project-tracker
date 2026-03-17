@@ -79,9 +79,25 @@ export function BoardActivityModal({ board, activityLog }) {
                             <span>Last viewed</span>
                         </div>
 
-                        {board.members.map(member => {
-                            return <li key={member._id}> <LastViewed member={member} /> </li>
-                        })}
+                        {(() => {
+                            const usersMap = {}
+                            board.members.forEach(m => usersMap[m._id] = { ...m, lastViewed: null })
+                            
+                            board.activities.forEach(activity => {
+                                if (activity.byMember) {
+                                    const userId = activity.byMember._id
+                                    if (!usersMap[userId]) {
+                                        usersMap[userId] = { ...activity.byMember, lastViewed: activity.createdAt }
+                                    } else if (!usersMap[userId].lastViewed || activity.createdAt > usersMap[userId].lastViewed) {
+                                        usersMap[userId].lastViewed = activity.createdAt
+                                    }
+                                }
+                            })
+                            
+                            return Object.values(usersMap).map(member => {
+                                return <li key={member._id}> <LastViewed member={member} /> </li>
+                            })
+                        })()}
                     </section>
                 }
                 {view === 'updates' &&

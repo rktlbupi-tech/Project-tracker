@@ -6,6 +6,7 @@
     height: 100vh;
     position: sticky;
     top: 0;
+    z-index: 100;
 
     .icon-link {
         @include center-flex();
@@ -66,6 +67,28 @@
             height: rem(36px);
             @include center-flex();
             position: relative;
+            cursor: pointer;
+
+            &.active {
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+            }
+
+            .notification-badge {
+                position: absolute;
+                top: 2px;
+                right: 12px;
+                background-color: #d73a49;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                padding: 2px 4px;
+                border-radius: 10px;
+                min-width: 14px;
+                height: 14px;
+                @include center-flex();
+                border: 1px solid $sidebar-main-bg;
+            }
 
             .triangle-icon {
                 position: absolute;
@@ -86,14 +109,27 @@
 
     .bottom {
         @include center-flex();
+        flex-direction: column;
         gap: $spacing-medium;
         padding: $spacing-medium 0;
+
+        .theme-toggle-btn {
+            color: white;
+            font-size: rem(20px);
+            opacity: 0.7;
+            transition: $transition-smooth;
+
+            &:hover {
+                opacity: 1;
+                transform: rotate(15deg);
+            }
+        }
     }
 
     .menu-icon {
         width: rem(42px);
         height: rem(42px);
-        color: $menu-icon-color;
+        color: $sidebar-menu-icon-color;
 
         &:hover {
             @include hover-sidebar()

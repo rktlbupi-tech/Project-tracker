@@ -5,10 +5,10 @@
     color: $primary-text-color;
     background-color: $app-bg;
     border-radius: $spacing-small;
-    box-shadow: -3px 4px 14px rgb(0 0 0 / 20%);
+    box-shadow: $glass-shadow;
     font-size: rem(14px);
     z-index: 51;
-    border: 1px solid darken($border-color , 20%);
+    border: 1px solid $border-color;
 
     h1 {
         font-size: rem(32px);
@@ -37,7 +37,9 @@
             font-family: inherit;
 
             &:focus-visible {
-                outline: 1px solid $border-color;
+                outline: 1px solid $primary-color;
+                background-color: $bg-primary;
+                color: $text-primary;
             }
         }
 

@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { loadUsers, login, signup } from '../store/user.actions'
 import { loadBoards } from '../store/board.actions'
+import { boardService } from '../services/board.service'
 import { useGoogleLogin } from '@react-oauth/google'
 
 export function LoginSignup() {
@@ -35,14 +36,36 @@ export function LoginSignup() {
         setCredentials({ ...credentials, [field]: value })
     }
 
-    function onSubmit(ev, isSignup) {
+    async function onSubmit(ev, isSignup) {
         ev.preventDefault()
         if (!credentials.username || !credentials.password) return
-        if(isSignup) {
-            if(!credentials.fullname) return 
-            signup(credentials)
-        } else login(credentials)
-        navigate(`/board/${boards[0]._id}`)
+        try {
+            if(isSignup) {
+                if(!credentials.fullname) return 
+                await signup(credentials)
+            } else {
+                await login(credentials)
+            }
+
+            // Check for pending invite
+            const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
+            if (pendingBoardId) {
+                await boardService.acceptInvite(pendingBoardId)
+                sessionStorage.removeItem('pendingInviteToken')
+                sessionStorage.removeItem('pendingInviteBoardId')
+                navigate(`/board/${pendingBoardId}`)
+                return;
+            }
+
+            const fetchedBoards = await loadBoards()
+            if (fetchedBoards && fetchedBoards.length > 0) {
+                navigate(`/board/${fetchedBoards[0]._id}`)
+            } else {
+                navigate(`/board/`)
+            }
+        } catch (err) {
+            console.error('Error in login/signup:', err)
+        }
     }
 
     function toggleSignup() {
@@ -62,25 +85,46 @@ export function LoginSignup() {
                         Accept: 'application/json'
                     }
                 })
-                checkGoogleCredentials(user.data)
+                await checkGoogleCredentials(user.data)
             }
         } catch (error) {
             console.log(error)
         }
     }
 
-    function checkGoogleCredentials(credentials) {
-        const user = users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
-        if (user) login(user)
-        else {
-            signup({
-                username: credentials.email,
-                password: credentials.id,
-                fullname: credentials.name,
-                imgUrl: credentials.picture
-            })
+    async function checkGoogleCredentials(credentials) {
+        try {
+            const user = users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
+            if (user) {
+                await login(user)
+            } else {
+                await signup({
+                    username: credentials.email,
+                    password: credentials.id,
+                    fullname: credentials.name,
+                    imgUrl: credentials.picture
+                })
+            }
+
+            // Check for pending invite
+            const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
+            if (pendingBoardId) {
+                await boardService.acceptInvite(pendingBoardId)
+                sessionStorage.removeItem('pendingInviteToken')
+                sessionStorage.removeItem('pendingInviteBoardId')
+                navigate(`/board/${pendingBoardId}`)
+                return;
+            }
+
+            const fetchedBoards = await loadBoards()
+            if (fetchedBoards && fetchedBoards.length > 0) {
+                navigate(`/board/${fetchedBoards[0]._id}`)
+            } else {
+                navigate(`/board/`)
+            }
+        } catch (err) {
+            console.error('Error with Google credentials:', err)
         }
-        navigate(`/board/${boards[0]._id}`)
     }
 
     return (
@@ -91,7 +135,7 @@ export function LoginSignup() {
             <LoginPageHeader />
             <main className="main-content">
                 <form className="form-container" onSubmit={(ev) => onSubmit(ev, isSignup)}>
-                    <h1>{isSignup ? 'Create your MyDay account here ' : 'Log in to your account'}</h1>
+                    <h1>{isSignup ? 'Create your Workio account here ' : 'Log in to your account'}</h1>
                     {isSignup && <ImgUploader onUploaded={onUploaded} />}
                     {!isSignup && <p className="login-explain">Enter your username and password</p>}
                     {isSignup && <p className="login-explain">Enter your details to get started</p>}

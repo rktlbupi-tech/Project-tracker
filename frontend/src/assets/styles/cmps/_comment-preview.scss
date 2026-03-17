@@ -1,7 +1,7 @@
 .comments-list {
     li {
         border-radius: 4px;
-        border: 1px solid darken($border-color , 20%);
+        border: 1px solid $border-color;
         margin-bottom: $spacing-medium;
         padding: $spacing-medium;
         .header-comment {
@@ -58,8 +58,8 @@
         }
 
         .cancel {
-            background-color: white;
-            color: black;
+            background-color: $bg-primary;
+            color: $text-primary;
             margin: 0;
             height: 32px;
             border-radius: 4px;
@@ -67,7 +67,7 @@
             @include center-flex();
 
             &:hover {
-                background-color: $workspace-hover;
+                background-color: var(--workspace-hover);
             }
         }
     }

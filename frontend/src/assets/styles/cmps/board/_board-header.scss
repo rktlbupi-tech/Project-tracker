@@ -1,51 +1,60 @@
 .board-header {
-    padding: $spacing-medium 30px 0 38px;
+    padding: $spacing-medium 30px 0 44px;
     position: sticky;
     left: 0;
     top: 0;
-    background-color: white;
+    background: $bg-surface;
+    backdrop-filter: $glass-blur;
+    border-bottom: 1px solid $border-color;
     z-index: 30;
+    transition: $transition-smooth;
 
     .board-title {
-        color: $workspace-icon-color ;
+        color: $text-primary;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
 
         >* {
             display: flex;
             align-items: center;
-            padding-top: $spacing-xs;
-            height: rem(32px);
-            border-radius: 4px;
+            height: auto;
         }
 
         .board-info {
             width: 100%;
-            gap: $spacing-small;
+            gap: 12px;
+            display: flex;
+            align-items: center;
 
             h1 {
                 cursor: text;
-                padding: $spacing-xs $spacing-xs $spacing-xs 0;
+                padding: 4px 8px;
                 border: 1px solid transparent;
-                color: $primary-text-color;
-                letter-spacing: 0.5px;
+                border-radius: 4px;
+                color: $text-primary;
+                letter-spacing: -0.5px;
+                font-weight: 600;
+                transition: $transition-smooth;
+                font-size: rem(24px);
 
                 &:hover {
-                    border: 1px solid darken($border-color , 20%);
-                }
-            }
-
-            &>* {
-                cursor: pointer;
-
-                &:hover:not(:first-child) {
-                    background-color: $workspace-hover;
+                    background-color: var(--workspace-hover);
                 }
             }
 
             .icon {
                 font-size: rem(20px);
                 @include center-flex();
-                border-radius: 4px;
-                padding: 2px;
+                border-radius: 6px;
+                padding: 6px;
+                transition: $transition-smooth;
+                color: $text-secondary;
+                
+                &:hover {
+                    background-color: var(--workspace-hover);
+                    color: $primary-color;
+                }
                 
                 .star {
                     margin-bottom: 2px;
@@ -54,35 +63,36 @@
 
             .star-full {
                 color: $color-egg_yolk;
+                
+                &:hover {
+                    color: darken($color-egg_yolk, 10%);
+                }
             }
         }
 
         .board-tools {
             gap: $spacing-medium;
-            height: fit-content;
+            height: auto;
+            margin-top: 4px;
 
             >* {
-                padding: $spacing-xs;
+                padding: 6px 12px;
                 @include center-flex();
                 border-radius: 6px;
                 cursor: pointer;
-            }
+                transition: $transition-smooth;
+                font-size: rem(14px);
+                font-weight: 500;
+                color: $text-secondary;
+                gap: 6px;
 
-            .activity {
                 &:hover {
-                    background-color: $workspace-hover;
+                    background-color: var(--workspace-hover);
+                    color: $text-primary;
                 }
             }
 
             .members-last-seen {
-                width: max-content;
-                gap: $spacing-xs;
-                height: rem(32px);
-
-                &:hover {
-                    background-color: $workspace-hover;
-                }
-
                 .last-seen-title {
                     display: none;
                     @include for-normal-layout() {
@@ -92,11 +102,11 @@
             }
 
             .invite {
-                height: rem(32px);
-                width: max-content;
-
+                background-color: $primary-color;
+                color: white;
+                
                 &:hover {
-                    background-color: $workspace-hover;
+                    background-color: $link-color;
                 }
 
                 &-title{
@@ -107,13 +117,17 @@
                 }
 
                 .invite-icon {
-                    width: 32px;
+                    width: 20px;
                 }
             }
 
             .members-imgs {
-                @include member-img(white, #323338, 24px, 26px);
-
+                @include member-img($bg-primary, $text-primary, 28px, 30px);
+                padding: 0;
+                
+                &:hover {
+                    background-color: transparent;
+                }
             }
         }
     }
@@ -121,49 +135,63 @@
     .board-description {
         border: 1px solid transparent;
         align-items: flex-start;
-        padding: $spacing-xs $spacing-small $spacing-xs 0;
+        padding: 4px 0;
         cursor: pointer;
-        color: $workspace-icon-color;
+        color: $text-secondary;
+        font-size: rem(13px);
+        transition: $transition-smooth;
 
         &-link {
             font-weight: 400;
-            font-size: rem(14px);
         }
 
         span {
-            color: $link-color;
+            color: $primary-color;
+            font-weight: 500;
 
             &:hover {
                 text-decoration: underline;
             }
         }
+        
+        &:hover {
+            color: $text-primary;
+        }
     }
 
     .board-display-btns {
-        margin-top: $spacing-small;
+        margin-top: 12px;
+        display: flex;
+        gap: 4px;
 
         .type-btn {
-            color: $primary-text-color;
+            color: $text-secondary;
             position: relative;
             @include center-flex();
-            padding: 0px $spacing-small 0px $spacing-small;
+            padding: 8px 16px;
             font-size: rem(14px);
-            height: 32px;
-            white-space: nowrap;
+            font-weight: 500;
             cursor: pointer;
-
-            &.active {
-                border-bottom: 2px solid $board-btn;
-            }
+            transition: $transition-smooth;
+            border-bottom: 2px solid transparent;
+            gap: 8px;
 
             svg {
-                font-size: rem(12px);
+                font-size: rem(16px);
+            }
+
+            &.active {
+                color: $primary-color;
+                border-bottom: 2px solid $primary-color;
+            }
+
+            &:hover:not(.active) {
+                background-color: var(--workspace-hover);
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
             }
 
             span {
-                font-weight: 500;
-                padding: 0 $spacing-xs;
-
                 &.wide {
                     display: none;
                 }
@@ -174,12 +202,6 @@
             }
             
             @include for-narrow-layout() {
-                &:hover {
-                    background-color: $workspace-hover;
-                    border-top-left-radius: 4px;
-                    border-top-right-radius: 4px;
-                }
-
                 span {
                     &.wide {
                         display: block;
@@ -194,23 +216,17 @@
     }
 
     .board-border {
-        height: 1px;
-        width: 100%;
-        background-color: darken($border-color , 20%);
+        display: none; // Handled by board-header border-bottom
     }
 
     @include for-mobile-layout() {
         & {
-            padding: $spacing-medium 10px 0 10px;
+            padding: $spacing-medium 16px 0 16px;
 
             .board-info h1 {
-                font-size: rem(15px);
+                font-size: rem(18px);
                 white-space: nowrap;
             }
-
-            // .invite-title {
-            //     display: none;
-            // }
 
             .board-tools {
                 margin-right: auto;
@@ -230,8 +246,7 @@
     @include for-narrow-layout() {
         & {
             .board-info h1 {
-                font-size: rem(24px);
-                line-height: 42px;
+                font-size: rem(28px);
             }
         }
     }

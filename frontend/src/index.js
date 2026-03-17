@@ -8,6 +8,25 @@ import { RootCmp } from './root-cmp'
 import './assets/styles/main.scss'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+// Global Error Listener
+window.onerror = (message, source, lineno, colno, error) => {
+  console.log(
+    `❌ %c[General Error] %c${message}`,
+    "color: #FA5252; font-weight: bold;",
+    "color: #1B2D1F;",
+    { source, lineno, colno, error }
+  );
+};
+
+window.onunhandledrejection = (event) => {
+  console.log(
+    `❌ %c[Unhandled Promise Rejection] %c${event.reason}`,
+    "color: #FA5252; font-weight: bold;",
+    "color: #1B2D1F;",
+    event
+  );
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <GoogleOAuthProvider clientId="206331273095-es5eep8nfovokr5vilsalpr8gnqsfdut.apps.googleusercontent.com">

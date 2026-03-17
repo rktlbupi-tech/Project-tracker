@@ -3,11 +3,11 @@
     background-color: $app-bg;
     border-radius: $spacing-small;
     color: $primary-text-color;
-    box-shadow: -3px 4px 14px rgb(0 0 0 / 20%);
+    box-shadow: $glass-shadow;
     padding: $spacing-small;
     font-size: rem(14px);
     z-index: 10;
-    border: 1px solid darken($border-color , 20%);
+    border: 1px solid $border-color;
     left: 74%;
     bottom: 70px;    
     

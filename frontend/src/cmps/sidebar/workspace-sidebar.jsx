@@ -14,10 +14,17 @@ import { Tooltip } from '@mui/material'
 export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setIsWorkspaceOpen, isWorkspaceOpen, setWorkspaceDisplay }) {
     const [filterByToEdit, setFilterByToEdit] = useState(boardService.getDefaultFilterBoards())
     const boards = useSelector(storeState => storeState.boardModule.boards)
+    const user = useSelector(storeState => storeState.userModule.user)
+
+    useEffect(() => {
+        const filter = boardService.getDefaultFilterBoards()
+        if (workspaceDisplay === 'starred') filter.isStarred = 'true'
+        setFilterByToEdit(filter)
+    }, [workspaceDisplay])
 
     useEffect(() => {
         loadBoards(filterByToEdit)
-    }, [filterByToEdit])
+    }, [filterByToEdit, user])
 
     function onToggleWorkspace () {
         setIsWorkspaceOpen((prevIsOpen) => !prevIsOpen)

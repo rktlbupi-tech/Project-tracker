@@ -78,3 +78,27 @@ export async function loadUser(userId) {
         console.log('Cannot load user', err)
     }
 }
+
+export async function inviteUser(invitedUserId, boardId, boardTitle) {
+    try {
+        await userService.invite(invitedUserId, boardId, boardTitle)
+    } catch (err) {
+        console.log('Cannot invite user', err)
+        throw err
+    }
+}
+
+export async function respondToInvitation(invitationId, status) {
+    try {
+        const user = await userService.updateInvitation(invitationId, status)
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        console.log('Cannot respond to invitation', err)
+        throw err
+    }
+}
+
+export function setUser(user) {
+    store.dispatch({ type: SET_USER, user })
+}

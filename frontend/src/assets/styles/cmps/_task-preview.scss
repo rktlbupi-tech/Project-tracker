@@ -1,28 +1,44 @@
 .task-preview {
     position: relative;
     font-size: rem(14px);
+    transition: $transition-smooth;
+    border-radius: 4px;
 
     .empty-div {
         @include empty-div()
     }
 
     &:hover {
+        background-color: $task-hover-color;
+        box-shadow: $glass-shadow;
+        z-index: 10;
+        
         .task-menu .icon {
             display: block;
         }
+
+        .open-task-details {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
 
-    .sticky-div.on-typing{
-        background-color: $workspace-board-active;
+    .sticky-div {
+        transition: $transition-smooth;
+        &.on-typing {
+            background-color: $workspace-board-active;
+        }
     }
+
     .task-menu {
         @include center-flex();
         position: absolute;
         width: 41px;
         left: -47px;
-        height: 40px;
-        color: $primary-text-color;
-        background-color: white;
+        height: 100%;
+        color: $text-secondary;
+        background-color: transparent;
+        transition: $transition-smooth;
 
         @include for-mobile-layout() {
             & {
@@ -35,18 +51,15 @@
             border-radius: 4px;
             font-size: rem(20px);
             cursor: pointer;
+            transition: $transition-smooth;
+            padding: 2px;
         }
 
         .icon:hover {
-            background-color: $layout-border-color;
+            background-color: $workspace-hover;
+            color: $primary-color;
         }
     }
-
-    // .task-menu-modal {
-    //     @include menu-modal();
-    //     padding: $spacing-small;
-    //     left: -34px;
-    // }
 
     .task-tools-modal {
         @include menu-modal();
@@ -55,28 +68,37 @@
     .picker {
         min-width: $cell-width;
         height: $cell-height;
-        border: 1px solid darken($border-color , 20%);
+        border: 1px solid $border-color;
+        transition: $transition-smooth;
+
+        &:hover {
+            border-color: $primary-color;
+        }
     }
 
     .task-title {
         width: $cell-width-task;
         cursor: pointer;
-
-        &:hover {
-            .open-task-details {
-                opacity: 1;
-            }
-        }
+        padding-left: 8px;
 
         blockquote {
             height: 70%;
+            transition: $transition-smooth;
         }
 
         .open-task-details {
             @include center-flex();
             opacity: 0;
+            transform: translateX(-10px);
             margin: 0 $spacing-small;
-            color: $workspace-icon-color;
+            color: $primary-color;
+            transition: $transition-smooth;
+            font-weight: 500;
+            gap: 4px;
+
+            &:hover {
+                color: $link-color;
+            }
 
             @include for-mobile-layout() {
                 & .open-btn {
@@ -85,17 +107,60 @@
             }
         }
 
+        .task-editing-indicator {
+            position: relative;
+            @include center-flex();
+            margin: 0 $spacing-small;
+            
+            .editing-avatar {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid $bg-primary;
+                z-index: 2;
+            }
+
+            .editing-pulse {
+                position: absolute;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: $accent-color;
+                opacity: 0.6;
+                z-index: 1;
+                animation: editingPulse 1.5s ease-out infinite;
+            }
+        }
+
+        @keyframes editingPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.6);
+                opacity: 0;
+            }
+        }
+
         .chat-icon {
-            font-size: rem(24px);
+            font-size: rem(20px);
             padding: 0 $spacing-medium;
             height: 100%;
-            border-left: 1px solid darken($border-color , 20%);
+            border-left: 1px solid $border-color;
             color: $chat-icon-color;
             @include center-flex();
             position: relative;
+            transition: $transition-smooth;
+
+            &:hover {
+                color: $primary-color;
+                background-color: var(--workspace-hover);
+            }
 
             .icon:hover {
-                color: $board-btn;
+                color: $primary-color;
                 cursor: pointer;
             }
 
@@ -107,36 +172,40 @@
             .count-comment {
                 @include center-flex();
                 position: absolute;
-                top: 15px;
-                right: 15px;
-                background-color: $board-btn;
+                top: 8px;
+                right: 8px;
+                background-color: $accent-color;
                 color: white;
                 font-size: rem(10px);
                 border-radius: 50%;
-                width: 14px;
-                height: 13px;
+                width: 16px;
+                height: 16px;
                 margin: 0;
                 cursor: pointer;
+                box-shadow: $glass-shadow;
             }
 
             .comment-chat {
-                color: $board-btn;
+                color: $primary-color;
             }
         }
     }
 
     &.on-typing {
         background-color: $workspace-board-active;
+        box-shadow: inset 0 0 0 2px $primary-color;
     }
 
     blockquote {
         padding-right: 40px;
-        border-radius: 5px;
+        border-radius: 4px;
         width: 200px;
         overflow: hidden;
         white-space: nowrap;
-        margin-left: 36px;
+        margin-left: 12px;
         cursor: text;
+        transition: $transition-smooth;
+        color: $text-primary;
 
         @include for-mobile-layout() {
             & {
@@ -145,17 +214,23 @@
         }
 
         &:focus-visible {
-            outline: 1px solid $board-btn;
+            outline: none;
+            background-color: $bg-primary;
+            box-shadow: 0 0 0 2px $primary-color;
+            overflow: visible;
+            white-space: pre-wrap;
+            position: relative;
+            z-index: 50;
         }
 
         &:hover {
-            outline: 1px solid darken($border-color, 20%);
+            background-color: var(--workspace-hover);
         }
     }
 
     .empty-div {
-        border-bottom: 1px solid darken($border-color , 20%);
-        flex-grow: 100%;
-        padding-right: 188px;
+        border-bottom: 1px solid $border-color;
+        flex-grow: 1;
+        padding-right: 20px;
     }
-}
+}

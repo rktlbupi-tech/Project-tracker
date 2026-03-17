@@ -40,13 +40,7 @@ const mockBoard = {
             "color": "#c4c4c4"
         },
     ],
-    "members": [
-        {
-            "id": "m101",
-            "fullname": "Tal Tarablus",
-            "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-        },
-    ],
+    "members": [],
     "groups": [{
         "id": "g101",
         "title": "Group 1",

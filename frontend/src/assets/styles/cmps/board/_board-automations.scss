@@ -1,0 +1,223 @@
+.board-automations-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-height: 80vh;
+    background: $bg-primary;
+    backdrop-filter: $glass-blur;
+    border-radius: 12px;
+    box-shadow: $glass-shadow;
+    border: 1px solid $border-color;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    font-family: $font-family;
+    color: $text-primary;
+    overflow: hidden;
+
+    .header {
+        padding: 20px 24px;
+        border-bottom: 1px solid $border-color;
+        background: $bg-secondary;
+
+        .title {
+            gap: 12px;
+            
+            h2 {
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: $text-primary;
+            }
+
+            .robot-icon {
+                font-size: 1.5rem;
+                color: $primary-color;
+            }
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: $text-secondary;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: $transition-smooth;
+
+            &:hover {
+                background-color: var(--workspace-hover);
+                color: $text-primary;
+            }
+        }
+    }
+
+    .content {
+        padding: 24px;
+        overflow-y: auto;
+        flex-grow: 1;
+        background: $bg-primary;
+
+        .btn-add-automation {
+            width: 100%;
+            padding: 16px;
+            background: rgba($primary-color, 0.1);
+            color: $primary-color;
+            border: 1px dashed $primary-color;
+            border-radius: 8px;
+            cursor: pointer;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: $transition-smooth;
+            margin-bottom: 24px;
+
+            &:hover {
+                background: rgba($primary-color, 0.15);
+                transform: translateY(-1px);
+            }
+        }
+
+        .no-automations {
+            text-align: center;
+            padding: 40px 20px;
+            color: $text-secondary;
+            background: $bg-secondary;
+            border-radius: 8px;
+        }
+
+        .automations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .automation-item {
+                padding: 16px;
+                background: $bg-secondary;
+                border: 1px solid $border-color;
+                border-radius: 8px;
+                transition: $transition-smooth;
+
+                &.disabled {
+                    opacity: 0.6;
+                    background: $bg-secondary;
+                }
+
+                .automation-details {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    flex-wrap: wrap;
+
+                    .when-label, .then-label {
+                        font-weight: 600;
+                        color: $text-secondary;
+                    }
+
+                    .highlight.tag {
+                        background: rgba($primary-color, 0.1);
+                        color: $primary-color;
+                        padding: 4px 10px;
+                        border-radius: 4px;
+                        font-weight: 500;
+                        font-size: 0.9rem;
+                    }
+                }
+
+                .toggle-btn {
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    border: 1px solid $border-color;
+                    background: $bg-primary;
+                    color: $text-primary;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                    transition: $transition-smooth;
+
+                    &.active {
+                        background: $secondary-color;
+                        color: white;
+                        border-color: $secondary-color;
+                    }
+                }
+            }
+        }
+
+        .automation-creator {
+            h3 {
+                margin-top: 0;
+                margin-bottom: 24px;
+                font-weight: 600;
+                color: $text-primary;
+            }
+
+            .creator-step {
+                margin-bottom: 20px;
+
+                label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    color: $text-primary;
+                }
+
+                select {
+                    width: 100%;
+                    padding: 10px 12px;
+                    border: 1px solid $border-color;
+                    border-radius: 4px;
+                    font-size: 1rem;
+                    outline: none;
+                    background: $bg-primary;
+                    color: $text-primary;
+
+                    &:focus {
+                        border-color: $primary-color;
+                    }
+                }
+            }
+
+            .creator-actions {
+                margin-top: 32px;
+                gap: 12px;
+
+                button {
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    font-weight: 500;
+                    border: none;
+                    transition: $transition-smooth;
+                }
+
+                .btn-cancel {
+                    background: transparent;
+                    border: 1px solid $border-color;
+                    color: $text-primary;
+
+                    &:hover {
+                        background: var(--workspace-hover);
+                    }
+                }
+
+                .btn-save {
+                    background: $primary-color;
+                    color: white;
+
+                    &:hover {
+                        background: darken($primary-color, 5%);
+                    }
+                }
+            }
+        }
+    }
+}

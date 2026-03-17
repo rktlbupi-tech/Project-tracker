@@ -1,6 +1,5 @@
 import { httpService } from './http.service.js'
 import { userService } from './user.service.js'
-import { utilService } from './util.service.js'
 
 const BASE_URL = 'board/'
 
@@ -19,11 +18,15 @@ export const boardService = {
     getEmptyActivity,
     getEmptyBoard,
     updateTask,
-    updateGroup
+    updateGroup,
+    acceptInvite
 }
 
-function query(filter = getDefaultFilterBoards()) {
-    const queryParams = `?title=${filter.title}&isStarred=${filter.isStarred}`
+function query(filter = {}) {
+    filter = { ...getDefaultFilterBoards(), ...filter }
+    const title = filter.title || ''
+    const isStarred = filter.isStarred || false
+    const queryParams = `?title=${title}&isStarred=${isStarred}`
     return httpService.get(BASE_URL + queryParams)
 }
 
@@ -64,6 +67,10 @@ function updateTask(boardId, groupId, task) {
 
 function updateGroup(boardId, group) {
     return httpService.put(`${BASE_URL}${boardId}/${group.id}`, group)
+}
+
+function acceptInvite(boardId) {
+    return httpService.post(`${BASE_URL}${boardId}/accept-invite`)
 }
 
 function getDefaultFilterBoards() {
@@ -110,6 +117,7 @@ function getEmptyTask() {
             "imgUrl": "",
         },
         "file": "",
+        "version": 0
     }
 }
 
@@ -153,11 +161,7 @@ function getEmptyBoard() {
         "title": 'New Board',
         "archivedAt": Date.now(),
         "isStarred": false,
-        "createdBy": {
-            "fullname": "Ofer Gavrilov",
-            "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069496/me_dpbzfs.jpg",
-            "_id": utilService.makeId()
-        },
+        "createdBy": userService.getLoggedinUser(),
         "labels": [
             {
                 "id": "l101",
@@ -195,30 +199,10 @@ function getEmptyBoard() {
                 "color": "#c4c4c4"
             },
         ],
-        "members": [
-            {
-                "_id": "m101",
-                "fullname": "Tal Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673788222/cld-sample.jpg"
-            },
-            {
-                "_id": "m102",
-                "fullname": "Idan David",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1673820094/%D7%A2%D7%99%D7%93%D7%9F_jranbo.jpg"
-            },
-            {
-                "_id": "m103",
-                "fullname": "Ofek Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069458/image_exxnux.png"
-            },
-            {
-                "_id": "m104",
-                "fullname": "Ofer Tarablus",
-                "imgUrl": "https://res.cloudinary.com/du63kkxhl/image/upload/v1674069496/me_dpbzfs.jpg"
-            }
-        ],
+        "members": [],
         "groups": [],
         "activities": [],
+        "automations": [],
         "cmpsOrder": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'updated-picker'],
         "description": "",
         "cmpsOption": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'number-picker', 'file-picker', 'updated-picker']

@@ -1,5 +1,6 @@
 const express = require('express')
-const { getBoards, getBoardById, addBoard, updateBoard, removeBoard, updateTask, updateGroup } = require('./board.controller')
+const { requireAuth } = require('../../middlewares/requireAuth.middleware')
+const { getBoards, getBoardById, addBoard, updateBoard, removeBoard, updateTask, updateGroup, acceptInvite } = require('./board.controller')
 const router = express.Router()
 
 // middleware that is specific to this router
@@ -8,6 +9,7 @@ const router = express.Router()
 router.get('/', getBoards)
 router.get('/:boardId', getBoardById)
 router.post('/', addBoard)
+router.post('/:boardId/accept-invite', requireAuth, acceptInvite)
 router.put('/:boardId/:groupId/:taskId', updateTask)
 router.put('/:boardId/:groupId', updateGroup)
 router.put('/:boardId', updateBoard)

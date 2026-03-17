@@ -31,7 +31,7 @@
 }
 
 @mixin hover-sidebar() {
-  background-color: rgba(0, 0, 0, .6);
+  background-color: var(--workspace-hover);
   border-radius: 10px;
   cursor: pointer;
 }
@@ -115,8 +115,8 @@
   font-size: rem(14px);
   z-index: 10;
   padding: $spacing-small;
-  box-shadow: -3px 4px 14px rgb(0 0 0 / 20%);
-  border: 1px solid darken($border-color , 20%);
+  box-shadow: $glass-shadow;
+  border: 1px solid $border-color;
 
   >* {
     display: flex;
@@ -133,8 +133,8 @@
 
 @mixin empty-div() {
     width: 100%;
-    border-bottom: 2px solid darken($border-color , 20%);
+    border-bottom: 2px solid $border-color;
     &:first-child {
-        border-top: 2px solid darken($border-color , 20%);
+        border-top: 2px solid $border-color;
   }
 }

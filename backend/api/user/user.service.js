@@ -8,7 +8,39 @@ module.exports = {
     getByUsername,
     remove,
     update,
-    add
+    add,
+    addInvitation,
+    updateInvitationStatus,
+    toggleStarredBoard,
+    makeId
+}
+
+async function toggleStarredBoard(userId, boardId) {
+    try {
+        const user = await getById(userId)
+        const collection = await dbService.getCollection('user')
+        
+        let starredBoardIds = user.starredBoardIds || []
+        // Ensure all are strings for consistent comparison
+        starredBoardIds = starredBoardIds.map(id => id.toString())
+        
+        const idx = starredBoardIds.indexOf(boardId.toString())
+        
+        if (idx === -1) {
+            starredBoardIds.push(boardId.toString())
+        } else {
+            starredBoardIds.splice(idx, 1)
+        }
+
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $set: { starredBoardIds } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot toggle starred board for user ${userId}`, err)
+        throw err
+    }
 }
 
 async function query(filterBy = {}) {
@@ -69,6 +101,8 @@ async function update(user) {
             username: user.username,
             password: user.password,
             imgUrl: user.imgUrl,
+            invitations: user.invitations || [],
+            starredBoardIds: user.starredBoardIds || []
         }
         const collection = await dbService.getCollection('user')
         await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
@@ -87,6 +121,8 @@ async function add(user) {
             password: user.password,
             fullname: user.fullname,
             imgUrl: user.imgUrl,
+            invitations: [],
+            starredBoardIds: []
         }
         const collection = await dbService.getCollection('user')
         await collection.insertOne(userToAdd)
@@ -95,6 +131,50 @@ async function add(user) {
         logger.error('cannot add user', err)
         throw err
     }
+}
+
+async function addInvitation(userId, invitation) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $push: { invitations: invitation } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot add invitation to user ${userId}`, err)
+        throw err
+    }
+}
+
+async function updateInvitationStatus(userId, invitationId, status) {
+    try {
+        const collection = await dbService.getCollection('user')
+        if (status === 'accepted' || status === 'rejected') {
+            await collection.updateOne(
+                { _id: ObjectId(userId), 'invitations.id': invitationId },
+                { $set: { 'invitations.$.status': status } }
+            )
+        } else if (status === 'cleared') {
+             await collection.updateOne(
+                { _id: ObjectId(userId) },
+                { $pull: { invitations: { id: invitationId } } }
+            )
+        }
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot update invitation status for user ${userId}`, err)
+        throw err
+    }
+}
+
+function makeId(length = 6) {
+    var txt = ''
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (var i = 0; i < length; i++) {
+        txt += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return txt
 }
 
 function _buildCriteria(filterBy) {
