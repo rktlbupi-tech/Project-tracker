@@ -8,8 +8,17 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
     const [isCreating, setIsCreating] = useState(false)
 
     // Preset options
-    const triggers = ['Status changes to Done', 'Status changes to Stuck']
-    const actions = ['Move item to Completed', 'Move item to Backlog']
+    const triggers = [
+        'Status changes to Done', 
+        'Status changes to Stuck', 
+        'Status changes to Progress'
+    ]
+    const actions = [
+        'Move item to Completed', 
+        'Move item to Backlog', 
+        'Move item to Top Group', 
+        'Duplicate item'
+    ]
 
     const [selectedTrigger, setSelectedTrigger] = useState(triggers[0])
     const [selectedAction, setSelectedAction] = useState(actions[0])

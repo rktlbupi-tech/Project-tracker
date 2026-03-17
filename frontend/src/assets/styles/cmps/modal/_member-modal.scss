@@ -139,6 +139,26 @@
         .triangle-icon {
             display: none;
         }
+
+        .btn-invite-main {
+            &:hover:not(:disabled) {
+                background-color: #0060b9 !important;
+            }
+            &:active:not(:disabled) {
+                transform: scale(0.98);
+            }
+        }
+
+        .suggestions-section {
+            .out-member-list {
+                li {
+                    transition: 0.2s;
+                    &:hover {
+                        background-color: #f0f3f5;
+                    }
+                }
+            }
+        }
     }
 
     .triangle-icon {

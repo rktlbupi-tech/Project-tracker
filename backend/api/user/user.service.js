@@ -11,7 +11,36 @@ module.exports = {
     add,
     addInvitation,
     updateInvitationStatus,
+    toggleStarredBoard,
     makeId
+}
+
+async function toggleStarredBoard(userId, boardId) {
+    try {
+        const user = await getById(userId)
+        const collection = await dbService.getCollection('user')
+        
+        let starredBoardIds = user.starredBoardIds || []
+        // Ensure all are strings for consistent comparison
+        starredBoardIds = starredBoardIds.map(id => id.toString())
+        
+        const idx = starredBoardIds.indexOf(boardId.toString())
+        
+        if (idx === -1) {
+            starredBoardIds.push(boardId.toString())
+        } else {
+            starredBoardIds.splice(idx, 1)
+        }
+
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $set: { starredBoardIds } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot toggle starred board for user ${userId}`, err)
+        throw err
+    }
 }
 
 async function query(filterBy = {}) {
@@ -72,6 +101,8 @@ async function update(user) {
             username: user.username,
             password: user.password,
             imgUrl: user.imgUrl,
+            invitations: user.invitations || [],
+            starredBoardIds: user.starredBoardIds || []
         }
         const collection = await dbService.getCollection('user')
         await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
@@ -90,7 +121,8 @@ async function add(user) {
             password: user.password,
             fullname: user.fullname,
             imgUrl: user.imgUrl,
-            invitations: []
+            invitations: [],
+            starredBoardIds: []
         }
         const collection = await dbService.getCollection('user')
         await collection.insertOne(userToAdd)

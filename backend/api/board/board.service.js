@@ -1,5 +1,6 @@
 const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
+const userService = require('../user/user.service')
 const ObjectId = require('mongodb').ObjectId
 
 async function query(filterBy, loggedinUser) {
@@ -9,7 +10,12 @@ async function query(filterBy, loggedinUser) {
         console.log('Querying boards with loggedinUser:', loggedinUser)
         
         if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
-        if (filterBy.isStarred) criteria.isStarred = filterBy.isStarred
+        
+        if (filterBy.isStarred) {
+            const user = await userService.getById(loggedinUser._id)
+            const starredBoardIds = user.starredBoardIds || []
+            criteria._id = { $in: starredBoardIds.map(id => ObjectId(id)) }
+        }
 
         if (loggedinUser) {
             criteria.$or = [
@@ -36,8 +42,11 @@ async function getById(boardId, loggedinUser) {
 
         if (!board) return null
 
+        // If no user is provided, we assume it's a system action (e.g., from Automation Engine)
+        if (!loggedinUser) return board
+
         // Check permission if board is not public (assuming all are private for now)
-        if (!loggedinUser || (board.createdBy._id.toString() !== loggedinUser._id.toString() && !board.members.find(m => m._id.toString() === loggedinUser._id.toString()))) {
+        if (board.createdBy._id.toString() !== loggedinUser._id.toString() && !board.members.find(m => m._id.toString() === loggedinUser._id.toString())) {
             const error = new Error('Not Authorized to view this board')
             error.status = 403
             throw error

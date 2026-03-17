@@ -16,13 +16,19 @@ export const userService = {
     remove,
     update,
     invite,
-    updateInvitation
+    updateInvitation,
+    toggleStarred
 }
 
 window.userService = userService
 
 function getUsers() {
     return httpService.get(BASE_URL)
+}
+
+async function toggleStarred(boardId) {
+    const user = await httpService.post(BASE_URL + 'toggle-starred', { boardId })
+    return saveLocalUser(user)
 }
 
 async function getById(userId) {

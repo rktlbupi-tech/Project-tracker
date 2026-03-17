@@ -15,12 +15,15 @@ import { FaRobot } from 'react-icons/fa'
 
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
-export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescription, setIsInviteModalOpen, setIsAutomationsOpen, setBoardType, boardType }) {
+export function BoardHeader({ board, onSetFilter, setIsShowDescription, setIsInviteModalOpen, setIsAutomationsOpen, setBoardType, boardType }) {
     const onlineUsers = useSelector(storeState => storeState.boardModule.onlineUsers)
     const isOpen = useSelector(storeState => storeState.boardModule.isBoardModalOpen)
+    const user = useSelector(storeState => storeState.userModule.user)
     const navigate = useNavigate()
 
-    async function onSave (ev) {
+    const isStarred = user?.starredBoardIds?.includes(board._id?.toString())
+
+    async function onSave(ev) {
         const value = ev.target.innerText
         board.title = value
         try {
@@ -31,11 +34,11 @@ export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescr
         }
     }
 
-    function onToggleStarred () {
+    function onToggleStarred() {
         try {
-            toggleStarred(board, isStarredOpen)
+            toggleStarred(board._id)
         } catch (err) {
-            console.log(err)
+            console.log('Failed to toggle star:', err)
         }
     }
 
@@ -66,7 +69,7 @@ export function BoardHeader ({ board, onSetFilter, isStarredOpen, setIsShowDescr
                     </Tooltip>
                     <Tooltip title="Add to favorites" arrow>
                         <div className='star-btn icon ' onClick={onToggleStarred}>
-                            {!board.isStarred ? <BsStar className='star' /> : <BsStarFill className="star star-full" />}
+                            {!isStarred ? <BsStar className='star' /> : <BsStarFill className="star star-full" style={{ color: '#ffcb00' }} />}
                         </div>
                     </Tooltip>
                 </div>

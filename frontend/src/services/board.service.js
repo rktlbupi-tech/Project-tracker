@@ -23,8 +23,11 @@ export const boardService = {
     acceptInvite
 }
 
-function query(filter = getDefaultFilterBoards()) {
-    const queryParams = `?title=${filter.title}&isStarred=${filter.isStarred}`
+function query(filter = {}) {
+    filter = { ...getDefaultFilterBoards(), ...filter }
+    const title = filter.title || ''
+    const isStarred = filter.isStarred || false
+    const queryParams = `?title=${title}&isStarred=${isStarred}`
     return httpService.get(BASE_URL + queryParams)
 }
 

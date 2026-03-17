@@ -49,46 +49,53 @@ async function inviteUser(req, res) {
     try {
         const { invitedUserId, boardId, boardTitle } = req.body
         const fromUser = req.loggedinUser
-        
-        // Check if invitedUserId is actually an email string
+        let email = ''
+        let invitedUser = null
+
+        // Determine the email and check if user exists
         if (invitedUserId.includes('@')) {
-            const email = invitedUserId
-            
-            // Generate a simple invite token/link for the email
-            const inviteToken = Buffer.from(JSON.stringify({
-                boardId, 
-                boardTitle, 
-                fromUser: { _id: fromUser._id, fullname: fromUser.fullname }
-            })).toString('base64')
-
-            const baseUrl = process.env.CLIENT_URL || 'http://localhost:3000'
-            const inviteLink = `${baseUrl}/invite?token=${inviteToken}`
-            
-            // Send email
-            await sendBoardInviteEmail(email, fromUser, boardTitle, inviteLink)
-            
-            res.send({ msg: 'Email invitation sent successfully' })
-            return
+            email = invitedUserId
+            invitedUser = await userService.getByUsername(email)
+        } else {
+            invitedUser = await userService.getById(invitedUserId)
+            email = invitedUser.username
         }
 
-        const invitation = {
-            id: userService.makeId(),
-            from: { _id: fromUser._id, fullname: fromUser.fullname, imgUrl: fromUser.imgUrl },
-            board: { _id: boardId, title: boardTitle },
-            createdAt: Date.now(),
-            status: 'pending'
-        }
+        // 1. Always send Email Invitation
+        const inviteToken = Buffer.from(JSON.stringify({
+            boardId,
+            boardTitle,
+            fromUser: { _id: fromUser._id, fullname: fromUser.fullname, username: fromUser.username }
+        })).toString('base64')
 
-        const invitedUser = await userService.addInvitation(invitedUserId, invitation)
+        const baseUrl = process.env.CLIENT_URL || 'http://localhost:3000'
+        const inviteLink = `${baseUrl}/invite?token=${inviteToken}`
         
-        // Notify via socket if online
-        socketService.emitToUser({
-            type: 'invitation-received',
-            data: invitation,
-            userId: invitedUserId
-        })
+        await sendBoardInviteEmail(email, fromUser, boardTitle, inviteLink)
 
-        res.send(invitedUser)
+        // 2. If user exists, also add an in-app invitation for real-time notification
+        if (invitedUser) {
+            const invitation = {
+                id: userService.makeId(),
+                from: { _id: fromUser._id, fullname: fromUser.fullname, imgUrl: fromUser.imgUrl },
+                board: { _id: boardId, title: boardTitle },
+                createdAt: Date.now(),
+                status: 'pending'
+            }
+
+            await userService.addInvitation(invitedUser._id, invitation)
+            
+            // Notify via socket if online
+            socketService.emitToUser({
+                type: 'invitation-received',
+                data: invitation,
+                userId: invitedUser._id.toString()
+            })
+            
+            return res.send(invitedUser)
+        }
+
+        res.send({ msg: 'Email invitation sent successfully' })
     } catch (err) {
         logger.error('Failed to invite user', err)
         res.status(500).send({ err: 'Failed to invite user' })
@@ -126,11 +133,24 @@ async function updateInvitation(req, res) {
     }
 }
 
+async function toggleStarred(req, res) {
+    try {
+        const { boardId } = req.body
+        const userId = req.loggedinUser._id
+        const user = await userService.toggleStarredBoard(userId, boardId)
+        res.send(user)
+    } catch (err) {
+        logger.error('Failed to toggle starred', err)
+        res.status(500).send({ err: 'Failed to toggle starred' })
+    }
+}
+
 module.exports = {
     getUser,
     getUsers,
     deleteUser,
     updateUser,
     inviteUser,
-    updateInvitation
+    updateInvitation,
+    toggleStarred
 }

@@ -1,7 +1,9 @@
 import { boardService } from '../services/board.service.js'
+import { userService } from '../services/user.service.js'
 
 import { store } from './store.js'
 import { SET_FILTER_BOARD, SET_BOARDS, SET_BOARD, REMOVE_BOARD, ADD_BOARD, UPDATE_BOARD, SET_FILTER, SET_MODAL, SET_DYNAMIC_MODAL, SET_ONLINE_USERS, SET_TASK_EDITING, UNSET_TASK_EDITING } from "./board.reducer.js"
+import { SET_USER } from "./user.reducer.js"
 import { utilService } from '../services/util.service.js'
 import { socketService, SOCKET_EMIT_SEND_UPDATE_BOARD } from '../services/socket.service.js'
 import { toast } from 'react-toastify'
@@ -317,19 +319,17 @@ export async function updateTaskAction(filteredBoard, groupId, saveTask, activit
     }
 }
 
-export async function toggleStarred(filteredBoard, isStarred) {
+export async function toggleStarred(boardId) {
     try {
-        const { board } = store.getState().boardModule
-        board.isStarred = !board.isStarred
-        await boardService.save(board)
-        const filter = boardService.getDefaultFilterBoards()
-        filter.isStarred = isStarred
-        let boards = await boardService.query(filter)
-        filteredBoard.isStarred = board.isStarred
-        store.dispatch({ type: SET_BOARD, board })
-        store.dispatch({ type: SET_FILTER_BOARD, filteredBoard })
-        store.dispatch({ type: SET_BOARDS, boards })
+        const user = await userService.toggleStarred(boardId)
+        store.dispatch({ type: SET_USER, user })
+        
+        // We don't want to force a reload with a default filter because it might 
+        // override the current view in the sidebar. The components that need
+        // to update should listen to SET_USER or re-query based on their own filters.
+        
     } catch (err) {
+        console.error('Failed to toggle star:', err)
         throw err
     }
 }
@@ -407,8 +407,4 @@ export async function handleOnDragEnd(result, board) {
 }
 
 // private functions
-function _updateTask(filteredBoard, groupId, saveTask) {
-    const group = filteredBoard.groups.find(currGroup => currGroup.id === groupId)
-    group.tasks = group.tasks.map(task => task.id === saveTask.id ? saveTask : task)
-}
 
