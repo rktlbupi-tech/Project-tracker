@@ -1,9 +1,10 @@
-const loader = require('../assets/img/loader.gif')
-
 export function Loader() {
-
-
-  return <div className="loader-container">
-    <img className="loader" src={loader} alt="Loading..." />
-  </div>
+    return (
+        <div className="loader-container">
+            <div className="workio-loader">
+                <div className="spinner"></div>
+                <div className="loader-w">w</div>
+            </div>
+        </div>
+    )
 }

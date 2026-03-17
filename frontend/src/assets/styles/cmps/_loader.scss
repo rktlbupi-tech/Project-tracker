@@ -1,5 +1,68 @@
 .loader-container {
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
     @include center-flex();
+    background-color: $bg-primary;
+    z-index: 9999;
+}
+
+.workio-loader {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .spinner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 4px solid transparent;
+        border-top-color: #fb5160; // Logo Red
+        border-bottom-color: #469cf5; // Logo Blue
+        animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-left-color: #fdbd3e; // Logo Yellow
+            border-right-color: #fdbd3e;
+            animation: spin-reverse 1.2s linear infinite;
+        }
+    }
+
+    .loader-w {
+        position: absolute;
+        font-family: inherit;
+        font-weight: 900;
+        font-size: 24px;
+        color: $text-primary;
+        animation: pulse 1.5s ease-in-out infinite;
+        text-transform: lowercase;
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
 }
