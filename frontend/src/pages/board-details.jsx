@@ -1,8 +1,8 @@
 import { useParams, useSearchParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
-import { socketService, SOCKET_EMIT_SET_TOPIC, SOCKET_EVENT_ADD_UPDATE_BOARD, SOCKET_EMIT_WATCH_BOARD, SOCKET_EMIT_UNWATCH_BOARD, SOCKET_EVENT_BOARD_USERS_ONLINE, SOCKET_EMIT_SET_USER_PRESENCE } from '../services/socket.service'
+import { socketService, SOCKET_EVENT_ADD_UPDATE_BOARD, SOCKET_EMIT_WATCH_BOARD, SOCKET_EMIT_UNWATCH_BOARD, SOCKET_EVENT_BOARD_USERS_ONLINE, SOCKET_EMIT_SET_USER_PRESENCE } from '../services/socket.service'
 import { loadBoard, loadBoards, setBoardFromSocket, setFilter, setOnlineUsers, setTaskEditing, unsetTaskEditing } from '../store/board.actions'
 import { ModalMemberInvite } from '../cmps/modal/modal-member-invite'
 import { WorkspaceSidebar } from '../cmps/sidebar/workspace-sidebar'
@@ -13,21 +13,24 @@ import { MainSidebar } from '../cmps/sidebar/main-sidebar'
 import { DynamicModal } from '../cmps/modal/dynamic-modal'
 import { boardService } from '../services/board.service'
 import { CreateBoard } from '../cmps/modal/create-board'
+import { CreateWorkspace } from '../cmps/modal/create-workspace'
 import { BoardHeader } from '../cmps/board/board-header'
 import { userService } from '../services/user.service'
 import { BoardModal } from '../cmps/board/board-modal'
 import { GroupList } from '../cmps/board/group-list'
 import { BoardAutomations } from '../cmps/board/board-automations'
 import { loadUsers } from '../store/user.actions'
+import { setCurrWorkspace } from '../store/workspace.actions'
 import { Loader } from '../cmps/loader'
 import { Dashboard } from './dashboard'
 
-export function BoardDetails () {
+export function BoardDetails() {
     const board = useSelector(storeState => storeState.boardModule.filteredBoard)
     const boards = useSelector(storeState => storeState.boardModule.boards)
     const isBoardModalOpen = useSelector(storeState => storeState.boardModule.isBoardModalOpen)
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+    const [isCreateWorkspaceModalOpen, setIsCreateWorkspaceModalOpen] = useState(false)
     const [isShowDescription, setIsShowDescription] = useState(false)
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
     const [isAutomationsOpen, setIsAutomationsOpen] = useState(false)
@@ -41,16 +44,28 @@ export function BoardDetails () {
 
     const { boardId } = useParams()
     const [searchParams, setSearchParams] = useSearchParams()
-    const queryFilterBy = boardService.getFilterFromSearchParams(searchParams)
+
+    // Using searchParams.toString() as a stable dependency for filter changes
+    const searchStr = searchParams.toString()
+    
+    const queryFilterBy = useMemo(() => {
+        return boardService.getFilterFromSearchParams(searchParams)
+    }, [searchStr]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (board?.workspaceId) {
+            setCurrWorkspace(board.workspaceId)
+        }
+    }, [board])
 
     useEffect(() => {
         loadBoard(boardId, queryFilterBy)
         loadUsers()
-        if (!boards.length) loadBoards()
 
         const user = userService.getLoggedinUser()
         if (user) socketService.emit(SOCKET_EMIT_SET_USER_PRESENCE, user)
-    }, [])
+        // We only want to re-load the board when the ID or the filter changes
+    }, [boardId, searchStr]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         socketService.emit(SOCKET_EMIT_WATCH_BOARD, boardId)
@@ -68,7 +83,7 @@ export function BoardDetails () {
         }
     }, [boardId])
 
-    function onSetFilter (filterBy) {
+    function onSetFilter(filterBy) {
         setSearchParams(filterBy)
         loadBoard(boardId, filterBy)
         setFilter(filterBy)
@@ -79,7 +94,15 @@ export function BoardDetails () {
         <section className="board-details flex">
             <div className='sidebar flex'>
                 <MainSidebar setWorkspaceDisplay={setWorkspaceDisplay} setIsWorkspaceOpen={setIsWorkspaceOpen} setIsLoginModalOpen={setIsLoginModalOpen} />
-                <WorkspaceSidebar workspaceDisplay={workspaceDisplay} isWorkspaceOpen={isWorkspaceOpen} setIsWorkspaceOpen={setIsWorkspaceOpen} board={board} setIsCreateModalOpen={setIsCreateModalOpen} />
+                <WorkspaceSidebar 
+                    workspaceDisplay={workspaceDisplay} 
+                    setWorkspaceDisplay={setWorkspaceDisplay}
+                    isWorkspaceOpen={isWorkspaceOpen} 
+                    setIsWorkspaceOpen={setIsWorkspaceOpen} 
+                    board={board} 
+                    setIsCreateModalOpen={setIsCreateModalOpen} 
+                    setIsCreateWorkspaceModalOpen={setIsCreateWorkspaceModalOpen}
+                />
             </div>
             <main className="board-main">
                 {board ? (
@@ -95,17 +118,18 @@ export function BoardDetails () {
                     </>
                 ) : (
                     <div className="empty-board-view flex column align-center justify-center" style={{ height: '100%', gap: '20px', color: '#676879' }}>
-                         <img src="https://res.cloudinary.com/du63kkxhl/image/upload/v1700131641/empty_state_bzxvzk.png" alt="Empty" style={{ width: '200px', opacity: 0.7 }} />
-                         <div style={{ textAlign: 'center' }}>
+                        <img src="https://res.cloudinary.com/du63kkxhl/image/upload/v1700131641/empty_state_bzxvzk.png" alt="Empty" style={{ width: '200px', opacity: 0.7 }} />
+                        <div style={{ textAlign: 'center' }}>
                             <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '10px' }}>You're not invited into any boards yet</h2>
                             <p style={{ fontSize: '16px' }}>When you are invited to a board, it will show up here.</p>
-                         </div>
+                        </div>
                     </div>
                 )}
             </main>
             {isCreateModalOpen && <CreateBoard setIsModalOpen={setIsCreateModalOpen} />}
+            {isCreateWorkspaceModalOpen && <CreateWorkspace setIsModalOpen={setIsCreateWorkspaceModalOpen} setWorkspaceDisplay={setWorkspaceDisplay} />}
             {isAutomationsOpen && board && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
-            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
+            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || isCreateWorkspaceModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
             {isShowDescription && board &&
                 <>
                     <BoardDescription setIsShowDescription={setIsShowDescription} board={board} />

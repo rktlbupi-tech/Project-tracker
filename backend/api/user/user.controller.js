@@ -145,6 +145,17 @@ async function toggleStarred(req, res) {
     }
 }
 
+async function clearNotifications(req, res) {
+    try {
+        const userId = req.loggedinUser._id
+        const user = await userService.clearNotifications(userId)
+        res.send(user)
+    } catch (err) {
+        logger.error('Failed to clear notifications', err)
+        res.status(500).send({ err: 'Failed to clear notifications' })
+    }
+}
+
 module.exports = {
     getUser,
     getUsers,
@@ -152,5 +163,6 @@ module.exports = {
     updateUser,
     inviteUser,
     updateInvitation,
-    toggleStarred
+    toggleStarred,
+    clearNotifications
 }

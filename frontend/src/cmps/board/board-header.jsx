@@ -6,12 +6,12 @@ import { RiErrorWarningLine } from 'react-icons/ri'
 import { BsBarChart, BsKanban, BsStar } from 'react-icons/bs'
 import { BsStarFill } from 'react-icons/bs'
 import { FiActivity } from 'react-icons/fi'
-import { GrHomeRounded } from 'react-icons/gr'
+import { AiOutlineHome } from 'react-icons/ai'
+import { FaRobot } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RiUserAddLine } from 'react-icons/ri'
 import { Tooltip } from '@mui/material'
-import { FaRobot } from 'react-icons/fa'
 import { loggerService } from '../../services/logger.service'
 
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
@@ -117,27 +117,21 @@ export function BoardHeader({ board, onSetFilter, setIsShowDescription, setIsInv
                 {board.description && <p className='board-description-link'>{board.description} <span onClick={() => setIsShowDescription(true)}>See More</span></p>}
             </div>
             <div className='board-display-btns flex' >
-                <Tooltip title="Main table" arrow>
-                    <div className={`type-btn ${boardType === 'table' ? ' active' : ''}`} onClick={() => onSetBoardType('table')} >
-                        <GrHomeRounded className='icon' />
-                        <span className='wide' onClick={() => onSetBoardType('table')}>Main Table</span>
-                        <span className='mobile'>Main Table</span>
-                    </div>
-                </Tooltip>
-                <Tooltip title="Kanban" arrow>
-                    <div className={`type-btn ${boardType === 'kanban' ? ' active' : ''}`} onClick={() => onSetBoardType('kanban')}>
-                        <BsKanban />
-                        <span className='wide'  >Kanban</span>
-                        <span className='mobile' onClick={() => onSetBoardType('kanban')}>Kanban</span>
-                    </div>
-                </Tooltip>
-                <Tooltip title="Dashboard" arrow>
-                    <div className={`type-btn ${boardType === 'dashboard' ? ' active' : ''}`} onClick={() => onSetBoardType('dashboard')}>
-                        <BsBarChart />
-                        <span className='wide' >Dashboard</span>
-                        <span className='mobile' onClick={() => onSetBoardType('dashboard')}>Dashboard</span>
-                    </div>
-                </Tooltip>
+                <div className={`type-btn ${boardType === 'table' ? ' active' : ''}`} onClick={() => onSetBoardType('table')} >
+                    <AiOutlineHome className='icon' />
+                    <span className='wide' onClick={() => onSetBoardType('table')}>Main Table</span>
+                    <span className='mobile'>Main Table</span>
+                </div>
+                <div className={`type-btn ${boardType === 'kanban' ? ' active' : ''}`} onClick={() => onSetBoardType('kanban')}>
+                    <BsKanban />
+                    <span className='wide'  >Kanban</span>
+                    <span className='mobile' onClick={() => onSetBoardType('kanban')}>Kanban</span>
+                </div>
+                <div className={`type-btn ${boardType === 'dashboard' ? ' active' : ''}`} onClick={() => onSetBoardType('dashboard')}>
+                    <BsBarChart />
+                    <span className='wide' >Dashboard</span>
+                    <span className='mobile' onClick={() => onSetBoardType('dashboard')}>Dashboard</span>
+                </div>
             </div>
             <div className='board-border'></div>
             {boardType !== 'dashboard' && <BoardFilter onSetFilter={onSetFilter} board={board} />}

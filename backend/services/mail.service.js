@@ -16,29 +16,33 @@ const transporter = nodemailer.createTransport({
  * 
  * @param {string} toEmail - The recipient's email address.
  * @param {object} fromUser - The user sending the invite (should have fullname).
- * @param {string} boardTitle - The title of the board they are invited to.
+ * @param {string} targetTitle - The title of the board or workspace they are invited to.
  * @param {string} inviteLink - The generated link to accept the invitation.
  */
-async function sendBoardInviteEmail(toEmail, fromUser, boardTitle, inviteLink) {
+async function sendInviteEmail(toEmail, fromUser, targetTitle, inviteLink) {
     try {
         const mailOptions = {
             from: `"${fromUser.fullname} (via Workio)" <${process.env.EMAIL_USER}>`,
             to: toEmail,
             replyTo: fromUser.username, // User A's email (stored in username)
-            subject: `${fromUser.fullname} has invited you to a board on Workio!`,
+            subject: `${fromUser.fullname} has invited you to join them on Workio!`,
             html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-                    <h2>You've been invited!</h2>
-                    <p><strong>${fromUser.fullname}</strong> (${fromUser.username}) has invited you to collaborate on the board: <strong>${boardTitle}</strong></p>
-                    <p>Click the button below to accept the invitation and join the board.</p>
-                    <div style="margin: 30px 0;">
-                        <a href="${inviteLink}" style="background-color: #0073ea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-                            Accept Invitation
-                        </a>
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e4e8; border-radius: 8px; overflow: hidden; color: #333;">
+                    <div style="background-color: #0073ea; color: white; padding: 20px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 24px;">Workspace Invitation</h1>
                     </div>
-                    <p style="color: #777; font-size: 14px;">If you don't have an account, you'll be prompted to sign up first.</p>
-                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                    <p style="color: #999; font-size: 12px;">This email was sent via Workio on behalf of ${fromUser.fullname}.</p>
+                    <div style="padding: 30px;">
+                        <p style="font-size: 16px;"><strong>${fromUser.fullname}</strong> (${fromUser.username}) has invited you to collaborate on <strong>${targetTitle}</strong>.</p>
+                        <p style="font-size: 16px;">Workio helps teams organize tasks, track projects, and achieve more together.</p>
+                        <div style="margin: 35px 0; text-align: center;">
+                            <a href="${inviteLink}" style="background-color: #0073ea; color: white; padding: 14px 28px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 16px; display: inline-block;">
+                                Accept Invitation
+                            </a>
+                        </div>
+                        <p style="color: #666; font-size: 14px; line-height: 1.5;">If you don't have a Workio account yet, you'll be guided through a quick signup process before joining.</p>
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                        <p style="color: #999; font-size: 12px; text-align: center;">This email was sent on behalf of ${fromUser.fullname}. If you weren't expecting this invite, you can safely ignore this email.</p>
+                    </div>
                 </div>
             `
         }
@@ -62,5 +66,5 @@ async function sendBoardInviteEmail(toEmail, fromUser, boardTitle, inviteLink) {
 }
 
 module.exports = {
-    sendBoardInviteEmail
+    sendInviteEmail
 }

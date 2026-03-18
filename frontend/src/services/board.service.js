@@ -23,11 +23,7 @@ export const boardService = {
 }
 
 function query(filter = {}) {
-    filter = { ...getDefaultFilterBoards(), ...filter }
-    const title = filter.title || ''
-    const isStarred = filter.isStarred || false
-    const queryParams = `?title=${title}&isStarred=${isStarred}`
-    return httpService.get(BASE_URL + queryParams)
+    return httpService.get(BASE_URL, filter)
 }
 
 function getFilteredBoard(board, filterBy = getDefaultFilterBoard()) {
@@ -102,6 +98,7 @@ function getEmptyGroup() {
         "archivedAt": Date.now(),
         "tasks": [],
         "color": '#ffcb00',
+        "hiddenColumns": [],
     }
 }
 
@@ -116,7 +113,7 @@ function getEmptyTask() {
         "updatedBy": {
             "imgUrl": "",
         },
-        "file": "",
+        "files": [],
         "version": 0
     }
 }
@@ -158,7 +155,7 @@ function getEmptyActivity() {
 
 function getEmptyBoard() {
     return {
-        "title": 'New Board',
+        "title": '',
         "archivedAt": Date.now(),
         "isStarred": false,
         "createdBy": userService.getLoggedinUser(),

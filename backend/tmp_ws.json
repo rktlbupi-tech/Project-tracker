@@ -1,0 +1,122 @@
+[
+  {
+    "_id": "69b76eacc2329d09b1b8417d",
+    "title": "Sprint 4"
+  },
+  {
+    "_id": "69b777c8c2329d09b1b84180",
+    "title": "Engineering & Product"
+  },
+  {
+    "_id": "69b777d6c2329d09b1b84181",
+    "title": "Web Portal Redesign"
+  },
+  {
+    "_id": "69b777e3c2329d09b1b84182",
+    "title": "Marketing & Growth"
+  },
+  {
+    "_id": "69b777efc2329d09b1b84183",
+    "title": "Internal Operation"
+  },
+  {
+    "_id": "69ba27a6f943124fc0710f1e",
+    "title": "Agency Lookup",
+    "description": "",
+    "color": "#0073ea",
+    "members": [
+      {
+        "_id": "69b5054797d4159c15b3b932",
+        "fullname": "Ruri Yuri-Konda",
+        "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocIaxFzsfyJzXgvAjmJS-qUDNxZ6JMNXv_dKZGb-FOqrrFyl=s96-c",
+        "role": "owner"
+      }
+    ],
+    "boardIds": [],
+    "createdBy": {
+      "_id": "69b5054797d4159c15b3b932",
+      "fullname": "Ruri Yuri-Konda",
+      "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocIaxFzsfyJzXgvAjmJS-qUDNxZ6JMNXv_dKZGb-FOqrrFyl=s96-c"
+    }
+  },
+  {
+    "_id": "69ba27cdf943124fc0710f1f",
+    "title": "Market Enterprise",
+    "description": "",
+    "color": "#735dd1",
+    "members": [
+      {
+        "_id": "69b5054797d4159c15b3b932",
+        "fullname": "Ruri Yuri-Konda",
+        "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocIaxFzsfyJzXgvAjmJS-qUDNxZ6JMNXv_dKZGb-FOqrrFyl=s96-c",
+        "role": "owner"
+      }
+    ],
+    "boardIds": [],
+    "createdBy": {
+      "_id": "69b5054797d4159c15b3b932",
+      "fullname": "Ruri Yuri-Konda",
+      "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocIaxFzsfyJzXgvAjmJS-qUDNxZ6JMNXv_dKZGb-FOqrrFyl=s96-c"
+    }
+  },
+  {
+    "_id": "69ba29ee57ca3d1431fb0012",
+    "title": "Testing Team",
+    "description": "",
+    "color": "#735dd1",
+    "members": [
+      {
+        "_id": "69b2869f2555a59d42976293",
+        "fullname": "Raya Maheshwari",
+        "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocJYw1ceeYye_k-MsNrnoipIhbS9iDtTrChs6T4ncHzhbq-K9t0=s96-c",
+        "role": "owner"
+      }
+    ],
+    "boardIds": [],
+    "createdBy": {
+      "_id": "69b2869f2555a59d42976293",
+      "fullname": "Raya Maheshwari",
+      "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocJYw1ceeYye_k-MsNrnoipIhbS9iDtTrChs6T4ncHzhbq-K9t0=s96-c"
+    }
+  },
+  {
+    "_id": "69ba2a0c57ca3d1431fb0014",
+    "title": "Game Dev",
+    "description": "",
+    "color": "#735dd1",
+    "members": [
+      {
+        "_id": "69b2869f2555a59d42976293",
+        "fullname": "Raya Maheshwari",
+        "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocJYw1ceeYye_k-MsNrnoipIhbS9iDtTrChs6T4ncHzhbq-K9t0=s96-c",
+        "role": "owner"
+      }
+    ],
+    "boardIds": [],
+    "createdBy": {
+      "_id": "69b2869f2555a59d42976293",
+      "fullname": "Raya Maheshwari",
+      "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocJYw1ceeYye_k-MsNrnoipIhbS9iDtTrChs6T4ncHzhbq-K9t0=s96-c"
+    }
+  },
+  {
+    "_id": "69ba330daf2a3e048ddc26f1",
+    "title": "Workio",
+    "description": "",
+    "color": "#ffcb00",
+    "members": [
+      {
+        "_id": "69b5054797d4159c15b3b932",
+        "fullname": "Ruri Yuri-Konda",
+        "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocIaxFzsfyJzXgvAjmJS-qUDNxZ6JMNXv_dKZGb-FOqrrFyl=s96-c",
+        "role": "owner"
+      }
+    ],
+    "boardIds": [],
+    "createdBy": {
+      "_id": "69b5054797d4159c15b3b932",
+      "fullname": "Ruri Yuri-Konda",
+      "imgUrl": "https://lh3.googleusercontent.com/a/ACg8ocIaxFzsfyJzXgvAjmJS-qUDNxZ6JMNXv_dKZGb-FOqrrFyl=s96-c"
+    }
+  }
+]

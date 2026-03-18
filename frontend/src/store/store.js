@@ -2,10 +2,14 @@ import { combineReducers, legacy_createStore as createStore } from 'redux'
 
 import { boardReducer } from './board.reducer' 
 import { userReducer } from './user.reducer'
+import { systemReducer } from './system.reducer'
+import { workspaceReducer } from './workspace.reducer'
 
 const rootReducer = combineReducers({
     boardModule: boardReducer,
-    userModule: userReducer 
+    userModule: userReducer,
+    systemModule: systemReducer,
+    workspaceModule: workspaceReducer
 })
 
 const middleware = (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__)? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__() : undefined

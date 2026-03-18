@@ -114,7 +114,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
                     </div>
                 </div>
             </div>
-            {board.cmpsOrder.map((cmp, idx) => {
+            {board.cmpsOrder.filter(cmp => !(group.hiddenColumns || []).includes(cmp)).map((cmp, idx) => {
                 return (
                     <DynamicCmp
                         cmp={cmp}

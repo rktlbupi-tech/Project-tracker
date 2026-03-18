@@ -27,7 +27,7 @@ export function BoardModal({ setIsMouseOver }) {
     return <section className={`board-modal ${isOpen ? 'open' : ''}`} onMouseOver={() => setIsMouseOver(true)} onMouseOut={() => setIsMouseOver(false)}>
         {!activityLog && <TaskModal task={currTask} board={board} groupId={groupId} setModalCurrTask={setCurrTask} />}
         {activityLog && <section className="board-activity-modal">
-            <BoardActivityModal board={board} activityLog={activityLog}/>
+            <BoardActivityModal board={board} activityLog={activityLog} />
         </section>}
     </section>
 }

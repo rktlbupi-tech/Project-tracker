@@ -19,6 +19,7 @@ export function MemberPicker({ info, onUpdate }) {
     const elMemberSection = useRef()
 
     function getMember(memberId) {
+        if (board.createdBy?._id === memberId) return board.createdBy
         return board.members.find(member => member._id === memberId)
     }
 

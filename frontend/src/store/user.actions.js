@@ -100,6 +100,17 @@ export async function respondToInvitation(invitationId, status) {
     }
 }
 
+export async function clearNotifications() {
+    try {
+        const user = await userService.clearNotifications()
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        loggerService.error('Cannot clear notifications', err)
+        throw err
+    }
+}
+
 export function setUser(user) {
     store.dispatch({ type: SET_USER, user })
 }
