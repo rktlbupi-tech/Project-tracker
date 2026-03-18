@@ -4,7 +4,8 @@ import { IoIosArrowDown } from 'react-icons/io'
 import { AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
 import { AiFillHome } from 'react-icons/ai'
 import { BoardPreview } from '../../board/board-preview'
-import { setCurrWorkspace } from '../../../store/workspace.actions'
+import { setCurrWorkspace, removeWorkspace, addWorkspace } from '../../../store/workspace.actions'
+import { BsThreeDots } from 'react-icons/bs'
 
 export default function WorkspaceBoard({ 
     handleChange, 
@@ -13,11 +14,47 @@ export default function WorkspaceBoard({
     boards, 
     workspaces, 
     currWorkspaceId, 
-    setIsCreateWorkspaceModalOpen 
+    setIsCreateWorkspaceModalOpen,
+    user
 }) {
     const [isWsSelectOpen, setIsWsSelectOpen] = useState(false)
+    const [hoveredWsId, setHoveredWsId] = useState(null)
+    const [menuOpenWsId, setMenuOpenWsId] = useState(null)
 
     const currWorkspace = workspaces.find(ws => ws._id === currWorkspaceId) || workspaces[0]
+
+    async function onDuplicateWorkspace(ev, wsToDuplicate) {
+        ev.stopPropagation()
+        setMenuOpenWsId(null)
+        try {
+            const newWs = { ...wsToDuplicate, title: wsToDuplicate.title + ' (Copy)' }
+            delete newWs._id
+            const savedWs = await addWorkspace(newWs)
+            setCurrWorkspace(savedWs._id)
+            setIsWsSelectOpen(false)
+        } catch (err) {
+            console.error('Cannot duplicate workspace', err)
+        }
+    }
+
+    async function onDeleteWorkspace(ev, wsId, wsCreatorId) {
+        ev.stopPropagation()
+        setMenuOpenWsId(null)
+        if (user?._id !== wsCreatorId) {
+            alert('Only the creator can delete this workspace.')
+            return
+        }
+        if (!window.confirm('Are you sure you want to delete this workspace and all its boards?')) return
+        try {
+            await removeWorkspace(wsId)
+            if (currWorkspaceId === wsId && workspaces.length > 1) {
+                const nextWs = workspaces.find(w => w._id !== wsId)
+                if (nextWs) setCurrWorkspace(nextWs._id)
+            }
+        } catch (err) {
+            console.error('Cannot remove workspace', err)
+        }
+    }
 
     return (
         <div className="workspace-sidebar-header">
@@ -59,18 +96,81 @@ export default function WorkspaceBoard({
                                             setCurrWorkspace(ws._id)
                                             setIsWsSelectOpen(false)
                                         }}
+                                        onMouseEnter={() => setHoveredWsId(ws._id)}
+                                        onMouseLeave={() => setHoveredWsId(null)}
                                         style={{ 
                                             padding: '8px 16px', 
                                             cursor: 'pointer', 
                                             display: 'flex', 
                                             alignItems: 'center', 
-                                            gap: '10px',
-                                            backgroundColor: ws._id === currWorkspaceId ? '#e1f2ff' : 'transparent'
+                                            justifyContent: 'space-between',
+                                            backgroundColor: ws._id === currWorkspaceId ? '#e1f2ff' : 'transparent',
+                                            position: 'relative'
                                         }}
                                         className="ws-item"
                                     >
-                                        <div style={{ width: '16px', height: '16px', backgroundColor: ws.color, borderRadius: '3px' }} />
-                                        <span style={{ fontSize: '14px' }}>{ws.title}</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{ width: '16px', height: '16px', backgroundColor: ws.color, borderRadius: '3px' }} />
+                                            <span style={{ fontSize: '14px' }}>{ws.title}</span>
+                                        </div>
+                                        
+                                        {(hoveredWsId === ws._id || menuOpenWsId === ws._id) && (
+                                            <div 
+                                                onClick={(ev) => {
+                                                    ev.stopPropagation()
+                                                    setMenuOpenWsId(menuOpenWsId === ws._id ? null : ws._id)
+                                                }}
+                                                style={{ padding: '0 4px', cursor: 'pointer', color: '#676879', borderRadius: '4px' }}
+                                                className="ws-options-trigger"
+                                            >
+                                                <BsThreeDots />
+                                            </div>
+                                        )}
+
+                                        {menuOpenWsId === ws._id && (
+                                            <div 
+                                                className="shadow"
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: '16px',
+                                                    top: '32px',
+                                                    backgroundColor: 'white',
+                                                    borderRadius: '4px',
+                                                    zIndex: 200,
+                                                    width: '120px',
+                                                    overflow: 'hidden'
+                                                }}
+                                            >
+                                                <div 
+                                                    onClick={(ev) => onDuplicateWorkspace(ev, ws)}
+                                                    style={{ padding: '8px 12px', fontSize: '13px', cursor: 'pointer', display: 'block' }}
+                                                    className="opts-item"
+                                                >
+                                                    Duplicate
+                                                </div>
+                                                <div 
+                                                    onClick={(ev) => {
+                                                        const isOwner = user?._id === ws.createdBy?._id
+                                                        if (!isOwner) {
+                                                            ev.stopPropagation()
+                                                            return
+                                                        }
+                                                        onDeleteWorkspace(ev, ws._id, ws.createdBy?._id)
+                                                    }}
+                                                    style={{ 
+                                                        padding: '8px 12px', 
+                                                        fontSize: '13px', 
+                                                        cursor: user?._id === ws.createdBy?._id ? 'pointer' : 'not-allowed', 
+                                                        display: 'block', 
+                                                        color: user?._id === ws.createdBy?._id ? 'red' : '#c3cfd9'
+                                                    }}
+                                                    className="opts-item"
+                                                    title={user?._id === ws.createdBy?._id ? '' : 'Only the creator can delete this workspace'}
+                                                >
+                                                    Delete
+                                                </div>
+                                            </div>
+                                        )}
                                     </li>
                                 ))}
                              </ul>

@@ -1,16 +1,18 @@
 import { useState } from "react"
 import { workspaceService } from "../../services/workspace.service"
-import { addWorkspace } from "../../store/workspace.actions"
+import { addWorkspace, setCurrWorkspace } from "../../store/workspace.actions"
 import { AiOutlineClose } from "react-icons/ai"
 
-export function CreateWorkspace({ setIsModalOpen }) {
+export function CreateWorkspace({ setIsModalOpen, setWorkspaceDisplay }) {
     const [workspace, setWorkspace] = useState(workspaceService.getEmptyWorkspace())
 
     async function onAddWorkspace(ev) {
         ev.preventDefault()
         if (!workspace.title) return
         try {
-            await addWorkspace(workspace)
+            const savedWorkspace = await addWorkspace(workspace)
+            setCurrWorkspace(savedWorkspace._id)
+            if (setWorkspaceDisplay) setWorkspaceDisplay('board')
             setIsModalOpen(false)
         } catch (err) {
             console.log('err:', err)

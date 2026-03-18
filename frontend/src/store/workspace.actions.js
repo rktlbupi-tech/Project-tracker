@@ -34,6 +34,10 @@ export async function removeWorkspace(workspaceId) {
     }
 }
 
+export function syncWorkspaceRemoved(workspaceId) {
+    store.dispatch({ type: REMOVE_WORKSPACE, workspaceId })
+}
+
 export async function updateWorkspace(workspace) {
     try {
         const savedWorkspace = await workspaceService.save(workspace)

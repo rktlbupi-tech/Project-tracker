@@ -1,5 +1,6 @@
 const workspaceService = require('./workspace.service.js')
 const logger = require('../../services/logger.service')
+const socketService = require('../../services/socket.service')
 
 async function getWorkspaces(req, res) {
     try {
@@ -60,7 +61,14 @@ async function updateWorkspace(req, res) {
 async function removeWorkspace(req, res) {
     try {
         const workspaceId = req.params.id
+        const workspace = await workspaceService.getById(workspaceId)
+        
+        if (workspace.createdBy._id.toString() !== req.loggedinUser._id.toString()) {
+            return res.status(403).send({ err: 'Only the creator can delete this workspace' })
+        }
+
         const removedId = await workspaceService.remove(workspaceId)
+        socketService.broadcast({ type: 'workspace-removed', data: removedId, userId: req.loggedinUser._id })
         res.send(removedId)
     } catch (err) {
         logger.error('Failed to remove workspace', err)

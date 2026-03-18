@@ -59,6 +59,12 @@ async function remove(workspaceId) {
     try {
         const collection = await dbService.getCollection('workspace')
         await collection.deleteOne({ _id: ObjectId(workspaceId) })
+
+        // Delete associated boards
+        const boardCollection = await dbService.getCollection('board')
+        const deleteResult = await boardCollection.deleteMany({ workspaceId })
+        logger.info(`Deleted ${deleteResult.deletedCount} boards associated with workspace ${workspaceId}`)
+
         return workspaceId
     } catch (err) {
         logger.error(`cannot remove workspace ${workspaceId}`, err)

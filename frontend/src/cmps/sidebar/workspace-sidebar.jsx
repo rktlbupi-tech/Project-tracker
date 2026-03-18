@@ -1,14 +1,15 @@
 import { useSelector } from 'react-redux'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { loadBoards } from '../../store/board.actions'
-import { loadWorkspaces, setCurrWorkspace } from '../../store/workspace.actions'
+import { loadWorkspaces, setCurrWorkspace, syncWorkspaceRemoved } from '../../store/workspace.actions'
 import { boardService } from '../../services/board.service'
+import { socketService } from '../../services/socket.service'
 
 import { MdKeyboardArrowRight } from 'react-icons/md'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
 import WorkspaceBoard from './workspace/workspace-board'
-import { useCallback } from 'react'
 import WorkspaceFavorite from './workspace/workspace-favorite'
 import { Tooltip } from '@mui/material'
 
@@ -17,6 +18,8 @@ export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setI
     const workspaces = useSelector(storeState => storeState.workspaceModule.workspaces)
     const currWorkspaceId = useSelector(storeState => storeState.workspaceModule.currWorkspaceId)
     const user = useSelector(storeState => storeState.userModule.user)
+    const navigate = useNavigate()
+    const prevWorkspaceId = useRef(currWorkspaceId)
     
     // Select boards from store and filter them locally to ensure no 'leakage' from other workspaces
     const boards = useSelector(storeState => {
@@ -35,8 +38,38 @@ export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setI
         return allBoards
     })
 
+    // Auto-navigate to the first board of the new workspace when switching
+    useEffect(() => {
+        if (currWorkspaceId && prevWorkspaceId.current !== currWorkspaceId) {
+            // Only navigate if we find a board belonging to the NEW workspace in the store
+            const firstBoard = boards.find(b => b.workspaceId === currWorkspaceId)
+            if (firstBoard) {
+                navigate(`/board/${firstBoard._id}`)
+                prevWorkspaceId.current = currWorkspaceId
+            } else {
+                // Even if no board found, mark this workspace choice as "last handled" 
+                // so we don't jump the gun later when a board might be added to another workspace
+                // (Though we could keep it pending if we want to jump to the first board created)
+                prevWorkspaceId.current = currWorkspaceId
+            }
+        }
+    }, [currWorkspaceId, boards, navigate])
+
     useEffect(() => {
         if (user) loadWorkspaces()
+
+        socketService.on('workspace-removed', (removedWsId) => {
+            syncWorkspaceRemoved(removedWsId)
+            // If the deleted workspace was the active one, fallback
+            setCurrWorkspace((prev) => {
+                if (prev === removedWsId) return null // Let the other useEffect pick a new one
+                return prev
+            })
+        })
+
+        return () => {
+             socketService.off('workspace-removed')
+        }
     }, [user])
 
     useEffect(() => {
@@ -82,6 +115,7 @@ export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setI
                     workspaces={workspaces}
                     currWorkspaceId={currWorkspaceId}
                     setIsCreateWorkspaceModalOpen={setIsCreateWorkspaceModalOpen}
+                    user={user}
                 />)
                 :
                 (<WorkspaceFavorite boards={boards} />)}

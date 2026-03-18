@@ -96,6 +96,7 @@ export function BoardDetails() {
                 <MainSidebar setWorkspaceDisplay={setWorkspaceDisplay} setIsWorkspaceOpen={setIsWorkspaceOpen} setIsLoginModalOpen={setIsLoginModalOpen} />
                 <WorkspaceSidebar 
                     workspaceDisplay={workspaceDisplay} 
+                    setWorkspaceDisplay={setWorkspaceDisplay}
                     isWorkspaceOpen={isWorkspaceOpen} 
                     setIsWorkspaceOpen={setIsWorkspaceOpen} 
                     board={board} 
@@ -126,7 +127,7 @@ export function BoardDetails() {
                 )}
             </main>
             {isCreateModalOpen && <CreateBoard setIsModalOpen={setIsCreateModalOpen} />}
-            {isCreateWorkspaceModalOpen && <CreateWorkspace setIsModalOpen={setIsCreateWorkspaceModalOpen} />}
+            {isCreateWorkspaceModalOpen && <CreateWorkspace setIsModalOpen={setIsCreateWorkspaceModalOpen} setWorkspaceDisplay={setWorkspaceDisplay} />}
             {isAutomationsOpen && board && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
             {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || isCreateWorkspaceModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
             {isShowDescription && board &&
