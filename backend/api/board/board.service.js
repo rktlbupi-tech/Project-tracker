@@ -7,11 +7,14 @@ async function query(filterBy, loggedinUser) {
     try {
         const criteria = {}
         // logger.debug('Querying boards with loggedinUser:', loggedinUser)
-        console.log('Querying boards with loggedinUser:', loggedinUser)
-        
         if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
         
-        if (filterBy.isStarred) {
+        if (filterBy.workspaceId && filterBy.workspaceId !== 'undefined') {
+            criteria.workspaceId = filterBy.workspaceId
+        }
+
+        const isStarred = (filterBy.isStarred === 'true' || filterBy.isStarred === true)
+        if (isStarred) {
             const user = await userService.getById(loggedinUser._id)
             const starredBoardIds = user.starredBoardIds || []
             criteria._id = { $in: starredBoardIds.map(id => ObjectId(id)) }

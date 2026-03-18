@@ -1,16 +1,20 @@
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import { boardService } from "../../services/board.service";
 import { loadBoards, saveBoard } from "../../store/board.actions";
 import { AiOutlineClose } from "react-icons/ai";
 
 export function CreateBoard({ setIsModalOpen }) {
-    const[board, setBoard] = useState(boardService.getEmptyBoard())
+    const [board, setBoard] = useState(boardService.getEmptyBoard())
+    const currWorkspaceId = useSelector(storeState => storeState.workspaceModule.currWorkspaceId)
 
     async function onAddBoard(ev) {
         ev.preventDefault()
+        if (!board.title) return
         try {
-            await saveBoard(board)
-            loadBoards()
+            const boardToSave = { ...board, workspaceId: currWorkspaceId }
+            await saveBoard(boardToSave)
+            loadBoards({ workspaceId: currWorkspaceId })
             setIsModalOpen(false)
         } catch (err) {
             console.log('err:', err)

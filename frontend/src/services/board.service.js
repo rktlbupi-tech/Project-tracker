@@ -23,11 +23,7 @@ export const boardService = {
 }
 
 function query(filter = {}) {
-    filter = { ...getDefaultFilterBoards(), ...filter }
-    const title = filter.title || ''
-    const isStarred = filter.isStarred || false
-    const queryParams = `?title=${title}&isStarred=${isStarred}`
-    return httpService.get(BASE_URL + queryParams)
+    return httpService.get(BASE_URL, filter)
 }
 
 function getFilteredBoard(board, filterBy = getDefaultFilterBoard()) {

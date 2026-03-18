@@ -13,12 +13,14 @@ import { MainSidebar } from '../cmps/sidebar/main-sidebar'
 import { DynamicModal } from '../cmps/modal/dynamic-modal'
 import { boardService } from '../services/board.service'
 import { CreateBoard } from '../cmps/modal/create-board'
+import { CreateWorkspace } from '../cmps/modal/create-workspace'
 import { BoardHeader } from '../cmps/board/board-header'
 import { userService } from '../services/user.service'
 import { BoardModal } from '../cmps/board/board-modal'
 import { GroupList } from '../cmps/board/group-list'
 import { BoardAutomations } from '../cmps/board/board-automations'
 import { loadUsers } from '../store/user.actions'
+import { setCurrWorkspace } from '../store/workspace.actions'
 import { Loader } from '../cmps/loader'
 import { Dashboard } from './dashboard'
 
@@ -28,6 +30,7 @@ export function BoardDetails() {
     const isBoardModalOpen = useSelector(storeState => storeState.boardModule.isBoardModalOpen)
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+    const [isCreateWorkspaceModalOpen, setIsCreateWorkspaceModalOpen] = useState(false)
     const [isShowDescription, setIsShowDescription] = useState(false)
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
     const [isAutomationsOpen, setIsAutomationsOpen] = useState(false)
@@ -50,9 +53,14 @@ export function BoardDetails() {
     }, [searchStr]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
+        if (board?.workspaceId) {
+            setCurrWorkspace(board.workspaceId)
+        }
+    }, [board])
+
+    useEffect(() => {
         loadBoard(boardId, queryFilterBy)
         loadUsers()
-        if (!boards.length) loadBoards()
 
         const user = userService.getLoggedinUser()
         if (user) socketService.emit(SOCKET_EMIT_SET_USER_PRESENCE, user)
@@ -86,7 +94,14 @@ export function BoardDetails() {
         <section className="board-details flex">
             <div className='sidebar flex'>
                 <MainSidebar setWorkspaceDisplay={setWorkspaceDisplay} setIsWorkspaceOpen={setIsWorkspaceOpen} setIsLoginModalOpen={setIsLoginModalOpen} />
-                <WorkspaceSidebar workspaceDisplay={workspaceDisplay} isWorkspaceOpen={isWorkspaceOpen} setIsWorkspaceOpen={setIsWorkspaceOpen} board={board} setIsCreateModalOpen={setIsCreateModalOpen} />
+                <WorkspaceSidebar 
+                    workspaceDisplay={workspaceDisplay} 
+                    isWorkspaceOpen={isWorkspaceOpen} 
+                    setIsWorkspaceOpen={setIsWorkspaceOpen} 
+                    board={board} 
+                    setIsCreateModalOpen={setIsCreateModalOpen} 
+                    setIsCreateWorkspaceModalOpen={setIsCreateWorkspaceModalOpen}
+                />
             </div>
             <main className="board-main">
                 {board ? (
@@ -111,8 +126,9 @@ export function BoardDetails() {
                 )}
             </main>
             {isCreateModalOpen && <CreateBoard setIsModalOpen={setIsCreateModalOpen} />}
+            {isCreateWorkspaceModalOpen && <CreateWorkspace setIsModalOpen={setIsCreateWorkspaceModalOpen} />}
             {isAutomationsOpen && board && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
-            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
+            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || isCreateWorkspaceModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
             {isShowDescription && board &&
                 <>
                     <BoardDescription setIsShowDescription={setIsShowDescription} board={board} />

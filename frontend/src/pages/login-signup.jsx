@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState, useEffect, useCallback } from 'react'
 import { ImgUploader } from '../cmps/login/img-uploader'
 import { LoginPageHeader } from '../cmps/login/login-page-header'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { loadUsers, login, signup } from '../store/user.actions'
 import { loadBoards } from '../store/board.actions'
@@ -15,6 +15,8 @@ export function LoginSignup() {
     const [googleUser, setGoogleUser] = useState(null)
     const [isSignup, setIsSignup] = useState(false)
     const navigate = useNavigate()
+    const location = useLocation()
+    const returnTo = location.state?.returnTo
     const boards = useSelector(storeState => storeState.boardModule.boards)
     const users = useSelector(storeState => storeState.userModule.users)
 
@@ -39,7 +41,13 @@ export function LoginSignup() {
                 })
             }
 
-            // Check for pending invite
+            // Check for returnTo state (e.g. from an invite page)
+            if (returnTo) {
+                navigate(returnTo)
+                return
+            }
+
+            // Check for pending invite (legacy)
             const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
             if (pendingBoardId) {
                 await boardService.acceptInvite(pendingBoardId)
@@ -99,7 +107,13 @@ export function LoginSignup() {
                 await login(credentials)
             }
 
-            // Check for pending invite
+            // Check for returnTo state (e.g. from an invite page)
+            if (returnTo) {
+                navigate(returnTo)
+                return
+            }
+
+            // Check for pending invite (legacy)
             const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
             if (pendingBoardId) {
                 await boardService.acceptInvite(pendingBoardId)

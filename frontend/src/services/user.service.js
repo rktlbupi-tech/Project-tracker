@@ -78,6 +78,7 @@ async function logout() {
 function saveLocalUser(user) {
     user = { 
         _id: user._id, 
+        username: user.username,
         fullname: user.fullname, 
         imgUrl: user.imgUrl, 
         invitations: user.invitations || [],

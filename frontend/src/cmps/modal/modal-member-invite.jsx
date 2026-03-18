@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 
 import { loadBoard, saveBoard } from "../../store/board.actions"
-import { inviteUser } from "../../store/user.actions"
+import { inviteService } from "../../services/invite.service"
 
 import { VscTriangleUp } from 'react-icons/vsc'
 import { CiSearch } from 'react-icons/ci'
@@ -45,14 +45,18 @@ export function ModalMemberInvite({ board, setIsInviteModalOpen }) {
     async function onInvite(targetEmail = filter.txt) {
         if (!targetEmail) return
 
-        // Basic check: if it doesn't have @, we assume it's a search term unless it was clicked from suggestions
         if (!targetEmail.includes('@')) {
             alert('Please enter a valid email address')
             return
         }
 
         try {
-            await inviteUser(targetEmail, board._id, board.title)
+            // Include workspaceId if board has one
+            await inviteService.create({ 
+                email: targetEmail, 
+                boardId: board._id, 
+                workspaceId: board.workspaceId 
+            })
             setIsInviteModalOpen(false)
             alert(`Invitation sent to ${targetEmail}`)
         } catch (err) {
