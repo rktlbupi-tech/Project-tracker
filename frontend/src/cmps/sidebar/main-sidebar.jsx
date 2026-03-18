@@ -34,27 +34,50 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
         setTheme(prev => prev === 'light' ? 'dark' : 'light')
     }
     
-    const pendingCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
+    const pendingInvitationsCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
+    const pendingNotificationsCount = user?.notifications?.length || 0
+    const pendingCount = pendingInvitationsCount + pendingNotificationsCount
 
     useEffect(() => {
         const onInviteReceived = (invitation) => {
             loggerService.debug('Invitation received!', invitation)
-            const updatedInvitations = [...(user?.invitations || []), invitation]
+            const updatedInvitations = [invitation, ...(user?.invitations || [])]
             const updatedUser = { ...user, invitations: updatedInvitations }
             setUser(updatedUser)
         }
+
+        const onNotificationReceived = (notification) => {
+            loggerService.debug('Notification received!', notification)
+            const updatedNotifications = [notification, ...(user?.notifications || [])]
+            const updatedUser = { ...user, notifications: updatedNotifications }
+            setUser(updatedUser)
+        }
+
         socketService.on('invitation-received', onInviteReceived)
+        socketService.on('notification-received', onNotificationReceived)
         
         return () => {
              socketService.off('invitation-received', onInviteReceived)
+             socketService.off('notification-received', onNotificationReceived)
         }
-    }, [user]) // Re-bind whenever user changes to ensure latest user object in listener
+    }, [user])
 
     function onChooseIcon (icon) {
         setDisplay(icon)
         setWorkspaceDisplay(icon)
         setIsWorkspaceOpen(true)
         setIsNotificationOpen(false)
+    }
+
+    const { clearNotifications } = require('../../store/user.actions')
+
+    function onToggleNotification(ev) {
+        ev.stopPropagation()
+        if (isNotificationOpen) {
+            // If we are closing, we clear the notifications count according to user request
+            if (pendingNotificationsCount > 0) clearNotifications()
+        }
+        setIsNotificationOpen(!isNotificationOpen)
     }
 
     return (
@@ -84,13 +107,10 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
                 <Tooltip title="Notifications" arrow>
                     <div 
                         className={`icon-container notification-icon ${isNotificationOpen ? 'active' : ''}`} 
-                        onClick={(ev) => {
-                            ev.stopPropagation()
-                            setIsNotificationOpen(!isNotificationOpen)
-                        }}
+                        onClick={onToggleNotification}
                     >
                         <IoNotificationsOutline />
-                        {pendingCount > 0 && <span className="notification-badge">{pendingCount}</span>}
+                        {pendingCount > 0 && <span className="notification-badge">{pendingCount > 9 ? '9+' : pendingCount}</span>}
                     </div>
                 </Tooltip>
             </div>

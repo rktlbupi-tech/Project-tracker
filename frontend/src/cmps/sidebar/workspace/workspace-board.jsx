@@ -2,18 +2,17 @@ import React, { useState } from 'react'
 import { BsFillLightningFill } from 'react-icons/bs'
 import { IoIosArrowDown } from 'react-icons/io'
 import { AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
-
 import { BoardPreview } from '../../board/board-preview'
 import { setCurrWorkspace, removeWorkspace, addWorkspace } from '../../../store/workspace.actions'
 import { BsThreeDots } from 'react-icons/bs'
 
-export default function WorkspaceBoard({ 
-    handleChange, 
-    filterByToEdit, 
-    setIsCreateModalOpen, 
-    boards, 
-    workspaces, 
-    currWorkspaceId, 
+export default function WorkspaceBoard({
+    handleChange,
+    filterByToEdit,
+    setIsCreateModalOpen,
+    boards,
+    workspaces,
+    currWorkspaceId,
     setIsCreateWorkspaceModalOpen,
     user
 }) {
@@ -87,22 +86,22 @@ export default function WorkspaceBoard({
                             padding: '8px 0',
                             marginTop: '4px'
                         }}>
-                             <div className="dropdown-section-title" style={{ padding: '4px 16px', fontSize: '12px', color: '#676879', fontWeight: 'bold' }}>MY WORKSPACES</div>
-                             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                            <div className="dropdown-section-title" style={{ padding: '4px 16px', fontSize: '12px', color: '#676879', fontWeight: 'bold' }}>MY WORKSPACES</div>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                                 {workspaces.map(ws => (
-                                    <li 
-                                        key={ws._id} 
+                                    <li
+                                        key={ws._id}
                                         onClick={() => {
                                             setCurrWorkspace(ws._id)
                                             setIsWsSelectOpen(false)
                                         }}
                                         onMouseEnter={() => setHoveredWsId(ws._id)}
                                         onMouseLeave={() => setHoveredWsId(null)}
-                                        style={{ 
-                                            padding: '8px 16px', 
-                                            cursor: 'pointer', 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
+                                        style={{
+                                            padding: '8px 16px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
                                             justifyContent: 'space-between',
                                             backgroundColor: ws._id === currWorkspaceId ? 'var(--workspace-board-active)' : 'transparent',
                                             position: 'relative'
@@ -113,9 +112,9 @@ export default function WorkspaceBoard({
                                             <div style={{ width: '16px', height: '16px', backgroundColor: ws.color, borderRadius: '3px' }} />
                                             <span style={{ fontSize: '14px' }}>{ws.title}</span>
                                         </div>
-                                        
+
                                         {(hoveredWsId === ws._id || menuOpenWsId === ws._id) && (
-                                            <div 
+                                            <div
                                                 onClick={(ev) => {
                                                     ev.stopPropagation()
                                                     setMenuOpenWsId(menuOpenWsId === ws._id ? null : ws._id)
@@ -128,7 +127,7 @@ export default function WorkspaceBoard({
                                         )}
 
                                         {menuOpenWsId === ws._id && (
-                                            <div 
+                                            <div
                                                 className="shadow"
                                                 style={{
                                                     position: 'absolute',
@@ -141,14 +140,14 @@ export default function WorkspaceBoard({
                                                     overflow: 'hidden'
                                                 }}
                                             >
-                                                <div 
+                                                <div
                                                     onClick={(ev) => onDuplicateWorkspace(ev, ws)}
                                                     style={{ padding: '8px 12px', fontSize: '13px', cursor: 'pointer', display: 'block' }}
                                                     className="opts-item"
                                                 >
                                                     Duplicate
                                                 </div>
-                                                <div 
+                                                <div
                                                     onClick={(ev) => {
                                                         const isOwner = user?._id === ws.createdBy?._id
                                                         if (!isOwner) {
@@ -157,11 +156,11 @@ export default function WorkspaceBoard({
                                                         }
                                                         onDeleteWorkspace(ev, ws._id, ws.createdBy?._id)
                                                     }}
-                                                    style={{ 
-                                                        padding: '8px 12px', 
-                                                        fontSize: '13px', 
-                                                        cursor: user?._id === ws.createdBy?._id ? 'pointer' : 'not-allowed', 
-                                                        display: 'block', 
+                                                    style={{
+                                                        padding: '8px 12px',
+                                                        fontSize: '13px',
+                                                        cursor: user?._id === ws.createdBy?._id ? 'pointer' : 'not-allowed',
+                                                        display: 'block',
                                                         color: user?._id === ws.createdBy?._id ? 'red' : '#c3cfd9'
                                                     }}
                                                     className="opts-item"
@@ -173,9 +172,9 @@ export default function WorkspaceBoard({
                                         )}
                                     </li>
                                 ))}
-                             </ul>
-                             <div style={{ borderTop: '1px solid #eee', marginTop: '8px', paddingTop: '8px' }}>
-                                <div 
+                            </ul>
+                            <div style={{ borderTop: '1px solid #eee', marginTop: '8px', paddingTop: '8px' }}>
+                                <div
                                     onClick={() => {
                                         setIsCreateWorkspaceModalOpen(true)
                                         setIsWsSelectOpen(false)
@@ -185,7 +184,7 @@ export default function WorkspaceBoard({
                                     <AiOutlinePlus />
                                     <span style={{ fontSize: '14px', fontWeight: '500' }}>Add new workspace</span>
                                 </div>
-                             </div>
+                            </div>
                         </div>
                     )}
                 </div>

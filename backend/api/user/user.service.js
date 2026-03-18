@@ -11,6 +11,8 @@ module.exports = {
     add,
     addInvitation,
     updateInvitationStatus,
+    addNotification,
+    clearNotifications,
     toggleStarredBoard,
     makeId
 }
@@ -102,6 +104,7 @@ async function update(user) {
             password: user.password,
             imgUrl: user.imgUrl,
             invitations: user.invitations || [],
+            notifications: user.notifications || [],
             starredBoardIds: user.starredBoardIds || []
         }
         const collection = await dbService.getCollection('user')
@@ -122,6 +125,7 @@ async function add(user) {
             fullname: user.fullname,
             imgUrl: user.imgUrl,
             invitations: [],
+            notifications: [],
             starredBoardIds: []
         }
         const collection = await dbService.getCollection('user')
@@ -164,6 +168,34 @@ async function updateInvitationStatus(userId, invitationId, status) {
         return getById(userId)
     } catch (err) {
         logger.error(`cannot update invitation status for user ${userId}`, err)
+        throw err
+    }
+}
+
+async function addNotification(userId, notification) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $push: { notifications: { $each: [notification], $position: 0 } } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot add notification to user ${userId}`, err)
+        throw err
+    }
+}
+
+async function clearNotifications(userId) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $set: { notifications: [] } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot clear notifications for user ${userId}`, err)
         throw err
     }
 }

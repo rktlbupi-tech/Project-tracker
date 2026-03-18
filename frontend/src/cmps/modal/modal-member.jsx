@@ -10,17 +10,26 @@ export function ModalMember({ dynamicModalObj }) {
     const [filter, setFilter] = useState({ txt: '' })
     const [outTaskMembers, setOutTaskMembers] = useState([])
     const board = useSelector(storeState => storeState.boardModule.board)
+
+    const allBoardMembers = useMemo(() => {
+        if (!board) return []
+        const members = [...(board.members || [])]
+        if (board.createdBy && !members.some(m => m._id === board.createdBy._id)) {
+            members.push(board.createdBy)
+        }
+        return members
+    }, [board.members, board.createdBy])
     
     const taskMembers = useMemo(() => {
         if (!dynamicModalObj.task?.memberIds) return []
         return dynamicModalObj.task.memberIds.map(memberId => {
-            return board.members.find(member => member._id === memberId)
+            return allBoardMembers.find(member => member._id === memberId)
         }).filter(Boolean)
     }, [board.members, dynamicModalObj.task.memberIds])
 
     useEffect(() => {
-        setOutTaskMembers(board.members.filter(member => !taskMembers.find(tm => tm._id === member._id)))
-    }, [board.members, taskMembers])
+        setOutTaskMembers(allBoardMembers.filter(member => !taskMembers.find(tm => tm._id === member._id)))
+    }, [allBoardMembers, taskMembers])
 
     function onRemoveMember(RemoveTaskMember) {
         dynamicModalObj.activity.from = 'Remove'
@@ -48,7 +57,7 @@ export function ModalMember({ dynamicModalObj }) {
 
     function onSubmit(ev) {
         ev.preventDefault()
-        let members = board.members.filter(member => !taskMembers.find(tm => tm._id === member._id))
+        let members = allBoardMembers.filter(member => !taskMembers.find(tm => tm._id === member._id))
         if (filter.txt) {
             const regex = new RegExp(filter.txt, 'i')
             members = members.filter(member => regex.test(member.fullname))

@@ -45,11 +45,17 @@ async function getById(boardId, loggedinUser) {
 
         if (!board) return null
 
-        // If no user is provided, we assume it's a system action (e.g., from Automation Engine)
+        // If no user is provided and it's not a public check, we assume it's a system action 
+        // In a real app, we would check if the board is public here.
         if (!loggedinUser) return board
 
-        // Check permission if board is not public (assuming all are private for now)
-        if (board.createdBy._id.toString() !== loggedinUser._id.toString() && !board.members.find(m => m._id.toString() === loggedinUser._id.toString())) {
+        // Robust permission check
+        const loggedinUserId = loggedinUser._id.toString()
+        const creatorId = board.createdBy?._id?.toString()
+        const isCreator = creatorId === loggedinUserId
+        const isMember = board.members?.some(m => m._id && m._id.toString() === loggedinUserId)
+
+        if (!isCreator && !isMember) {
             const error = new Error('Not Authorized to view this board')
             error.status = 403
             throw error
@@ -87,16 +93,82 @@ async function add(board) {
 
 async function update(board, loggedinUser) {
     try {
-        await getById(board._id, loggedinUser) // This will throw if no permission
+        const prevBoard = await getById(board._id, loggedinUser) // This will throw if no permission
         const boardToSave = {...board}
         delete boardToSave._id
         const collection = await dbService.getCollection('board')
         await collection.updateOne({ _id: ObjectId(board._id) }, { $set: boardToSave })
+        
+        // Detect task assignment changes across the entire board
+        if (loggedinUser) {
+            _sendTaskAssignmentNotifications(board, prevBoard, loggedinUser)
+        }
+
         return board
     } catch (err) {
         logger.error(`cannot update board ${board._id}`, err)
         throw err
     }
+}
+
+async function _sendTaskAssignmentNotifications(board, prevBoard, loggedinUser) {
+    const socketService = require('../../services/socket.service')
+    
+    // Create a map of previous task members for easy comparison
+    const prevTaskMembersMap = {}
+    prevBoard.groups.forEach(group => {
+        group.tasks.forEach(task => {
+            prevTaskMembersMap[task.id] = task.memberIds || []
+        })
+    })
+
+    board.groups.forEach(group => {
+        group.tasks.forEach(task => {
+            const prevMemberIds = prevTaskMembersMap[task.id] || []
+            const nextMemberIds = task.memberIds || []
+            const newMemberIds = nextMemberIds.filter(id => !prevMemberIds.includes(id))
+
+            if (newMemberIds.length > 0) {
+                newMemberIds.forEach(async (memberId) => {
+                    // Don't notify yourself
+                    const memberIdStr = memberId.toString()
+                    const loggedinUserIdStr = loggedinUser._id.toString()
+                    if (memberIdStr === loggedinUserIdStr) return
+
+                    const notification = {
+                        id: userService.makeId(),
+                        type: 'task-assigned',
+                        from: {
+                            _id: loggedinUser._id,
+                            fullname: loggedinUser.fullname,
+                            imgUrl: loggedinUser.imgUrl
+                        },
+                        board: {
+                            _id: board._id,
+                            title: board.title
+                        },
+                        task: {
+                            id: task.id,
+                            title: task.title
+                        },
+                        createdAt: Date.now(),
+                        isRead: false
+                    }
+
+                    try {
+                        await userService.addNotification(memberIdStr, notification)
+                        socketService.emitToUser({
+                            type: 'notification-received',
+                            data: notification,
+                            userId: memberIdStr
+                        })
+                    } catch (notiErr) {
+                        logger.error(`Failed to send notification to ${memberIdStr}`, notiErr)
+                    }
+                })
+            }
+        })
+    })
 }
 
 async function updateTask(boardId, groupId, taskId, saveTask, loggedinUser){

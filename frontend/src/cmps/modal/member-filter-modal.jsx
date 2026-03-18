@@ -13,6 +13,9 @@ export function MemberFilterModal({dynamicModalObj}) {
     function getUsersToFilter() {
         const usersMap = {}
         board.members.forEach(m => usersMap[m._id] = m)
+        if (board.createdBy && !usersMap[board.createdBy._id]) {
+            usersMap[board.createdBy._id] = board.createdBy
+        }
         board.activities.forEach(activity => {
             if (activity.byMember && !usersMap[activity.byMember._id]) {
                 usersMap[activity.byMember._id] = activity.byMember
