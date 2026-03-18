@@ -27,6 +27,7 @@ export function StatisticGroup({ cmpType, group, board }) {
         switch (cmpType) {
             case 'member-picker':
                 return
+            /*
             case 'status-picker':
                 return (
                     <div className="statistic-group-container flex column">
@@ -45,6 +46,7 @@ export function StatisticGroup({ cmpType, group, board }) {
                         </div>
                     </div>
                 )
+            */
             case 'date-picker':
                 return []
             case 'number-picker':

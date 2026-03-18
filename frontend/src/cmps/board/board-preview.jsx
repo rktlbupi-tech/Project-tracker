@@ -42,7 +42,7 @@ export function BoardPreview({ board }) {
     function onToggleMemberFilterModal() {
         const isOpen = dynamicModalObj?.type === 'board-menu' ? !dynamicModalObj.isOpen : true
         const { x, y } = elBoardPreview.current.getClientRects()[0]
-        setDynamicModalObj({ isOpen, pos: { x: (x + 190), y: (y + 35) }, type: 'board-menu', onRemove: onRemove, onDuplicate: onDuplicate})
+        setDynamicModalObj({ isOpen, pos: { x: (x + 190), y: (y + 35) }, type: 'board-menu', onRemove: onRemove, onDuplicate: onDuplicate, board: board })
     }
 
     return (

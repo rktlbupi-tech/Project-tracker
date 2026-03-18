@@ -380,8 +380,7 @@ export function setDynamicModalObj(dynamicModalObj) {
 
 export function closeDynamicModal() {
     const { dynamicModalObj } = store.getState().boardModule
-    dynamicModalObj.isOpen = false
-    store.dispatch({ type: SET_DYNAMIC_MODAL, dynamicModalObj })
+    store.dispatch({ type: SET_DYNAMIC_MODAL, dynamicModalObj: { ...dynamicModalObj, isOpen: false } })
 }
 
 // Drag and drop

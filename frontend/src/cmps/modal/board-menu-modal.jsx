@@ -4,9 +4,13 @@ import { useSelector } from 'react-redux'
 import { setDynamicModalObj } from '../../store/board.actions'
 
 export function BoardMenuModal({ dynamicModalObj }) {
-    const board = useSelector(storeState => storeState.boardModule.filteredBoard)
+    const user = useSelector(storeState => storeState.userModule.user)
+    const board = dynamicModalObj.board
+
+    const isCreator = user?._id === board?.createdBy?._id
 
     function onRemoveBoard() {
+        if (!isCreator) return
         setDynamicModalObj({ isOpen: false})
         dynamicModalObj.onRemove(board._id)
     }   
@@ -22,7 +26,16 @@ export function BoardMenuModal({ dynamicModalObj }) {
                 <HiOutlineDocumentDuplicate />
                 <span>Duplicate Board</span>
             </div>
-            <div className="delete" onClick={onRemoveBoard}>
+            <div 
+                className={`delete ${!isCreator ? 'disabled' : ''}`} 
+                onClick={onRemoveBoard}
+                title={!isCreator ? 'Only the board creator can delete this board' : ''}
+                style={{
+                    color: isCreator ? '#e2445c' : '#c3cfd9',
+                    cursor: isCreator ? 'pointer' : 'not-allowed',
+                    opacity: isCreator ? 1 : 0.7
+                }}
+            >
                 <FiTrash />
                 <span>Delete</span>
             </div>

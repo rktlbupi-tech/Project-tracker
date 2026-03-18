@@ -80,9 +80,9 @@ export function InvitePage() {
                 {!user && (
                     <div className="auth-required flex column align-center">
                         <p>Please log in or sign up to accept this invitation.</p>
-                        <div className="flex" style={{gap: '12px'}}>
-                            <button onClick={() => navigate('/auth/login', { state: { returnTo: `/invite/${token}` } })}>Login</button>
-                            <button onClick={() => navigate('/auth/signup', { state: { returnTo: `/invite/${token}` } })}>Sign Up</button>
+                        <div className="flex actions">
+                            <button className="auth-btn" onClick={() => navigate('/auth/login', { state: { returnTo: `/invite/${token}` } })}>Login</button>
+                            <button className="auth-btn" onClick={() => navigate('/auth/signup', { state: { returnTo: `/invite/${token}` } })}>Sign Up</button>
                         </div>
                     </div>
                 )}

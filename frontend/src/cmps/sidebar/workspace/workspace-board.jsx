@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { BsFillLightningFill } from 'react-icons/bs'
 import { IoIosArrowDown } from 'react-icons/io'
 import { AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
-import { AiFillHome } from 'react-icons/ai'
+
 import { BoardPreview } from '../../board/board-preview'
 import { setCurrWorkspace, removeWorkspace, addWorkspace } from '../../../store/workspace.actions'
 import { BsThreeDots } from 'react-icons/bs'
@@ -69,7 +69,7 @@ export default function WorkspaceBoard({
                             <div className='lightning-container' style={{ backgroundColor: currWorkspace?.color || '#735dd1' }}>
                                 <BsFillLightningFill />
                             </div>
-                            <AiFillHome className='home' />
+
                             <h5 className='workspace-title'>{currWorkspace?.title || 'Main Workspace'}</h5>
                         </div>
                         <IoIosArrowDown className={`icon ${isWsSelectOpen ? 'rotate' : ''}`} />
@@ -81,7 +81,7 @@ export default function WorkspaceBoard({
                             top: '100%',
                             left: 0,
                             width: '100%',
-                            backgroundColor: 'white',
+                            backgroundColor: 'var(--bg-primary)',
                             zIndex: 100,
                             borderRadius: '4px',
                             padding: '8px 0',
@@ -104,7 +104,7 @@ export default function WorkspaceBoard({
                                             display: 'flex', 
                                             alignItems: 'center', 
                                             justifyContent: 'space-between',
-                                            backgroundColor: ws._id === currWorkspaceId ? '#e1f2ff' : 'transparent',
+                                            backgroundColor: ws._id === currWorkspaceId ? 'var(--workspace-board-active)' : 'transparent',
                                             position: 'relative'
                                         }}
                                         className="ws-item"
@@ -134,7 +134,7 @@ export default function WorkspaceBoard({
                                                     position: 'absolute',
                                                     right: '16px',
                                                     top: '32px',
-                                                    backgroundColor: 'white',
+                                                    backgroundColor: 'var(--bg-primary)',
                                                     borderRadius: '4px',
                                                     zIndex: 200,
                                                     width: '120px',

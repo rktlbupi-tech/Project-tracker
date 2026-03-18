@@ -41,6 +41,8 @@ export function CreateBoard({ setIsModalOpen }) {
                         name="title"
                         value={board.title}
                         onChange={handleChange}
+                        placeholder="e.g. Weekly Tasks"
+                        autoFocus
                         />
                 <button></button>
             </form>

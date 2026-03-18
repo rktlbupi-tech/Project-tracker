@@ -31,7 +31,9 @@ export function GroupPreview({ group, board, idx }) {
 
     function loadColumns() {
         const columns = board.cmpsOption.filter(cmpOption => {
-            return !board.cmpsOrder.includes(cmpOption)
+            const isBoardGlobal = board.cmpsOrder.includes(cmpOption)
+            const isGroupHidden = (group.hiddenColumns || []).includes(cmpOption)
+            return !isBoardGlobal || isGroupHidden
         })
         return columns
     }
@@ -158,7 +160,7 @@ export function GroupPreview({ group, board, idx }) {
                                         </div>
                                         <div className="task title">Task</div>
                                     </div>
-                                    {board.cmpsOrder.map((title, idx) =>
+                                    {board.cmpsOrder.filter(cmp => !(group.hiddenColumns || []).includes(cmp)).map((title, idx) =>
                                         <Draggable key={title + (group.id || group._id)} draggableId={title + (group.id || group._id)} index={idx}>
                                             {(provided, snapshot) => {
                                                 return (
@@ -210,21 +212,23 @@ export function GroupPreview({ group, board, idx }) {
                                 </div>
                             )}
                         </Droppable>
-                        <div className="statistic flex">
-                            <div className="sticky-container">
-                                <div className="hidden"></div>
+                        {board.cmpsOrder.some(cmp => cmp === 'number-picker' && !(group.hiddenColumns || []).includes(cmp)) && (
+                            <div className="statistic flex">
+                                <div className="sticky-container">
+                                    <div className="hidden"></div>
+                                </div>
+                                <div className="statistic-container flex">
+                                    {board.cmpsOrder.filter(cmp => !(group.hiddenColumns || []).includes(cmp)).map((cmpType, idx) => {
+                                        return (
+                                            <div key={idx} className={`title ${idx === 0 ? ' first ' : ''}${cmpType}`}>
+                                                <StatisticGroup cmpType={cmpType} board={board} group={group} />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <div className="empty-div"></div>
                             </div>
-                            <div className="statistic-container flex">
-                                {board.cmpsOrder.map((cmpType, idx) => {
-                                    return (
-                                        <div key={idx} className={`title ${idx === 0 ? ' first ' : ''}${cmpType}`}>
-                                            <StatisticGroup cmpType={cmpType} board={board} group={group} />
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="empty-div"></div>
-                        </div>
+                        )}
                     </div>
                 </div>
             }}

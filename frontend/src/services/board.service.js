@@ -98,6 +98,7 @@ function getEmptyGroup() {
         "archivedAt": Date.now(),
         "tasks": [],
         "color": '#ffcb00',
+        "hiddenColumns": [],
     }
 }
 
@@ -112,7 +113,7 @@ function getEmptyTask() {
         "updatedBy": {
             "imgUrl": "",
         },
-        "file": "",
+        "files": [],
         "version": 0
     }
 }
@@ -154,7 +155,7 @@ function getEmptyActivity() {
 
 function getEmptyBoard() {
     return {
-        "title": 'New Board',
+        "title": '',
         "archivedAt": Date.now(),
         "isStarred": false,
         "createdBy": userService.getLoggedinUser(),

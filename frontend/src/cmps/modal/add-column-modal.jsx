@@ -3,21 +3,25 @@ import { CiCalculator2, CiCalendarDate } from 'react-icons/ci'
 import { RxCountdownTimer } from "react-icons/rx"
 import { BsCheckSquare } from "react-icons/bs"
 import { HiOutlineUserCircle } from 'react-icons/hi'
-import { loadBoard, saveBoard, setDynamicModalObj } from '../../store/board.actions'
+import { loadBoard, saveBoard, setDynamicModalObj, updateGroupAction } from '../../store/board.actions'
 import { useSelector } from 'react-redux'
 
 const statusImg = require('../../assets/img/status.png')
 
 export function AddColumnModal ({ dynamicModalObj }) {
     const board = useSelector(storeState => storeState.boardModule.filteredBoard)
+    const { group } = dynamicModalObj
 
-    console.log(dynamicModalObj.columns)
-    
     async function addColumn (columnType) {
         try {
-            board.cmpsOrder.push(columnType)
-            await saveBoard(board)
-            loadBoard(board._id)
+            if (group && group.hiddenColumns?.includes(columnType)) {
+                const groupToUpdate = { ...group, hiddenColumns: group.hiddenColumns.filter(c => c !== columnType) }
+                await updateGroupAction(board, groupToUpdate)
+            } else if (!board.cmpsOrder.includes(columnType)) {
+                board.cmpsOrder.push(columnType)
+                await saveBoard(board)
+                loadBoard(board._id)
+            }
             dynamicModalObj.isOpen = false
             setDynamicModalObj(dynamicModalObj)
         } catch (err) {
