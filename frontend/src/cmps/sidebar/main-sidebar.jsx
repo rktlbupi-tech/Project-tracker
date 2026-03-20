@@ -35,7 +35,7 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
     }
     
     const pendingInvitationsCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
-    const pendingNotificationsCount = user?.notifications?.length || 0
+    const pendingNotificationsCount = user?.notifications?.filter(noti => !noti.isRead && noti.createdAt > (user.lastSeenNotifications || 0)).length || 0
     const pendingCount = pendingInvitationsCount + pendingNotificationsCount
 
     useEffect(() => {
@@ -69,13 +69,13 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
         setIsNotificationOpen(false)
     }
 
-    const { clearNotifications } = require('../../store/user.actions')
+    const { updateLastSeenNotifications, markNotificationsRead, clearNotifications } = require('../../store/user.actions')
 
     function onToggleNotification(ev) {
         ev.stopPropagation()
-        if (isNotificationOpen) {
-            // If we are closing, we clear the notifications count according to user request
-            if (pendingNotificationsCount > 0) clearNotifications()
+        if (!isNotificationOpen) {
+            // Update last seen to clear badge
+            updateLastSeenNotifications()
         }
         setIsNotificationOpen(!isNotificationOpen)
     }

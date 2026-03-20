@@ -111,6 +111,28 @@ export async function clearNotifications() {
     }
 }
 
+export async function markNotificationsRead() {
+    try {
+        const user = await userService.markNotificationsRead()
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        loggerService.error('Cannot mark notifications as read', err)
+        throw err
+    }
+}
+
+export async function updateLastSeenNotifications() {
+    try {
+        const user = await userService.updateLastSeenNotifications()
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        loggerService.error('Cannot update last seen notifications', err)
+        throw err
+    }
+}
+
 export function setUser(user) {
     store.dispatch({ type: SET_USER, user })
 }

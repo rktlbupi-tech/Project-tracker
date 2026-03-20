@@ -18,7 +18,9 @@ export const userService = {
     invite,
     updateInvitation,
     toggleStarred,
-    clearNotifications
+    clearNotifications,
+    markNotificationsRead,
+    updateLastSeenNotifications
 }
 
 window.userService = userService
@@ -61,6 +63,16 @@ async function clearNotifications() {
     return saveLocalUser(user)
 }
 
+async function markNotificationsRead() {
+    const user = await httpService.post(BASE_URL + 'mark-read')
+    return saveLocalUser(user)
+}
+
+async function updateLastSeenNotifications() {
+    const user = await httpService.post(BASE_URL + 'update-last-seen')
+    return saveLocalUser(user)
+}
+
 async function login(userCred) {
     const user = await httpService.post('auth/login', userCred)
     if (user) {
@@ -89,7 +101,8 @@ function saveLocalUser(user) {
         imgUrl: user.imgUrl, 
         invitations: user.invitations || [],
         notifications: user.notifications || [],
-        starredBoardIds: user.starredBoardIds || []
+        starredBoardIds: user.starredBoardIds || [],
+        lastSeenNotifications: user.lastSeenNotifications || 0
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
