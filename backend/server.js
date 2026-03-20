@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({ path: ['.env.local', '.env'] })
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
@@ -50,6 +50,7 @@ setupSocketAPI(http)
 
 // Initialize Automation and Socket Event listeners
 require('./services/automation.service')
+require('./services/deadline-reminder.service')
 registerSocketEvents()
 
 app.get('/**', (req, res) => {

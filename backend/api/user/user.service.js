@@ -13,6 +13,8 @@ module.exports = {
     updateInvitationStatus,
     addNotification,
     clearNotifications,
+    markNotificationsRead,
+    updateLastSeenNotifications,
     toggleStarredBoard,
     makeId
 }
@@ -196,6 +198,34 @@ async function clearNotifications(userId) {
         return getById(userId)
     } catch (err) {
         logger.error(`cannot clear notifications for user ${userId}`, err)
+        throw err
+    }
+}
+
+async function markNotificationsRead(userId) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $set: { 'notifications.$[].isRead': true } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot mark notifications as read for user ${userId}`, err)
+        throw err
+    }
+}
+
+async function updateLastSeenNotifications(userId) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId) },
+            { $set: { lastSeenNotifications: Date.now() } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot update last seen notifications for user ${userId}`, err)
         throw err
     }
 }

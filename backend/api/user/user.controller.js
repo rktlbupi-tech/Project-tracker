@@ -156,6 +156,28 @@ async function clearNotifications(req, res) {
     }
 }
 
+async function markNotificationsRead(req, res) {
+    try {
+        const userId = req.loggedinUser._id
+        const user = await userService.markNotificationsRead(userId)
+        res.send(user)
+    } catch (err) {
+        logger.error('Failed to mark notifications as read', err)
+        res.status(500).send({ err: 'Failed to mark notifications as read' })
+    }
+}
+
+async function updateLastSeenNotifications(req, res) {
+    try {
+        const userId = req.loggedinUser._id
+        const user = await userService.updateLastSeenNotifications(userId)
+        res.send(user)
+    } catch (err) {
+        logger.error('Failed to update last seen notifications', err)
+        res.status(500).send({ err: 'Failed to update last seen notifications' })
+    }
+}
+
 module.exports = {
     getUser,
     getUsers,
@@ -164,5 +186,7 @@ module.exports = {
     inviteUser,
     updateInvitation,
     toggleStarred,
-    clearNotifications
+    clearNotifications,
+    markNotificationsRead,
+    updateLastSeenNotifications
 }

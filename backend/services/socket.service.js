@@ -60,8 +60,9 @@ function setupSocketAPI(http) {
         })
         
         socket.on('set-user-presence', user => {
-            logger.info(`Setting socket.user for presence [id: ${socket.id}]`)
+            logger.info(`Setting socket.user and socket.userId for presence [id: ${socket.id}, userId: ${user?._id}]`)
             socket.user = user
+            if (user?._id) socket.userId = user._id.toString()
             if (socket.myBoard) {
                 _addToBoard(socket, socket.myBoard, user)
             }

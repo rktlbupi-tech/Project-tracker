@@ -80,6 +80,13 @@ export function AddColumnModal ({ dynamicModalObj }) {
                         Updated
                     </div>
                 )
+            case "deadline-picker":
+                return (
+                    <div onClick={() => addColumn('deadline-picker')}>
+                        <RxCountdownTimer />
+                        Deadline
+                    </div>
+                )
             case "checkbox-picker":
                 return (
                     <div onClick={() => addColumn('checkbox-picker')}>
@@ -92,7 +99,7 @@ export function AddColumnModal ({ dynamicModalObj }) {
         }
     }
 
-    if (!dynamicModalObj.columns.length) return <div></div>
+    if (!dynamicModalObj.columns || !dynamicModalObj.columns.length) return <div></div>
     return <ul className="add-column-modal">
         {dynamicModalObj.columns.map((column, idx) => <li key={idx}> {getIconAction(column)} </li>)}
     </ul >

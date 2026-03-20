@@ -88,8 +88,9 @@ async function updateTask(req, res) {
     const group = board.groups.find(g => (g.id === groupId || g._id === groupId))
     const taskToSend = group.tasks.find(t => (t.id === taskId || t._id === taskId))
     
-    // Event emitted for the Automation Engine
-    eventBus.emit('TASK_UPDATED', { boardId, groupId, task: taskToSend })
+    // Event emitted for the Automation Engine (including the updated field for context)
+    const { updatedField } = task
+    eventBus.emit('TASK_UPDATED', { boardId, groupId, task: taskToSend, updatedField })
 
     res.send(board)
   } catch (err) {

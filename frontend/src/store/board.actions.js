@@ -278,7 +278,7 @@ export async function updateGroupAction(filteredBoard, saveGroup) {
     }
 }
 
-export async function updateTaskAction(filteredBoard, groupId, saveTask, activity) {
+export async function updateTaskAction(filteredBoard, groupId, saveTask, activity, field) {
     const prevBoard = structuredClone(store.getState().boardModule.board)
     const prevFilteredBoard = structuredClone(store.getState().boardModule.filteredBoard)
 
@@ -303,7 +303,7 @@ export async function updateTaskAction(filteredBoard, groupId, saveTask, activit
         if (activity) {
             await boardService.save(newBoard)
         }
-        await boardService.updateTask(newFilteredBoard._id, groupId, saveTask)
+        await boardService.updateTask(newFilteredBoard._id, groupId, saveTask, field)
     } catch (err) {
         // Rollback on failure
         store.dispatch({ type: SET_BOARD, board: prevBoard })

@@ -233,4 +233,17 @@
         flex-grow: 1;
         padding-right: 20px;
     }
-}
+
+    .deadline-picker {
+        &.soon {
+            background-color: #ffcb00; // Amber
+            color: white;
+            input { color: white !important; }
+        }
+        &.overdue {
+            background-color: #e2445c; // Red
+            color: white;
+            input { color: white !important; }
+        }
+    }
+}

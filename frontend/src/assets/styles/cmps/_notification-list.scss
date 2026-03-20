@@ -2,7 +2,7 @@
     position: fixed;
     top: 155px;
     left: 66px;
-    width: 350px;
+    width: 420px; // Slightly wider for actions
     background-color: $bg-primary;
     box-shadow: $glass-shadow;
     border-radius: 8px;
@@ -32,11 +32,43 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 12px;
 
         h3 {
             margin: 0;
             font-size: 16px;
             color: $text-primary;
+            white-space: nowrap;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-grow: 1;
+            justify-content: flex-end;
+
+            button {
+                background: none;
+                border: none;
+                font-size: 12px;
+                color: #0073ea;
+                cursor: pointer;
+                padding: 4px 8px;
+                border-radius: 4px;
+                white-space: nowrap;
+                font-weight: 500;
+
+                &:hover {
+                    background-color: rgba(0, 115, 234, 0.1);
+                }
+
+                &.clear-all-btn {
+                    color: #e02d3c;
+                    &:hover {
+                        background-color: rgba(224, 45, 60, 0.1);
+                    }
+                }
+            }
         }
 
         .close-btn {
@@ -68,6 +100,7 @@
             padding: 12px 16px;
             border-bottom: 1px solid $border-color;
             transition: background-color 0.2s;
+            position: relative;
 
             &:last-child {
                 border-bottom: none;
@@ -77,6 +110,28 @@
                 cursor: pointer;
                 &:hover {
                     background-color: var(--bg-hover);
+                }
+            }
+
+            &.unread {
+                background-color: rgba(0, 115, 234, 0.05);
+                
+                &::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 4px;
+                    background-color: #0073ea;
+                }
+                
+                &:hover {
+                    background-color: rgba(0, 115, 234, 0.1);
+                }
+
+                strong {
+                    color: #0073ea !important;
                 }
             }
 

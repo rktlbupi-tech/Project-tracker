@@ -11,6 +11,7 @@ import { UpdatedPicker } from "./updated-picker"
 import { NumberPicker } from "./number-picker"
 import { FilePicker } from "./file-picker"
 import { loggerService } from "../../services/logger.service"
+import { DeadlinePicker } from "./deadline-picker"
 
 import { TbArrowsDiagonal } from 'react-icons/tb'
 import { BiDotsHorizontalRounded, BiMessageRoundedAdd } from 'react-icons/bi'
@@ -39,7 +40,7 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
         taskToUpdate.updatedBy.date = Date.now()
         taskToUpdate.updatedBy.imgUrl = (user && user.imgUrl) || guest
         try {
-            await updateTaskAction(board, group.id, taskToUpdate, activity)
+            await updateTaskAction(board, group.id, taskToUpdate, activity, cmpType)
         } catch (err) {
             loggerService.error('Error updating task field', err)
         }
@@ -82,7 +83,11 @@ export function TaskPreview({ task, group, board, handleCheckboxChange, isMainCh
     }
 
     return (
-        <section className={'task-preview flex'} ref={elTaskPreview}>
+        <section 
+            className={'task-preview flex'} 
+            ref={elTaskPreview}
+            style={task.style || {}}
+        >
             <div ref={elMenuTask} className="sticky-div" style={{ borderColor: group.color }}>
                 <div className="task-menu">
                     <BiDotsHorizontalRounded className="icon" onClick={onToggleTaskModal} />
@@ -144,6 +149,8 @@ function DynamicCmp({ cmp, info, onUpdate }) {
             return <FilePicker info={info} onUpdate={onUpdate} />
         case "updated-picker":
             return <UpdatedPicker info={info} onUpdate={onUpdate} />
+        case "deadline-picker":
+            return <DeadlinePicker info={info} onUpdate={onUpdate} />
         default:
             return <p>UNKNOWN {cmp}</p>
     }
