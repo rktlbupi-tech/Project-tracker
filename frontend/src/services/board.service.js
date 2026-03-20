@@ -57,8 +57,8 @@ function save(board) {
     return httpService.post(BASE_URL, board)
 }
 
-function updateTask(boardId, groupId, task) {
-    return httpService.put(`${BASE_URL}${boardId}/${groupId}/${task.id}`, task)
+function updateTask(boardId, groupId, task, updatedField) {
+    return httpService.put(`${BASE_URL}${boardId}/${groupId}/${task.id}`, { ...task, updatedField })
 }
 
 function updateGroup(boardId, group) {
@@ -109,6 +109,7 @@ function getEmptyTask() {
         "priority": "",
         "memberIds": [],
         "dueDate": '',
+        "deadline": '',
         "comments": [],
         "updatedBy": {
             "imgUrl": "",
@@ -200,9 +201,9 @@ function getEmptyBoard() {
         "groups": [],
         "activities": [],
         "automations": [],
-        "cmpsOrder": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'updated-picker'],
+        "cmpsOrder": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'updated-picker', 'deadline-picker'],
         "description": "",
-        "cmpsOption": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'number-picker', 'file-picker', 'updated-picker']
+        "cmpsOption": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'file-picker', 'updated-picker', 'deadline-picker']
     }
 }
 

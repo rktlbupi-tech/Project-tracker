@@ -6,29 +6,16 @@ const ObjectId = require('mongodb').ObjectId
 async function query(filterBy, loggedinUser) {
     try {
         const criteria = {}
-        // logger.debug('Querying boards with loggedinUser:', loggedinUser)
         if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
-        
         if (filterBy.workspaceId && filterBy.workspaceId !== 'undefined') {
             criteria.workspaceId = filterBy.workspaceId
         }
-
         const isStarred = (filterBy.isStarred === 'true' || filterBy.isStarred === true)
         if (isStarred) {
             const user = await userService.getById(loggedinUser._id)
             const starredBoardIds = user.starredBoardIds || []
             criteria._id = { $in: starredBoardIds.map(id => ObjectId(id)) }
         }
-
-        if (loggedinUser) {
-            criteria.$or = [
-                { 'createdBy._id': loggedinUser._id },
-                { 'members._id': loggedinUser._id }
-            ]
-        } else {
-            return []
-        }
-        
         const collection = await dbService.getCollection('board')
         var boards = await collection.find(criteria).toArray()
         return boards
@@ -42,35 +29,17 @@ async function getById(boardId, loggedinUser) {
     try {
         const collection = await dbService.getCollection('board')
         const board = await collection.findOne({ _id: ObjectId(boardId) })
-
-        if (!board) return null
-
-        // If no user is provided and it's not a public check, we assume it's a system action 
-        // In a real app, we would check if the board is public here.
-        if (!loggedinUser) return board
-
-        // Robust permission check
-        const loggedinUserId = loggedinUser._id.toString()
-        const creatorId = board.createdBy?._id?.toString()
-        const isCreator = creatorId === loggedinUserId
-        const isMember = board.members?.some(m => m._id && m._id.toString() === loggedinUserId)
-
-        if (!isCreator && !isMember) {
-            const error = new Error('Not Authorized to view this board')
-            error.status = 403
-            throw error
-        }
-
+        if (!board) throw new Error(`Board ${boardId} not found`)
         return board
     } catch (err) {
-        logger.error(`while finding board ${boardId}`, err)
+        logger.error(`cannot find board ${boardId}`, err)
         throw err
     }
 }
 
 async function remove(boardId, loggedinUser) {
     try {
-        await getById(boardId, loggedinUser) // This will throw if no permission
+        await getById(boardId, loggedinUser)
         const collection = await dbService.getCollection('board')
         await collection.deleteOne({ _id: ObjectId(boardId) })
         return boardId
@@ -93,13 +62,38 @@ async function add(board) {
 
 async function update(board, loggedinUser) {
     try {
-        const prevBoard = await getById(board._id, loggedinUser) // This will throw if no permission
+        const prevBoard = await getById(board._id, loggedinUser)
         const boardToSave = {...board}
         delete boardToSave._id
+
+        // Logging: Detect group deletion
+        const prevGroupIds = prevBoard.groups.map(g => (g.id || g._id?.toString()))
+        const nextGroupIds = board.groups.map(g => (g.id || g._id?.toString()))
+        const deletedGroupId = prevGroupIds.find(id => !nextGroupIds.includes(id))
+        
+        if (deletedGroupId && loggedinUser) {
+            const deletedGroup = prevBoard.groups.find(g => (g.id === deletedGroupId || g._id?.toString() === deletedGroupId))
+            if (deletedGroup) {
+                const activity = {
+                    id: _makeId(),
+                    txt: `Deleted group: ${deletedGroup.title}`,
+                    createdAt: Date.now(),
+                    byMember: {
+                        _id: loggedinUser._id,
+                        fullname: loggedinUser.fullname,
+                        imgUrl: loggedinUser.imgUrl
+                    }
+                }
+                if (!boardToSave.activities) boardToSave.activities = []
+                boardToSave.activities.unshift(activity)
+                if (boardToSave.activities.length > 30) boardToSave.activities.pop()
+            }
+        }
+
         const collection = await dbService.getCollection('board')
         await collection.updateOne({ _id: ObjectId(board._id) }, { $set: boardToSave })
         
-        // Detect task assignment changes across the entire board
+        // Detect task assignment changes
         if (loggedinUser) {
             _sendTaskAssignmentNotifications(board, prevBoard, loggedinUser)
         }
@@ -114,7 +108,6 @@ async function update(board, loggedinUser) {
 async function _sendTaskAssignmentNotifications(board, prevBoard, loggedinUser) {
     const socketService = require('../../services/socket.service')
     
-    // Create a map of previous task members for easy comparison
     const prevTaskMembersMap = {}
     prevBoard.groups.forEach(group => {
         group.tasks.forEach(task => {
@@ -130,14 +123,14 @@ async function _sendTaskAssignmentNotifications(board, prevBoard, loggedinUser) 
 
             if (newMemberIds.length > 0) {
                 newMemberIds.forEach(async (memberId) => {
-                    // Don't notify yourself
                     const memberIdStr = memberId.toString()
-                    const loggedinUserIdStr = loggedinUser._id.toString()
-                    if (memberIdStr === loggedinUserIdStr) return
+                    // No self-check for testing
+                    // if (memberIdStr === loggedinUser._id.toString()) return
 
                     const notification = {
                         id: userService.makeId(),
                         type: 'task-assigned',
+                        txt: `Assigned you task: ${task.title}`,
                         from: {
                             _id: loggedinUser._id,
                             fullname: loggedinUser.fullname,
@@ -171,6 +164,51 @@ async function _sendTaskAssignmentNotifications(board, prevBoard, loggedinUser) 
     })
 }
 
+async function _sendDeadlineUpdateNotifications(board, task, loggedinUser) {
+    const socketService = require('../../services/socket.service')
+    const memberIds = task.memberIds || []
+    
+    if (!memberIds.length) return
+
+    const notification = {
+        id: userService.makeId(),
+        type: 'deadline-assigned',
+        txt: `New deadline set for: ${task.title}`,
+        from: {
+            _id: loggedinUser._id,
+            fullname: loggedinUser.fullname,
+            imgUrl: loggedinUser.imgUrl
+        },
+        board: {
+            _id: board._id,
+            title: board.title
+        },
+        task: {
+            id: task.id,
+            title: task.title
+        },
+        createdAt: Date.now(),
+        isRead: false
+    }
+
+    memberIds.forEach(async (memberId) => {
+        const memberIdStr = memberId.toString()
+        // No self-check for testing
+        // if (memberIdStr === loggedinUser._id.toString()) return
+
+        try {
+            await userService.addNotification(memberIdStr, notification)
+            socketService.emitToUser({
+                type: 'notification-received',
+                data: notification,
+                userId: memberIdStr
+            })
+        } catch (err) {
+            logger.error(`Failed to send deadline notification to ${memberIdStr}`, err)
+        }
+    })
+}
+
 async function updateTask(boardId, groupId, taskId, saveTask, loggedinUser){
     try {
         const board =  await getById(boardId, loggedinUser)
@@ -181,17 +219,21 @@ async function updateTask(boardId, groupId, taskId, saveTask, loggedinUser){
         
         const dbTask = group.tasks[targetTaskIdx]
 
-        // 1. Version Check (Optimistic Concurrency)
+        // 1. Version Check
         if (saveTask.version && dbTask.version && saveTask.version < dbTask.version) {
-            const conflictErr = new Error(`Conflict: Task was modified by another user. Refresh to see the latest changes.`)
-            conflictErr.status = 409 // HTTP 409 Conflict
+            const conflictErr = new Error(`Conflict`)
+            conflictErr.status = 409 
             throw conflictErr
         }
 
-        // 2. Increment Version
         saveTask.version = (dbTask.version || 0) + 1
-
         group.tasks[targetTaskIdx] = saveTask
+        
+        // Instant Notification: Detect deadline changes
+        if (dbTask.deadline !== saveTask.deadline && saveTask.deadline && loggedinUser) {
+            _sendDeadlineUpdateNotifications(board, saveTask, loggedinUser)
+        }
+
         await update(board, loggedinUser)
         return board
     } catch (err) {
@@ -216,35 +258,37 @@ async function addMember(boardId, loggedinUser) {
     try {
         const collection = await dbService.getCollection('board')
         const board = await collection.findOne({ _id: ObjectId(boardId) })
-
         if (!board) throw new Error(`Board ${boardId} not found`)
-
-        // Check if member already exists
         const isMember = board.members.some(member => member._id.toString() === loggedinUser._id.toString())
-        const isCreator = board.createdBy._id.toString() === loggedinUser._id.toString()
-
-        if (!isMember && !isCreator) {
-            board.members.push({
-                _id: loggedinUser._id,
-                fullname: loggedinUser.fullname,
-                imgUrl: loggedinUser.imgUrl
-            })
-            const boardToSave = { ...board }
-            delete boardToSave._id
-            await collection.updateOne({ _id: ObjectId(board._id) }, { $set: boardToSave })
-        }
-
+        if (isMember) return board
+        board.members.push({
+            _id: loggedinUser._id,
+            fullname: loggedinUser.fullname,
+            imgUrl: loggedinUser.imgUrl
+        })
+        const boardToSave = {...board}
+        delete boardToSave._id
+        await collection.updateOne({ _id: ObjectId(boardId) }, { $set: boardToSave })
         return board
     } catch (err) {
-        logger.error(`cannot add member to board ${boardId}`, err)
+        logger.error('cannot add member', err)
         throw err
     }
 }
 
+function _makeId(length = 6) {
+    var txt = ''
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (var i = 0; i < length; i++) {
+        txt += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return txt
+}
+
 module.exports = {
-    remove,
     query,
     getById,
+    remove,
     add,
     update,
     updateTask,

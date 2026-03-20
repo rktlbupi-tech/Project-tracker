@@ -79,7 +79,11 @@ export function NotificationList({ user, onClose }) {
                         <div className="inv-info flex align-center">
                             <img src={notification.from.imgUrl} alt={notification.from.fullname} className="user-img" />
                             <p>
-                                <strong>{notification.from.fullname}</strong> assigned you a task <strong>{notification.task.title}</strong> on board <strong>{notification.board.title}</strong>
+                                {notification.txt || (
+                                    <>
+                                        <strong>{notification.from.fullname}</strong> assigned you a task <strong>{notification.task.title}</strong> on board <strong>{notification.board.title}</strong>
+                                    </>
+                                )}
                             </p>
                         </div>
                         <span className="time">{utilService.calculateTime(notification.createdAt)}</span>

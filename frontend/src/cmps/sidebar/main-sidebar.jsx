@@ -47,10 +47,14 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
         }
 
         const onNotificationReceived = (notification) => {
-            loggerService.debug('Notification received!', notification)
+            loggerService.info('Notification received!', notification)
             const updatedNotifications = [notification, ...(user?.notifications || [])]
             const updatedUser = { ...user, notifications: updatedNotifications }
             setUser(updatedUser)
+            
+            // Show a visual alert
+            const toastContent = notification.txt || `New Notification: ${notification.type}`
+            console.log('FLASHING NOTIFICATION:', toastContent)
         }
 
         socketService.on('invitation-received', onInviteReceived)

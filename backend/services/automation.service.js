@@ -9,10 +9,10 @@ class AutomationService {
     }
 
     initListeners() {
-        eventBus.on('TASK_UPDATED', async ({ boardId, groupId, task, change }) => {
+        eventBus.on('TASK_UPDATED', async ({ boardId, groupId, task, updatedField }) => {
             try {
                 await delay(100)
-                await this.evaluateAutomations(boardId, groupId, task, 'TASK_UPDATED', change)
+                await this.evaluateAutomations(boardId, groupId, task, 'TASK_UPDATED', updatedField)
             } catch (err) {
                 console.error('Automation Engine Error:', err)
             }
@@ -28,7 +28,7 @@ class AutomationService {
         })
     }
 
-    async evaluateAutomations(boardId, groupId, updatedTask, eventType, change = {}) {
+    async evaluateAutomations(boardId, groupId, updatedTask, eventType, updatedField = '') {
         const board = await boardService.getById(boardId)
         if (!board || !board.automations || !board.automations.length) return
 
@@ -42,8 +42,8 @@ class AutomationService {
         let hasMoved = false
 
         // --- GLOBAL DEFAULT: Reset highlight if priority is changed to non-High ---
-        if (change.priority && change.priority !== 'High' && taskToModify.style && taskToModify.style.backgroundColor) {
-            console.log(`[Automation Engine] Priority changed to ${change.priority}, resetting style for: ${taskToModify.title}`)
+        if (updatedField === 'priority-picker' && taskToModify.priority !== 'High' && taskToModify.style && taskToModify.style.backgroundColor) {
+            console.log(`[Automation Engine] Priority changed to ${taskToModify.priority}, resetting style for: ${taskToModify.title}`)
             taskToModify.style = {}
             boardNeedsSave = true
         }
@@ -65,7 +65,17 @@ class AutomationService {
                 const { type, columnType, value } = auto.trigger
                 
                 if (type === 'COLUMN_CHANGE' && eventType === 'TASK_UPDATED') {
-                    if (taskToModify[columnType] === value) isTriggered = true
+                    // Only trigger if the specific columns match
+                    const fieldMapping = {
+                        'status': 'status-picker',
+                        'priority': 'priority-picker',
+                        'memberIds': 'member-picker',
+                        'dueDate': 'date-picker',
+                        'deadline': 'deadline-picker'
+                    }
+                    if (fieldMapping[columnType] === updatedField || columnType === updatedField) {
+                         if (taskToModify[columnType] === value) isTriggered = true
+                    }
                 } else if (type === 'ITEM_CREATED' && eventType === 'TASK_CREATED') {
                     isTriggered = true
                 }
@@ -87,11 +97,12 @@ class AutomationService {
         }
 
         // --- GLOBAL DEFAULT: Fallback to Top Group (STATUS UPDATES ONLY) ---
-        // CRITICAL: We only move groups if the 'status' column was specifically updated.
-        if (eventType === 'TASK_UPDATED' && change.status && !hasMoved) {
+        // CRITICAL DECOUPLING: We ONLY automatically move groups if the 'status' column was the one updated.
+        // Assigning a person (member-picker), date (date-picker), or deadline (deadline-picker) will NEVER trigger a move.
+        if (eventType === 'TASK_UPDATED' && updatedField === 'status-picker' && !hasMoved) {
             const isTopGroup = board.groups[0].id === groupId || board.groups[0]._id?.toString() === groupId
             if (!isTopGroup) {
-                console.log(`[Automation Engine] Status changed to '${change.status}' with no move rule. Returning to Top Group.`)
+                console.log(`[Automation Engine] Status change detected. No move rule matched. Returning to Top Group.`)
                 const moved = this._moveToTopGroup(board, groupId, taskToModify)
                 if (moved) boardNeedsSave = true
             }
@@ -128,12 +139,10 @@ class AutomationService {
 
             switch (type) {
                 case 'HIGHLIGHT':
-                    console.log(`[Automation Engine] Highlighting task: ${task.title}`)
                     task.style = { 
                         backgroundColor: 'rgba(255, 171, 0, 0.12)', 
-                        boxShadow: 'inset 4px 0 0 #ffab00, 0 0 12px rgba(255, 171, 0, 0.1)',
-                        borderBottom: '1px solid rgba(255, 171, 0, 0.2)',
-                        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
+                        boxShadow: 'inset 4px 0 0 #ffab00',
+                        transition: 'all 0.5s ease'
                     }
                     return true
                 case 'RESET_STYLE':
@@ -141,13 +150,6 @@ class AutomationService {
                     return true
                 case 'MOVE_TO_GROUP':
                     return this._moveToGroup(board, sourceGroupId, task, [target.toLowerCase()], target, '#735dd1')
-                case 'DUPLICATE':
-                    return this._duplicateTask(board, sourceGroupId, task)
-                case 'DELETE':
-                    return this._deleteTask(board, sourceGroupId, task)
-                case 'CHANGE_COLUMN':
-                    task[columnType] = value
-                    return true
                 default:
                     return false
             }
@@ -205,21 +207,10 @@ class AutomationService {
     _duplicateTask(board, groupId, task) {
         const sourceGroup = board.groups.find(g => (g.id === groupId || g._id?.toString() === groupId))
         if (sourceGroup) {
-            const duplicateTask = { 
-                ...structuredClone(task), 
-                id: 't' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                title: task.title + ' (Copy)'
-            }
+            const duplicateTask = structuredClone(task)
+            duplicateTask.id = 't' + Date.now().toString()
+            duplicateTask.title += ' (Copy)'
             sourceGroup.tasks.unshift(duplicateTask)
-            return true
-        }
-        return false
-    }
-
-    _deleteTask(board, groupId, task) {
-        const sourceGroup = board.groups.find(g => (g.id === groupId || g._id?.toString() === groupId))
-        if (sourceGroup) {
-            sourceGroup.tasks = sourceGroup.tasks.filter(t => (t.id !== task.id && t._id?.toString() !== task.id))
             return true
         }
         return false

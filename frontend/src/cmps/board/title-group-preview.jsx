@@ -25,6 +25,8 @@ export function TitleGroupPreview({ title, group, isKanban }) {
                 return 'Files'
             case 'updated-picker':
                 return 'Last Updated'
+            case 'deadline-picker':
+                return 'Deadline'
             default: return ''
         }
     }

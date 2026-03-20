@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { socketService, SOCKET_EVENT_ADD_UPDATE_BOARD, SOCKET_EMIT_WATCH_BOARD, SOCKET_EMIT_UNWATCH_BOARD, SOCKET_EVENT_BOARD_USERS_ONLINE, SOCKET_EMIT_SET_USER_PRESENCE } from '../services/socket.service'
-import { loadBoard, loadBoards, setBoardFromSocket, setFilter, setOnlineUsers, setTaskEditing, unsetTaskEditing } from '../store/board.actions'
+import { loadBoard, loadBoards, setBoardFromSocket, setFilter, setOnlineUsers, setTaskEditing, unsetTaskEditing, saveBoard } from '../store/board.actions'
 import { ModalMemberInvite } from '../cmps/modal/modal-member-invite'
 import { WorkspaceSidebar } from '../cmps/sidebar/workspace-sidebar'
 import { LoginLogoutModal } from '../cmps/modal/login-logout-modal'
@@ -23,9 +23,11 @@ import { loadUsers } from '../store/user.actions'
 import { setCurrWorkspace } from '../store/workspace.actions'
 import { Loader } from '../cmps/loader'
 import { Dashboard } from './dashboard'
+import { loggerService } from '../services/logger.service'
 
 export function BoardDetails() {
     const board = useSelector(storeState => storeState.boardModule.filteredBoard)
+    const fullBoard = useSelector(storeState => storeState.boardModule.board)
     const boards = useSelector(storeState => storeState.boardModule.boards)
     const isBoardModalOpen = useSelector(storeState => storeState.boardModule.isBoardModalOpen)
 
@@ -56,7 +58,49 @@ export function BoardDetails() {
         if (board?.workspaceId) {
             setCurrWorkspace(board.workspaceId)
         }
-    }, [board])
+        
+        // --- Migration: Ensure 'deadline-picker' exists and 'number-picker' is removed ---
+        if (fullBoard) {
+            let hasChanged = false
+            const newBoard = structuredClone(fullBoard)
+            
+            if (!newBoard.cmpsOption) newBoard.cmpsOption = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
+            
+            // 1. Ensure Deadline is an option
+            if (!newBoard.cmpsOption.includes('deadline-picker')) {
+                newBoard.cmpsOption.push('deadline-picker')
+                hasChanged = true
+            }
+
+            // 2. Remove Numbers from options as requested
+            if (newBoard.cmpsOption.includes('number-picker')) {
+                newBoard.cmpsOption = newBoard.cmpsOption.filter(c => c !== 'number-picker')
+                hasChanged = true
+            }
+
+            // 3. Ensure Files is an option if missing
+            if (!newBoard.cmpsOption.includes('file-picker')) {
+                newBoard.cmpsOption.push('file-picker')
+                hasChanged = true
+            }
+            
+            // 4. Ensure Deadline is currently visible (in cmpsOrder)
+            if (!newBoard.cmpsOrder.includes('deadline-picker')) {
+                const updatedIdx = newBoard.cmpsOrder.indexOf('updated-picker')
+                if (updatedIdx !== -1) {
+                    newBoard.cmpsOrder.splice(updatedIdx + 1, 0, 'deadline-picker')
+                } else {
+                    newBoard.cmpsOrder.push('deadline-picker')
+                }
+                hasChanged = true
+            }
+
+            if (hasChanged) {
+                loggerService.info('Migrating full board to latest column structure')
+                saveBoard(newBoard)
+            }
+        }
+    }, [fullBoard, board])
 
     useEffect(() => {
         loadBoard(boardId, queryFilterBy)

@@ -50,6 +50,7 @@ setupSocketAPI(http)
 
 // Initialize Automation and Socket Event listeners
 require('./services/automation.service')
+require('./services/deadline-reminder.service')
 registerSocketEvents()
 
 app.get('/**', (req, res) => {
