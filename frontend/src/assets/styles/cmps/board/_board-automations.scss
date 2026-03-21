@@ -317,35 +317,62 @@
                 border: 1px solid $border-color;
 
                 .builder-sentence {
-                    font-size: 1.1rem;
-                    font-weight: 400;
+                    font-size: 1.15rem;
+                    font-weight: 500;
                     color: $text-primary;
-                    line-height: 2.5;
+                    line-height: normal;
+                    padding: 40px 20px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 16px;
 
-                    .bolt-icon { color: $accent-color; margin-right: 12px; }
-                    .arrow-icon { margin: 0 16px; opacity: 0.5; }
+                    .bolt-icon { 
+                        color: $accent-color; 
+                        font-size: 1.5rem;
+                        margin-right: 8px;
+                    }
+                    .arrow-icon { 
+                        margin: 0 8px; 
+                        opacity: 0.5;
+                        color: $text-secondary;
+                    }
 
                     .inline-select, .inline-input {
                         background: $bg-primary;
-                        border: 1px solid $border-color;
-                        border-radius: 6px;
-                        padding: 6px 12px;
-                        margin: 0 8px;
+                        border: 2px solid $border-color;
+                        border-radius: 8px;
+                        padding: 8px 16px;
                         font-size: 1rem;
                         color: $primary-color;
-                        font-weight: 600;
+                        font-weight: 700;
                         outline: none;
-                        transition: all 0.2s;
+                        transition: all 0.3s;
+                        min-width: 140px;
+                        text-align: center;
+                        cursor: pointer;
+
+                        &:hover {
+                            border-color: rgba($primary-color, 0.4);
+                        }
 
                         &:focus {
                             border-color: $primary-color;
-                            box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+                            background: white;
+                            box-shadow: 0 0 15px rgba($primary-color, 0.1);
                         }
                     }
 
                     .inline-input {
-                        width: 150px;
-                        &::placeholder { font-weight: 400; opacity: 0.5; }
+                        width: auto;
+                        min-width: 180px;
+                        &::placeholder { 
+                            font-weight: 400; 
+                            opacity: 0.4;
+                            color: $text-secondary;
+                        }
+                        cursor: text;
                     }
                 }
             }
