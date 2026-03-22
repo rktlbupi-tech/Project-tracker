@@ -1,66 +1,91 @@
 .home-header {
-    @include center-flex();
-    justify-content: space-between;
-    padding: 0 $spacing-large;
-    height: rem(72px);
-    position: sticky;
+    height: rem(90px); // Slightly taller
+    position: fixed;
     top: 0;
-    background: $bg-primary;
-    color: $text-primary;
-    border-bottom: 1px solid $border-color;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
 
-    nav {
-        height: 100%;
+    .header-content {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr; // Left, Center, Right
+        align-items: center;
+        max-width: rem(1300px);
+        margin: 0 auto;
+        padding: 0 rem(40px);
+    }
+
+    .header-logo-container {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .header-nav {
+        display: flex;
+        gap: rem(40px);
+        justify-content: center;
+
+        a {
+            font-size: rem(16px);
+            font-weight: 600;
+            color: #121212;
+            transition: all 0.2s ease;
+            position: relative;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -4px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background-color: #4C50FF;
+                transition: width 0.3s ease;
+            }
+
+            &:hover {
+                color: #4C50FF;
+                &::after { width: 100%; }
+            }
+        }
     }
 
     .header-btns {
-        @include center-flex();
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: rem(28px);
 
-        .btn-start {
-            @include center-flex();
-            background-color: $home-btn-bg;
-            height: 40px;
-            width: 130px;
-            font-size: rem(13px);
-            padding: $spacing-small $spacing-medium;
-            border-radius: 40px;
-
-            &:hover {
-                background-color: #5151d5;
-
-                .arrow svg {
-                    transition: 0.4s;
-                    transform: translateX(4px);
-                }
-            }
-
-            .arrow {
-                @include center-flex();
-                display: none;
-                padding-left: $spacing-medium;
-
-                @include for-normal-layout() {
-                    & {
-                        display: flex;
-                    }
-                }
-            }
+        .btn-client-zone {
+            font-size: rem(16px);
+            font-weight: 600;
+            color: #121212;
+            transition: opacity 0.2s;
+            &:hover { opacity: 0.7; }
         }
 
-        .btn-login {
-            background-color: transparent;
-            color: $text-secondary;
-            padding: $spacing-small $spacing-medium;
-            font-size: rem(14px);
-            border-radius: 8px;
-            font-weight: 300;
-            margin-right: $spacing-medium;
+        .btn-contact {
+            background-color: #121212;
+            color: #fff;
+            border: none;
+            padding: rem(14px) rem(28px);
+            border-radius: rem(30px);
+            font-size: rem(16px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
             &:hover {
-                color: $primary-color;
-                background-color: var(--workspace-hover);
+                background-color: #000;
+                transform: scale(1.05);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             }
         }
     }
-
 }

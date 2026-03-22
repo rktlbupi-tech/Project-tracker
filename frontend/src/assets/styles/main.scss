@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 // Setup
 @import "setup/variables";
 @import "setup/functions";
@@ -67,6 +69,8 @@
 // Home
 @import "cmps/home/home-teaser";
 @import "cmps/home/home-screenshot";
+@import "cmps/slanted-marquee";
+@import "cmps/home-footer";
 
 // Custom
 @import "cmps/custom/getstarted-btn";

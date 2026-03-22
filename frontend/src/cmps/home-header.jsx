@@ -1,18 +1,28 @@
 import { Link } from 'react-router-dom'
-import { HiOutlineArrowRight } from 'react-icons/hi'
 import Logo from './logo'
-
 
 export function HomeHeader ({ boards }) {
     return (
         <header className="home-header">
-               <Logo />
-                <div className='header-btns'>
-                    <Link to={'/auth/login'}><button className="btn-login">Log in</button></Link>
+            <div className="header-content layout">
+                <div className="header-logo-container">
+                    <Logo />
+                </div>
+                
+                <nav className="header-nav items-center">
+                    <Link to="#">About</Link>
+                    <Link to="#">Services</Link>
+                    <Link to="#">Case Studies</Link>
+                    <Link to="#">Blog</Link>
+                </nav>
+
+                <div className='header-btns flex items-center'>
+                    <Link to={'/auth/login'} className="btn-client-zone">Client Zone</Link>
                     <Link to={boards?.length ? `/board/${boards[0]._id}` : '/auth/login'}>
-                        <button className='btn-start'>Get started <span className="arrow"><HiOutlineArrowRight /></span></button>
+                        <button className='btn-contact'>Contact Us</button>
                     </Link>
                 </div>
+            </div>
         </header>
     )
 }
