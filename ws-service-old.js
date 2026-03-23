@@ -1,4 +1,4 @@
-const dbService = require('../../services/db.service')
+﻿const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 const ObjectId = require('mongodb').ObjectId
 
@@ -6,12 +6,9 @@ async function query(filterBy = {}) {
     try {
         const criteria = {}
         if (filterBy.userId) {
-            const userId = filterBy.userId.toString()
             criteria.$or = [
-                { 'createdBy._id': userId },
-                { 'members._id': userId },
-                { 'createdBy._id': ObjectId(userId) },
-                { 'members._id': ObjectId(userId) }
+                { 'createdBy._id': filterBy.userId },
+                { 'members._id': filterBy.userId }
             ]
         }
         const collection = await dbService.getCollection('workspace')
@@ -81,12 +78,11 @@ async function addMember(workspaceId, user, role = 'member') {
         if (!workspace) throw new Error('Workspace not found')
         
         // Check if already a member
-        const isMember = workspace.members.some(m => m._id && m._id.toString() === user._id.toString())
-        const isCreator = workspace.createdBy?._id && workspace.createdBy._id.toString() === user._id.toString()
-        if (isMember || isCreator) return workspace
+        const isMember = workspace.members.some(m => m._id.toString() === user._id.toString())
+        if (isMember) return workspace
 
         workspace.members.push({
-            _id: user._id.toString(),
+            _id: user._id,
             fullname: user.fullname,
             imgUrl: user.imgUrl,
             role

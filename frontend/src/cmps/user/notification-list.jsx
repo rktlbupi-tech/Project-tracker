@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { respondToInvitation, markNotificationsRead, markSingleNotificationRead, clearNotifications } from "../../store/user.actions"
 import { loadBoards } from "../../store/board.actions"
+import { loadWorkspaces } from "../../store/workspace.actions"
 import { utilService } from "../../services/util.service"
 import { loggerService } from "../../services/logger.service"
 
@@ -25,11 +26,14 @@ export function NotificationList({ user, onClose }) {
     const pendingInvitations = invitations.filter(inv => inv.status === 'pending')
     const notifications = user.notifications || []
 
-    async function onAction(invitationId, status) {
+    async function onAction(invitationId, status, boardId) {
         try {
             await respondToInvitation(invitationId, status)
             if (status === 'accepted') {
-                loadBoards()
+                await loadBoards()
+                await loadWorkspaces()
+                navigate(`/board/${boardId}`)
+                onClose()
             }
         } catch (err) {
             loggerService.error('Had issues responding to invitation', err)
@@ -69,8 +73,8 @@ export function NotificationList({ user, onClose }) {
                             </p>
                         </div>
                         <div className="inv-actions flex">
-                            <button className="accept-btn" onClick={() => onAction(inv.id, 'accepted')}>Accept</button>
-                            <button className="reject-btn" onClick={() => onAction(inv.id, 'rejected')}>Reject</button>
+                            <button className="accept-btn" onClick={() => onAction(inv.id, 'accepted', inv.board._id)}>Accept</button>
+                            <button className="reject-btn" onClick={() => onAction(inv.id, 'rejected', inv.board._id)}>Reject</button>
                         </div>
                         <span className="time">{utilService.calculateTime(inv.createdAt)}</span>
                     </div>

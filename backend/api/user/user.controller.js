@@ -109,18 +109,33 @@ async function updateInvitation(req, res) {
 
         const user = await userService.updateInvitationStatus(loggedinUser._id, invitationId, status)
 
-        // If accepted, add user to board members
+        // If accepted, add user to board members and workspace members
         if (status === 'accepted') {
             const invitation = user.invitations.find(inv => inv.id === invitationId)
             if (invitation) {
                 const board = await boardService.getById(invitation.board._id)
                 if (board) {
-                    const member = { _id: user._id, fullname: user.fullname, imgUrl: user.imgUrl }
-                    if (!board.members.find(m => m._id === member._id)) {
+                    const member = { _id: user._id.toString(), fullname: user.fullname, imgUrl: user.imgUrl }
+                    
+                    // 1. Add to Board
+                    const isBoardMember = board.members.some(m => m._id && m._id.toString() === member._id)
+                    if (!isBoardMember) {
                         board.members.push(member)
-                        await boardService.update(board)
-                        // Notify board members of new member
+                        await boardService.update(board, loggedinUser)
                         socketService.broadcast({ type: 'board-add-update', data: board, room: board._id })
+                    }
+
+                    // 2. Add to Workspace
+                    if (board.workspaceId) {
+                        const workspaceService = require('../workspace/workspace.service')
+                        const workspace = await workspaceService.getById(board.workspaceId)
+                        if (workspace) {
+                            const isWorkspaceMember = workspace.members.some(m => m._id && m._id.toString() === member._id)
+                            const isCreator = workspace.createdBy?._id && workspace.createdBy._id.toString() === member._id
+                            if (!isWorkspaceMember && !isCreator) {
+                                await workspaceService.addMember(board.workspaceId, user)
+                            }
+                        }
                     }
                 }
             }

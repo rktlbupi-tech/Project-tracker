@@ -27,8 +27,11 @@ class DeadlineReminderService {
             for (const board of boards) {
                 let boardChanged = false
                 const deepBoard = await boardService.getById(board._id)
+                if (!deepBoard || !deepBoard.groups || !Array.isArray(deepBoard.groups)) continue
                 
                 for (const group of deepBoard.groups) {
+                    if (!group.tasks || !Array.isArray(group.tasks)) continue
+
                     for (const task of group.tasks) {
                         if (!task.deadline) continue
                         if (task.notifiedDeadline) continue

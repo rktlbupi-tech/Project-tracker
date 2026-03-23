@@ -20,7 +20,8 @@ export default function WorkspaceBoard({
     const [hoveredWsId, setHoveredWsId] = useState(null)
     const [menuOpenWsId, setMenuOpenWsId] = useState(null)
 
-    const currWorkspace = workspaces.find(ws => ws._id === currWorkspaceId) || workspaces[0]
+    const currWorkspaceIdStr = currWorkspaceId?.toString()
+    const currWorkspace = workspaces.find(ws => ws._id?.toString() === currWorkspaceIdStr) || workspaces[0]
 
     async function onDuplicateWorkspace(ev, wsToDuplicate) {
         ev.stopPropagation()
@@ -103,7 +104,7 @@ export default function WorkspaceBoard({
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'space-between',
-                                            backgroundColor: ws._id === currWorkspaceId ? 'var(--workspace-board-active)' : 'transparent',
+                                            backgroundColor: (ws._id?.toString() === currWorkspaceIdStr) ? 'var(--workspace-board-active)' : 'transparent',
                                             position: 'relative'
                                         }}
                                         className="ws-item"
@@ -149,7 +150,7 @@ export default function WorkspaceBoard({
                                                 </div>
                                                 <div
                                                     onClick={(ev) => {
-                                                        const isOwner = user?._id === ws.createdBy?._id
+                                                        const isOwner = user?._id?.toString() === ws.createdBy?._id?.toString()
                                                         if (!isOwner) {
                                                             ev.stopPropagation()
                                                             return

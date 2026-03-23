@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { logout } from "../../store/user.actions"
 import { BiLogIn } from 'react-icons/bi'
 import { TbLogout } from 'react-icons/tb'
@@ -7,12 +7,14 @@ import { closeDynamicModal } from "../../store/board.actions"
 
 export function LoginLogoutModal({ setIsLoginModalOpen }) {
     const user = useSelector(storeState => storeState.userModule.user)
+    const navigate = useNavigate()
     const guestImg = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
     function onLogout() {
         setIsLoginModalOpen(false)
         closeDynamicModal()
         logout()
+        navigate('/')
     }
 
     return (

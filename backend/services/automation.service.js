@@ -30,7 +30,7 @@ class AutomationService {
 
     async evaluateAutomations(boardId, groupId, updatedTask, eventType, updatedField = '') {
         const board = await boardService.getById(boardId)
-        if (!board || !board.automations || !board.automations.length) return
+        if (!board) return
 
         // Critical: Find the actual task object within the newly fetched board context
         const group = board.groups.find(g => (g.id === groupId || g._id?.toString() === groupId))
@@ -63,6 +63,15 @@ class AutomationService {
                 taskToModify.style = {}
                 boardNeedsSave = true
             }
+        }
+
+        if (!board.automations || !board.automations.length) {
+            if (boardNeedsSave) {
+                console.log(`[Automation Engine] Saving global defaults for board ${boardId}`)
+                const savedBoard = await boardService.update(board)
+                eventBus.emit('BOARD_UPDATED', savedBoard)
+            }
+            return
         }
 
         for (const auto of board.automations) {

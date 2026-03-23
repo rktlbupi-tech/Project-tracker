@@ -177,7 +177,7 @@ export async function duplicateTask(filteredBoard, group, task) {
     }
 }
 
-export async function addTask(task, group, filteredBoard, activity) {
+export async function addTask(task, group, filteredBoard, activity, calendarUpdate) {
     const prevBoard = structuredClone(store.getState().boardModule.board)
     const prevFilteredBoard = structuredClone(store.getState().boardModule.filteredBoard)
 
@@ -193,9 +193,15 @@ export async function addTask(task, group, filteredBoard, activity) {
         groupToUpdate.tasks.push(task)
 
         if (activity) {
-            activity.task = { id: task.id, title: task.title }
+            activity.id = utilService.makeId()
             if (newBoard.activities.length >= 30) newBoard.activities.pop()
             newBoard.activities.unshift(activity)
+        }
+
+        if (calendarUpdate) {
+            if (!newBoard.calendarUpdates) newBoard.calendarUpdates = []
+            newBoard.calendarUpdates.unshift(calendarUpdate)
+            if (newBoard.calendarUpdates.length > 50) newBoard.calendarUpdates.pop()
         }
 
         // 2. Calculate new filtered board

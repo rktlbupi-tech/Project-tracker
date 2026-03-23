@@ -6,8 +6,32 @@ import { IoClose } from 'react-icons/io5'
 import { updateOptimisticBoard, addTask } from '../../store/board.actions'
 import { boardService } from '../../services/board.service'
 import { utilService } from '../../services/util.service'
+import { userService } from '../../services/user.service'
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const DISPLAY_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function fmtDate(date) {
+    if (!date) return '—'
+    const d = new Date(date)
+    return `${DISPLAY_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+}
+
+function buildCalendarUpdate({ action, label, taskId, taskTitle, from, to }) {
+    const user = userService.getLoggedinUser()
+    return {
+        id: utilService.makeId(),
+        source: 'calendar',
+        action,       // 'reschedule' | 'add-task'
+        label,        // human-readable sentence
+        taskId,
+        taskTitle,
+        from,
+        to,
+        createdAt: Date.now(),
+        byMember: user || { fullname: 'Guest', imgUrl: '' },
+    }
+}
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -181,14 +205,42 @@ export function BoardCalendar({ board }) {
         const task = group.tasks.find(t => t.id === draggingTask.id)
         if (!task) return
 
+        const fromDateRaw = task.deadline || task.date
         const dateStr = toDateStr(targetDate)
 
-        // If task has a deadline, move the deadline. Otherwise move the date.
+        // Update the date field
         if (task.deadline) {
             task.deadline = dateStr
         } else {
             task.date = dateStr
         }
+
+        // ── Log to activities (Activity tab) ──
+        const activityEntry = {
+            ...boardService.getEmptyActivity(),
+            action: 'date',
+            task: { id: task.id, title: task.title },
+            from: fromDateRaw || '',
+            to: dateStr,
+        }
+
+        // ── Log to calendarUpdates (Updates tab) ──
+        const calUpdate = buildCalendarUpdate({
+            action: 'reschedule',
+            label: `Moved "${task.title}" ${task.deadline !== undefined ? 'deadline' : 'due date'} from ${fmtDate(fromDateRaw)} → ${fmtDate(dateStr)}`,
+            taskId: task.id,
+            taskTitle: task.title,
+            from: fromDateRaw || '',
+            to: dateStr,
+        })
+
+        if (!newBoard.calendarUpdates) newBoard.calendarUpdates = []
+        newBoard.calendarUpdates.unshift(calUpdate)
+        if (newBoard.calendarUpdates.length > 50) newBoard.calendarUpdates.pop()
+
+        if (!newBoard.activities) newBoard.activities = []
+        if (newBoard.activities.length >= 30) newBoard.activities.pop()
+        newBoard.activities.unshift(activityEntry)
 
         const prevBoard = fullBoard
         try {
@@ -218,15 +270,22 @@ export function BoardCalendar({ board }) {
         const dateStr = toDateStr(addingToDate)
         const newTask = boardService.getEmptyTask()
         newTask.title = title
-        newTask.id = utilService.makeId()
         newTask.deadline = dateStr
 
         const activity = boardService.getEmptyActivity()
-        activity.action = 'added task'
-        activity.task = { id: newTask.id, title: newTask.title }
+        activity.action = 'create'
+        activity.from = { title: addingGroup.title, color: addingGroup.color }
+
+        const calUpdate = buildCalendarUpdate({
+            action: 'add-task',
+            label: `Created "${title}" with deadline ${fmtDate(dateStr)} in group "${addingGroup.title}"`,
+            taskTitle: title,
+            from: '',
+            to: dateStr,
+        })
 
         try {
-            await addTask(newTask, addingGroup, fullBoard, activity)
+            await addTask(newTask, addingGroup, fullBoard, activity, calUpdate)
         } catch (err) {
             console.error('Failed to create task from calendar', err)
         }

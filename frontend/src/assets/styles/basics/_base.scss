@@ -127,3 +127,43 @@ blockquote {
         outline: 1px solid $primary-color;
     }
 }
+
+.empty-board-view {
+    height: 100%;
+    gap: 15px;
+    padding: 40px;
+    text-align: center;
+
+    .empty-img-container {
+        margin-bottom: 24px;
+        
+        .main-empty-img {
+            width: 350px;
+            max-width: 90vw;
+            opacity: 1;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.1));
+            transition: transform 0.3s;
+            
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+    }
+
+    .empty-text-container {
+        max-width: 600px;
+        
+        h2 {
+            font-size: 30px;
+            font-weight: 600;
+            color: $text-primary;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 18px;
+            color: $text-secondary;
+            font-weight: 400;
+        }
+    }
+}
