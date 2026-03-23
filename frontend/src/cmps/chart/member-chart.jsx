@@ -9,6 +9,8 @@ ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Tooltip, Le
 export function MemberChart({ board, dynamicModalObj }) {
     const elModalBtn = useRef()
     const [chartType, setChartType] = useState('doughnut')
+    const isDark = document.documentElement.className.includes('theme-dark')
+
     const data = {
         labels: getMembersName(),
         datasets: [
@@ -16,7 +18,7 @@ export function MemberChart({ board, dynamicModalObj }) {
                 label: 'board members',
                 data: getData(),
                 backgroundColor: getRandomColors(),
-                borderColor: '#fff',
+                borderColor: isDark ? '#121212' : '#ffffff',
                 borderWidth: 2,
                 hoverOffset: 10,
             },
@@ -31,6 +33,7 @@ export function MemberChart({ board, dynamicModalObj }) {
                     usePointStyle: true,
                     pointStyle: 'circle',
                     padding: 20,
+                    color: isDark ? '#a0a0a0' : '#42526e',
                     font: {
                         size: 12,
                         family: "'Inter', sans-serif",
@@ -54,23 +57,40 @@ export function MemberChart({ board, dynamicModalObj }) {
         responsive: true,
     }
 
+    function getAllAssignedMembers() {
+        // Collect all unique memberIds from every task across all groups
+        const memberCountMap = {}
+        board.groups.forEach(group => group.tasks.forEach(task => {
+            (task.memberIds || []).forEach(memberId => {
+                if (!memberCountMap[memberId]) memberCountMap[memberId] = 0
+                memberCountMap[memberId]++
+            })
+        }))
+        return memberCountMap
+    }
+
+    function resolveMember(memberId) {
+        if (board.createdBy?._id === memberId) return board.createdBy
+        return board.members.find(m => m._id === memberId)
+    }
+
     function getMembersName() {
-        return board.members.map(member => member.fullname)
+        const memberCountMap = getAllAssignedMembers()
+        return Object.keys(memberCountMap).map(memberId => {
+            const member = resolveMember(memberId)
+            return member ? member.fullname : memberId
+        })
     }
 
     function getRandomColors() {
         const colorArr = utilService.getColors()
-        return board.members.map((_, idx) => colorArr[idx % colorArr.length])
+        const memberCountMap = getAllAssignedMembers()
+        return Object.keys(memberCountMap).map((_, idx) => colorArr[idx % colorArr.length])
     }
 
     function getData() {
-        const membersId = board.members.map(member => member._id)
-        const data = new Array(membersId.length).fill(0)
-        board.groups.forEach(group => group.tasks.forEach(task => task.memberIds.forEach(memberId => {
-            data[membersId.indexOf(memberId)]++
-        })))
-
-        return data
+        const memberCountMap = getAllAssignedMembers()
+        return Object.values(memberCountMap)
     }
 
     function onToggleTypeModal() {

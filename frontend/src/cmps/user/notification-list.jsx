@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { respondToInvitation, markNotificationsRead, clearNotifications } from "../../store/user.actions"
+import { respondToInvitation, markNotificationsRead, markSingleNotificationRead, clearNotifications } from "../../store/user.actions"
 import { loadBoards } from "../../store/board.actions"
 import { utilService } from "../../services/util.service"
 import { loggerService } from "../../services/logger.service"
@@ -36,8 +36,11 @@ export function NotificationList({ user, onClose }) {
         }
     }
 
-    function onNotificationClick(boardId) {
-        navigate(`/board/${boardId}`)
+    async function onNotificationClick(notification) {
+        if (!notification.isRead) {
+            await markSingleNotificationRead(notification.id)
+        }
+        navigate(`/board/${notification.board._id}`)
         onClose()
     }
 
@@ -77,7 +80,7 @@ export function NotificationList({ user, onClose }) {
                     <div 
                         key={notification.id} 
                         className={`notification-item flex column task-item ${!notification.isRead ? 'unread' : ''}`} 
-                        onClick={() => onNotificationClick(notification.board._id)}
+                        onClick={() => onNotificationClick(notification)}
                     >
                         <div className="inv-info flex align-center">
                             {notification.from.imgUrl ? <img src={notification.from.imgUrl} alt={notification.from.fullname} className="user-img" /> : <div className="user-avatar">{notification.from.fullname.substring(0,1)}</div>}

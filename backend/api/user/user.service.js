@@ -14,6 +14,7 @@ module.exports = {
     addNotification,
     clearNotifications,
     markNotificationsRead,
+    markSingleNotificationRead,
     updateLastSeenNotifications,
     toggleStarredBoard,
     makeId
@@ -212,6 +213,20 @@ async function markNotificationsRead(userId) {
         return getById(userId)
     } catch (err) {
         logger.error(`cannot mark notifications as read for user ${userId}`, err)
+        throw err
+    }
+}
+
+async function markSingleNotificationRead(userId, notificationId) {
+    try {
+        const collection = await dbService.getCollection('user')
+        await collection.updateOne(
+            { _id: ObjectId(userId), 'notifications.id': notificationId },
+            { $set: { 'notifications.$.isRead': true } }
+        )
+        return getById(userId)
+    } catch (err) {
+        logger.error(`cannot mark single notification as read for user ${userId}`, err)
         throw err
     }
 }

@@ -3,7 +3,7 @@ import { closeDynamicModal, saveBoard, toggleModal, toggleStarred } from '../../
 import { loadBoards } from '../../store/board.actions'
 
 import { RiErrorWarningLine } from 'react-icons/ri'
-import { BsBarChart, BsKanban, BsStar } from 'react-icons/bs'
+import { BsBarChart, BsKanban, BsStar, BsCalendar3 } from 'react-icons/bs'
 import { BsStarFill } from 'react-icons/bs'
 import { FiActivity } from 'react-icons/fi'
 import { AiOutlineHome } from 'react-icons/ai'
@@ -129,22 +129,23 @@ export function BoardHeader({ board, onSetFilter, setIsShowDescription, setIsInv
             <div className='board-display-btns flex' >
                 <div className={`type-btn ${boardType === 'table' ? ' active' : ''}`} onClick={() => onSetBoardType('table')} >
                     <AiOutlineHome className='icon' />
-                    <span className='wide' onClick={() => onSetBoardType('table')}>Main Table</span>
-                    <span className='mobile'>Main Table</span>
+                    <span>Main Table</span>
                 </div>
                 <div className={`type-btn ${boardType === 'kanban' ? ' active' : ''}`} onClick={() => onSetBoardType('kanban')}>
                     <BsKanban />
-                    <span className='wide'  >Kanban</span>
-                    <span className='mobile' onClick={() => onSetBoardType('kanban')}>Kanban</span>
+                    <span>Kanban</span>
                 </div>
                 <div className={`type-btn ${boardType === 'dashboard' ? ' active' : ''}`} onClick={() => onSetBoardType('dashboard')}>
                     <BsBarChart />
-                    <span className='wide' >Dashboard</span>
-                    <span className='mobile' onClick={() => onSetBoardType('dashboard')}>Dashboard</span>
+                    <span>Dashboard</span>
+                </div>
+                <div className={`type-btn ${boardType === 'calendar' ? ' active' : ''}`} onClick={() => onSetBoardType('calendar')}>
+                    <BsCalendar3 />
+                    <span>Calendar</span>
                 </div>
             </div>
             <div className='board-border'></div>
-            {boardType !== 'dashboard' && <BoardFilter onSetFilter={onSetFilter} board={board} />}
+            {boardType !== 'dashboard' && boardType !== 'calendar' && <BoardFilter onSetFilter={onSetFilter} board={board} />}
         </header >
     )
 }

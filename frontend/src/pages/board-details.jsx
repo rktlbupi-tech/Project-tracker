@@ -23,6 +23,7 @@ import { loadUsers } from '../store/user.actions'
 import { setCurrWorkspace } from '../store/workspace.actions'
 import { Loader } from '../cmps/loader'
 import { Dashboard } from './dashboard'
+import { BoardCalendar } from '../cmps/board/board-calendar'
 import { loggerService } from '../services/logger.service'
 
 export function BoardDetails() {
@@ -160,6 +161,7 @@ export function BoardDetails() {
                         }
                         <BoardModal setIsMouseOver={setIsMouseOver} />
                         {boardType === 'dashboard' && <Dashboard />}
+                        {boardType === 'calendar' && <BoardCalendar board={fullBoard} />}
                     </>
                 ) : (
                     <div className="empty-board-view flex column align-center justify-center" style={{ height: '100%', gap: '15px', padding: '40px' }}>

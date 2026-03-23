@@ -9,6 +9,8 @@ ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Tooltip, Le
 export function LabelChart({ board, dynamicModalObj }) {
   const elModalBtn = useRef()
   const [chartType, setChartType] = useState('doughnut')
+  const isDark = document.documentElement.className.includes('theme-dark')
+
   const data = {
     labels: getLabelTitles(),
     datasets: [
@@ -16,7 +18,7 @@ export function LabelChart({ board, dynamicModalObj }) {
         label: 'board labels',
         data: getData(),
         backgroundColor: getLabelColors(),
-        borderColor: '#fff',
+        borderColor: isDark ? '#121212' : '#ffffff',
         borderWidth: 2,
         hoverOffset: 10,
       },
@@ -31,6 +33,7 @@ export function LabelChart({ board, dynamicModalObj }) {
           usePointStyle: true,
           pointStyle: 'circle',
           padding: 20,
+          color: isDark ? '#a0a0a0' : '#42526e',
           font: {
             size: 12,
             family: "'Inter', sans-serif",

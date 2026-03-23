@@ -167,6 +167,18 @@ async function markNotificationsRead(req, res) {
     }
 }
 
+async function markSingleNotificationRead(req, res) {
+    try {
+        const userId = req.loggedinUser._id
+        const { notificationId } = req.body
+        const user = await userService.markSingleNotificationRead(userId, notificationId)
+        res.send(user)
+    } catch (err) {
+        logger.error('Failed to mark single notification as read', err)
+        res.status(500).send({ err: 'Failed to mark single notification as read' })
+    }
+}
+
 async function updateLastSeenNotifications(req, res) {
     try {
         const userId = req.loggedinUser._id
@@ -188,5 +200,6 @@ module.exports = {
     toggleStarred,
     clearNotifications,
     markNotificationsRead,
+    markSingleNotificationRead,
     updateLastSeenNotifications
 }
