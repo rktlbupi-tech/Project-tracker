@@ -98,7 +98,7 @@ export default function HomePage() {
                     <SlantedMarquee
                         items={['Team Collaboration', 'File Sharing', 'Real-time Updates', 'Custom Automations', 'Integrations']}
                         direction="right"
-                        color="orange"
+                        color="black"
                     />
                 </div>
 

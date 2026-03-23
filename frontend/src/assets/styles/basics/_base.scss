@@ -2,21 +2,21 @@
     box-sizing: border-box;
     scrollbar-width: thin;
     scrollbar-color: var(--text-secondary) var(--bg-secondary);
-    
+
     &::-webkit-scrollbar {
         width: 8px;
         cursor: pointer;
     }
-    
+
     &::-webkit-scrollbar-track {
         background: var(--bg-secondary);
     }
-    
+
     &::-webkit-scrollbar-thumb {
         border-radius: 25px;
         background-color: var(--text-secondary);
         cursor: pointer;
-        
+
         &:hover {
             background-color: var(--text-primary);
         }
@@ -80,6 +80,7 @@ ul {
     padding: 0;
     list-style: none;
 }
+
 li {
     list-style-type: none;
 }

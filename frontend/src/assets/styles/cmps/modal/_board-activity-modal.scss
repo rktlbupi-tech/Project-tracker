@@ -1,27 +1,106 @@
 .board-activity-modal {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     .board-activity-header {
-        margin: 20px 20px $spacing-small $spacing-large;
-        
+        padding: 24px 30px;
+        border-bottom: 1px solid #dfe1e6;
+
         .close-btn {
-            color: #777;
+            font-size: 24px;
+            color: #6b778c;
             cursor: pointer;
+            margin-bottom: 12px;
+            
+            &:hover {
+                color: #172b4d;
+                transform: rotate(90deg);
+            }
+        }
+
+        .board-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #172b4d;
+            margin-bottom: 16px;
+
+            span {
+                color: #6161ff;
+                font-weight: 700;
+                margin-left: 4px;
+            }
         }
     
         .views {
-            gap: 18px;
-            >* {
+            gap: 24px;
+            display: flex;
+
+            span {
                 cursor: pointer;
-                @include center-flex();
-            }
-            .active{
-                border-bottom: 2px solid $board-btn;
+                color: #5e6c84;
+                font-size: 14px;
+                font-weight: 500;
+                padding-bottom: 8px;
+                position: relative;
+                transition: color 0.2s;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -1px;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background-color: transparent;
+                    border-radius: 4px;
+                    transition: all 0.2s;
+                }
+
+                &:hover {
+                    color: #172b4d;
+                }
+
+                &.active {
+                    color: #6161ff;
+                    font-weight: 600;
+                    &::after {
+                        background-color: #6161ff;
+                    }
+                }
             }
         }
     }
 
     .board-activity-content {
+        flex: 1;
         overflow-y: auto;
-        height: 85vh;
+        padding: 20px 30px;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        li {
+            list-style: none;
+            margin-bottom: 4px;
+        }
     }    
+}
+
+.theme-dark {
+    .board-activity-modal {
+        .board-activity-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+            .board-title { color: #fff; }
+            .views span:not(.active):hover { color: #fff; }
+        }
+        .board-activity-content::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
 }

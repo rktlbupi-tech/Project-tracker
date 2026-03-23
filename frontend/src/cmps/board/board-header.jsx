@@ -83,13 +83,23 @@ export function BoardHeader({ board, onSetFilter, setIsShowDescription, setIsInv
                             <span className='last-seen-title'>Viewing</span>
                             <div className='flex members-imgs'>
                                 {onlineUsers.slice(0, 3).map((user, idx) => (
-                                    <img 
+                                    <Tooltip 
                                         key={user._id} 
-                                        className={`member-img${idx + 1}`} 
-                                        src={user.imgUrl || guest} 
-                                        alt={user.fullname} 
-                                        title={user.fullname}
-                                    />
+                                        title={
+                                            <div className="user-tooltip-content">
+                                                <p className="name">{user.fullname}</p>
+                                                <p className="email">{user.username || 'Active now'}</p>
+                                            </div>
+                                        } 
+                                        placement="bottom" 
+                                        arrow
+                                    >
+                                        <img 
+                                            className={`member-img${idx + 1}`} 
+                                            src={user.imgUrl || guest} 
+                                            alt={user.fullname} 
+                                        />
+                                    </Tooltip>
                                 ))}
                                 {onlineUsers.length > 3 && (
                                     <div className='show-more-members'>

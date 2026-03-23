@@ -1,132 +1,183 @@
 .board-header {
-    padding: $spacing-medium 30px 0 44px;
+    padding: 16px 32px 0;
     position: sticky;
     left: 0;
     top: 0;
-    background: $bg-surface;
-    backdrop-filter: $glass-blur;
-    border-bottom: 1px solid $border-color;
+    background: #fff;
+    border-bottom: 1px solid #dfe1e6;
     z-index: 30;
-    transition: $transition-smooth;
 
     .board-title {
-        color: $text-primary;
         display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        >* {
-            display: flex;
-            align-items: center;
-            height: auto;
-        }
+        flex-direction: row; // Changed from column to row for top level
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
 
         .board-info {
-            width: 100%;
-            gap: 12px;
             display: flex;
             align-items: center;
+            gap: 12px;
 
-            h1 {
+            blockquote h1 {
                 cursor: text;
                 padding: 4px 8px;
-                border: 1px solid transparent;
                 border-radius: 4px;
-                color: $text-primary;
-                letter-spacing: -0.5px;
-                font-weight: 600;
-                transition: $transition-smooth;
-                font-size: rem(24px);
+                color: #172b4d;
+                font-weight: 700;
+                font-size: 24px;
+                transition: background-color 0.2s;
+                margin: 0;
 
                 &:hover {
-                    background-color: var(--workspace-hover);
+                    background-color: #ebecf0;
                 }
             }
 
             .icon {
-                font-size: rem(20px);
-                @include center-flex();
+                font-size: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 border-radius: 6px;
-                padding: 6px;
-                transition: $transition-smooth;
-                color: $text-secondary;
+                width: 32px;
+                height: 32px;
+                transition: background-color 0.2s;
+                color: #6b778c;
+                cursor: pointer;
                 
                 &:hover {
-                    background-color: var(--workspace-hover);
-                    color: $primary-color;
-                }
-                
-                .star {
-                    margin-bottom: 2px;
+                    background-color: #ebecf0;
+                    color: #0052cc;
                 }
             }
 
             .star-full {
-                color: $color-egg_yolk;
-                
-                &:hover {
-                    color: darken($color-egg_yolk, 10%);
-                }
+                color: #ffab00;
             }
         }
 
         .board-tools {
-            gap: $spacing-medium;
-            height: auto;
-            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
 
-            >* {
-                padding: 6px 12px;
-                @include center-flex();
+            .activity {
+                font-size: 20px;
+                color: #6b778c;
+                padding: 6px;
                 border-radius: 6px;
                 cursor: pointer;
-                transition: $transition-smooth;
-                font-size: rem(14px);
-                font-weight: 500;
-                color: $text-secondary;
-                gap: 6px;
+                transition: background 0.2s;
 
                 &:hover {
-                    background-color: var(--workspace-hover);
-                    color: $text-primary;
+                    background-color: #ebecf0;
+                    color: #172b4d;
                 }
             }
 
             .members-last-seen {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 4px 12px;
+                border-radius: 20px;
+                border: 1px solid #dfe1e6;
+                background-color: #fff;
+                cursor: pointer;
+                
+                &:hover {
+                    background-color: #f4f5f7;
+                }
+
                 .last-seen-title {
-                    display: none;
-                    @include for-normal-layout() {
-                        display: block;
-                    }
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #6b778c;
                 }
             }
 
             .invite {
-                background-color: $primary-color;
-                color: white;
-                
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 14px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                transition: all 0.2s;
+                background-color: transparent;
+                color: #0073ea;
+                border: 1px solid #0073ea;
+
                 &:hover {
-                    background-color: $link-color;
+                    background-color: rgba(0, 115, 234, 0.05);
+                    border-color: #005fb8;
+                    color: #005fb8;
+                    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
                 }
 
-                &-title{
-                    display: none;
-                    @include for-normal-layout() {
-                        display: block;
+                &.automations-trigger {
+                    background-color: transparent;
+                    color: #6b778c;
+                    border: 1px solid #dfe1e6;
+
+                    &:hover {
+                        background-color: #f4f5f7;
+                        color: #172b4d;
+                        border-color: #a5adba;
                     }
                 }
 
                 .invite-icon {
-                    width: 20px;
+                    font-size: 18px;
+                }
+            }
+
+            .theme-dark & {
+                .invite {
+                    color: #6161ff;
+                    border-color: #6161ff;
+
+                    &:hover {
+                        background-color: rgba(97, 97, 255, 0.1);
+                        border-color: #8c8cff;
+                        color: #8c8cff;
+                    }
+
+                    &.automations-trigger {
+                        border-color: rgba(255, 255, 255, 0.2);
+                        color: rgba(255, 255, 255, 0.7);
+                    }
                 }
             }
 
             .members-imgs {
-                @include member-img($bg-primary, $text-primary, 28px, 30px);
-                padding: 0;
+                display: flex;
+                flex-direction: row-reverse;
                 
-                &:hover {
-                    background-color: transparent;
+                img {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    border: 2px solid #fff;
+                    margin-right: -12px;
+                }
+
+                .show-more-members {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background-color: #dfe1e6;
+                    border: 2px solid #fff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #42526e;
+                    margin-right: -12px;
                 }
             }
         }
@@ -160,57 +211,56 @@
     }
 
     .board-display-btns {
-        margin-top: 12px;
+        margin-top: 24px;
         display: flex;
-        gap: 4px;
+        gap: 8px;
 
         .type-btn {
-            color: $text-secondary;
+            color: #5e6c84;
             position: relative;
-            @include center-flex();
-            padding: 8px 16px;
-            font-size: rem(14px);
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: $transition-smooth;
-            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
             gap: 8px;
+            border-radius: 4px;
 
             svg {
-                font-size: rem(16px);
+                font-size: 16px;
+                color: #5e6c84;
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0px;
+                left: 16px;
+                right: 16px;
+                height: 3px;
+                background-color: transparent;
+                border-radius: 10px 10px 0 0;
+                transition: all 0.2s ease;
             }
 
             &.active {
-                color: $primary-color;
-                border-bottom: 2px solid $primary-color;
+                color: #0052cc;
+                font-weight: 600;
+
+                svg {
+                    color: #0052cc;
+                }
+
+                &::after {
+                    background-color: #0052cc;
+                }
             }
 
             &:hover:not(.active) {
-                background-color: var(--workspace-hover);
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
-            }
-
-            span {
-                &.wide {
-                    display: none;
-                }
-
-                &.mobile {
-                    display: block;
-                }
-            }
-            
-            @include for-narrow-layout() {
-                span {
-                    &.wide {
-                        display: block;
-                    }
-
-                    &.mobile {
-                        display: none;
-                    }
-                }
+                background-color: #ebecf0;
+                color: #172b4d;
             }
         }
     }

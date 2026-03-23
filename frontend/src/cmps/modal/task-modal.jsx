@@ -135,69 +135,87 @@ export function TaskModal({ task, board, groupId, setModalCurrTask }) {
     }
     return <section className='task-modal'>
         <div className="task-modal-header">
-            <CgClose className="close-btn" onClick={onCloseModal} />
+            <div className="header-top flex space-between align-center">
+                <CgClose className="close-btn" onClick={onCloseModal} />
+                <div className="modal-actions">
+                    {/* Add more tools here if needed */}
+                </div>
+            </div>
             <div className="title">
                 <blockquote contentEditable onBlur={onUpdateTaskTitle} suppressContentEditableWarning={true}>
                     {task.title}
                 </blockquote>
             </div>
         </div>
+
         <div className="task-modal-type flex">
-            <div onClick={() => setIsShowUpdate(!isShowUpdate)} className={`updates-btn ${isShowUpdate ? 'active' : ''}`}>
-                <GrHomeRounded />
+            <div onClick={() => setIsShowUpdate(true)} className={`type-tab ${isShowUpdate ? 'active' : ''}`}>
+                <GrHomeRounded className="icon" />
                 <span>Updates</span>
             </div>
-            <div onClick={() => setIsShowUpdate(!isShowUpdate)} className={`activity-btn ${!isShowUpdate ? 'active' : ''}`}>
+            <div onClick={() => setIsShowUpdate(false)} className={`type-tab ${!isShowUpdate ? 'active' : ''}`}>
                 <span>Activity Log</span>
             </div>
         </div>
-        {!isShowUpdate && <ul className="activities">
-            {
-                taskActivities.map((activity, idx) => {
-                    return <li key={idx}><ActivityPreview activity={activity} /></li>
-                })
-            }
-        </ul>}
-        {isShowUpdate && <section className="update">
-            {!isWriteNewUpdate && <span className="close-input-container flex align-center" onClick={() => setIsWriteNewUpdate(true)}>Write an update</span>}
-            {isWriteNewUpdate && <form className="input-container">
-                <div className="style-txt">
-                    <span onMouseDown={(ev) => onChangeTextStyle(ev, 'fontWeight')}><AiOutlineBold /></span>
-                    <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textDecoration')}><RxUnderline /></span>
-                    <span onMouseDown={(ev) => onChangeTextStyle(ev, 'fontStyle')}>/</span>
-                    <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textAlign', 'Left')}><TbAlignLeft /></span>
-                    <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textAlign', 'Center')}><TbAlignCenter /></span>
-                    <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textAlign', 'Right')}><TbAlignRight /></span>
-                </div>
-                <textarea
-                    name="txt"
-                    style={comment.style}
-                    value={comment.txt}
-                    onBlur={close}
-                    onChange={handleChange}></textarea>
-            </form>}
-            {isWriteNewUpdate && <div className="button-container"><button className="save" onMouseDown={onAddComment}>Update</button></div>}
-            <ul className="comments-list">
-                {
-                    currTask.comments.map(comment => {
-                        return (
-                            <li key={comment._id}>
-                                <CommentPreview onRemoveComment={onRemoveComment} comment={comment} onEditComment={onEditComment} />
-                            </li>
-                        )
-                    })
-                }
+
+        {!isShowUpdate && <div className="activity-container">
+            <ul className="activities">
+                {taskActivities.map((activity, idx) => (
+                    <li key={idx}><ActivityPreview activity={activity} /></li>
+                ))}
             </ul>
-            {currTask.comments.length === 0 &&
-                <div className="no-updates flex column align-center">
-                    <img src={noUpdate} alt="" />
-                    <div className="txt flex column align-center">
-                        <h2>No updates yet for this item</h2>
-                        <p>Be the first one to update about progress, mention someone
-                            <br />or upload files to share with your team members
-                        </p>
+        </div>}
+
+        {isShowUpdate && <section className="update-section">
+            <div className="editor-wrapper">
+                {!isWriteNewUpdate && (
+                    <div className="placeholder-input flex align-center" onClick={() => setIsWriteNewUpdate(true)}>
+                        <span className="text">Write an update...</span>
                     </div>
-                </div>}
+                )}
+                {isWriteNewUpdate && (
+                    <form className="modern-editor">
+                        <div className="toolbar flex align-center">
+                            <span onMouseDown={(ev) => onChangeTextStyle(ev, 'fontWeight')} title="Bold"><AiOutlineBold /></span>
+                            <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textDecoration')} title="Underline"><RxUnderline /></span>
+                            <span onMouseDown={(ev) => onChangeTextStyle(ev, 'fontStyle')} title="Italic" style={{ fontSize: '18px', fontWeight: 500 }}>/</span>
+                            <div className="divider"></div>
+                            <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textAlign', 'Left')} title="Align Left"><TbAlignLeft /></span>
+                            <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textAlign', 'Center')} title="Align Center"><TbAlignCenter /></span>
+                            <span onMouseDown={(ev) => onChangeTextStyle(ev, 'textAlign', 'Right')} title="Align Right"><TbAlignRight /></span>
+                        </div>
+                        <textarea
+                            name="txt"
+                            placeholder="Share your progress..."
+                            autoFocus
+                            style={comment.style}
+                            value={comment.txt}
+                            onBlur={close}
+                            onChange={handleChange}></textarea>
+                        <div className="footer flex justify-end">
+                            <button className="btn-save" onMouseDown={onAddComment}>Update</button>
+                        </div>
+                    </form>
+                )}
+            </div>
+
+            <ul className="comments-list">
+                {currTask.comments.map(comment => (
+                    <li key={comment._id} className="comment-item">
+                        <CommentPreview onRemoveComment={onRemoveComment} comment={comment} onEditComment={onEditComment} />
+                    </li>
+                ))}
+            </ul>
+
+            {currTask.comments.length === 0 && (
+                <div className="no-updates-modern flex column align-center">
+                    <img src={require('../../assets/img/empty_state_modern.png')} alt="Empty" />
+                    <div className="msg-box">
+                        <h3>No updates yet</h3>
+                        <p>Share progress, ask questions, or tag teammates to get the conversation started.</p>
+                    </div>
+                </div>
+            )}
         </section>}
     </section>
 }

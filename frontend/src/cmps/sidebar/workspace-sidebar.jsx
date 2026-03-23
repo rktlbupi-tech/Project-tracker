@@ -11,6 +11,7 @@ import { MdKeyboardArrowRight } from 'react-icons/md'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
 import WorkspaceBoard from './workspace/workspace-board'
 import WorkspaceFavorite from './workspace/workspace-favorite'
+import { NotificationList } from '../user/notification-list'
 import { Tooltip } from '@mui/material'
 
 export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setIsWorkspaceOpen, isWorkspaceOpen, setWorkspaceDisplay, setIsCreateWorkspaceModalOpen }) {
@@ -106,19 +107,22 @@ export function WorkspaceSidebar ({ workspaceDisplay, setIsCreateModalOpen, setI
                     {!isWorkspaceOpen && <MdKeyboardArrowRight />}
                 </div>
             </Tooltip>
-            {workspaceDisplay === 'board' ?
-                (<WorkspaceBoard 
-                    handleChange={handleChange}
-                    filterByToEdit={filterByToEdit} 
-                    boards={boards} 
-                    setIsCreateModalOpen={setIsCreateModalOpen} 
-                    workspaces={workspaces}
-                    currWorkspaceId={currWorkspaceId}
-                    setIsCreateWorkspaceModalOpen={setIsCreateWorkspaceModalOpen}
-                    user={user}
-                />)
-                :
-                (<WorkspaceFavorite boards={boards} />)}
+            <div className="sidebar-content">
+                {workspaceDisplay === 'board' &&
+                    <WorkspaceBoard 
+                        handleChange={handleChange}
+                        filterByToEdit={filterByToEdit} 
+                        boards={boards} 
+                        setIsCreateModalOpen={setIsCreateModalOpen} 
+                        workspaces={workspaces}
+                        currWorkspaceId={currWorkspaceId}
+                        setIsCreateWorkspaceModalOpen={setIsCreateWorkspaceModalOpen}
+                        user={user}
+                    />
+                }
+                {workspaceDisplay === 'starred' && <WorkspaceFavorite boards={boards} />}
+                {workspaceDisplay === 'notifications' && <NotificationList user={user} onClose={() => setIsWorkspaceOpen(false)} />}
+            </div>
         </section>
     )
 }

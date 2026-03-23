@@ -16,7 +16,21 @@ export function GroupList({ board }) {
         }, 600)
     }
 
-    if (!board.groups) return <div></div>
+    if (!board.groups || board.groups.length === 0) {
+        return (
+            <div className="empty-tasks-container flex column align-center justify-center" style={{ padding: '60px 20px', backgroundColor: 'transparent' }}>
+                <img 
+                    src={require('../../assets/img/empty_state_modern.png')} 
+                    alt="No tasks" 
+                    style={{ width: '420px', maxWidth: '100%', opacity: 1, filter: 'drop-shadow(0 15px 35px rgba(0,0,0,0.04))' }} 
+                />
+                <div className="text-content" style={{ textAlign: 'center', marginTop: '10px' }}>
+                    <h3 style={{ fontSize: '24px', fontWeight: 600, color: '#172b4d', marginBottom: '8px' }}>Your project starts here</h3>
+                    <p style={{ color: '#5e6c84', fontSize: '16px', maxWidth: '400px', margin: '0 auto' }}>Create a group or add a task to get things moving. Teamwork starts with a single task.</p>
+                </div>
+            </div>
+        )
+    }
     return <div ref={containerRef} style={{ minWidth: getCellWidth() }}>
         <DragDropContext onDragEnd={(ev) => handleOnDragEnd(ev, board)}>
             <Droppable droppableId={board._id} type='group'>
