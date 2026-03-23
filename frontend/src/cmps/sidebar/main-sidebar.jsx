@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
-import { AiOutlineStar, AiOutlineMenu } from 'react-icons/ai'
+import { AiOutlineStar } from 'react-icons/ai'
 import { BsSun, BsMoon } from 'react-icons/bs'
 import { VscTriangleLeft } from 'react-icons/vsc'
 import { IoNotificationsOutline } from 'react-icons/io5'
+import { TbLayoutGrid, TbLayoutSidebarLeftExpand } from 'react-icons/tb'
 import { closeDynamicModal } from '../../store/board.actions'
 import { setUser } from '../../store/user.actions'
 import { socketService } from '../../services/socket.service'
-import WorkspaceIcon from './workspace-icon'
 import { Tooltip } from '@mui/material'
 import { NotificationList } from '../user/notification-list'
 import { useEffect } from 'react'
@@ -19,7 +19,7 @@ import { loggerService } from '../../services/logger.service'
 const logo = require('../../assets/img/logo.png')
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
-export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWorkspaceOpen }) {
+export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspaceDisplay, setIsWorkspaceOpen }) {
     const [display, setDisplay] = useState('board')
     const [isNotificationOpen, setIsNotificationOpen] = useState(false)
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
@@ -33,7 +33,7 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
     function toggleTheme() {
         setTheme(prev => prev === 'light' ? 'dark' : 'light')
     }
-    
+
     const pendingInvitationsCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
     const pendingNotificationsCount = user?.notifications?.filter(noti => !noti.isRead && noti.createdAt > (user.lastSeenNotifications || 0)).length || 0
     const pendingCount = pendingInvitationsCount + pendingNotificationsCount
@@ -51,7 +51,7 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
             const updatedNotifications = [notification, ...(user?.notifications || [])]
             const updatedUser = { ...user, notifications: updatedNotifications }
             setUser(updatedUser)
-            
+
             // Show a visual alert
             const toastContent = notification.txt || `New Notification: ${notification.type}`
             console.log('FLASHING NOTIFICATION:', toastContent)
@@ -59,17 +59,21 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
 
         socketService.on('invitation-received', onInviteReceived)
         socketService.on('notification-received', onNotificationReceived)
-        
+
         return () => {
-             socketService.off('invitation-received', onInviteReceived)
-             socketService.off('notification-received', onNotificationReceived)
+            socketService.off('invitation-received', onInviteReceived)
+            socketService.off('notification-received', onNotificationReceived)
         }
     }, [user])
 
-    function onChooseIcon (icon) {
-        setDisplay(icon)
-        setWorkspaceDisplay(icon)
-        setIsWorkspaceOpen(true)
+    function onChooseIcon(icon) {
+        if (display === icon && isWorkspaceOpen) {
+            setIsWorkspaceOpen(false)
+        } else {
+            setDisplay(icon)
+            setWorkspaceDisplay(icon)
+            setIsWorkspaceOpen(true)
+        }
         setIsNotificationOpen(false)
     }
 
@@ -87,7 +91,7 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
     return (
         <section className="main-sidebar flex">
             <span className='open-workspace-btn'>
-                <AiOutlineMenu onClick={() => setIsWorkspaceOpen(prev => !prev)} />
+                {/* <TbLayoutSidebarLeftExpand onClick={() => setIsWorkspaceOpen(prev => !prev)} /> */}
             </span>
             <Link to={'/'} className='icon-link'>
                 <Tooltip title="Home" arrow>
@@ -95,44 +99,55 @@ export function MainSidebar ({ setIsLoginModalOpen, setWorkspaceDisplay, setIsWo
                 </Tooltip>
             </Link>
             <div className='tools-container flex column align-center'>
-                <Tooltip title="Workspaces" arrow>
-                    <div className="icon-container" onClick={() => onChooseIcon('board')} >
-                        <WorkspaceIcon />
-                        {display === 'board' && <VscTriangleLeft className="triangle-icon" />}
+                <Tooltip title="Workspaces" placement="right" arrow>
+                    <div className={`icon-container ${display === 'board' ? 'active' : ''}`} onClick={() => onChooseIcon('board')} >
+                        <TbLayoutGrid />
                     </div>
                 </Tooltip>
-                <Tooltip title="Favorites" arrow>
-                    <div className='icon-container' onClick={() => onChooseIcon('starred')}>
+
+                <Tooltip title="Favorites" placement="right" arrow>
+                    <div className={`icon-container ${display === 'starred' ? 'active' : ''}`} onClick={() => onChooseIcon('starred')}>
                         < AiOutlineStar />
-                        {display === 'starred' && <VscTriangleLeft className="triangle-icon" />}
                     </div>
                 </Tooltip>
-                
-                <Tooltip title="Notifications" arrow>
-                    <div 
-                        className={`icon-container notification-icon ${isNotificationOpen ? 'active' : ''}`} 
-                        onClick={onToggleNotification}
-                    >
+
+                <Tooltip title="Notifications" placement="right" arrow>
+                    <div className={`icon-container notification-icon ${display === 'notifications' ? 'active' : ''}`} onClick={() => onChooseIcon('notifications')}>
                         <IoNotificationsOutline />
-                        {pendingCount > 0 && <span className="notification-badge">{pendingCount > 9 ? '9+' : pendingCount}</span>}
+                        {user?.notifications?.some(n => !n.isRead) && <span className="notification-badge">{user.notifications.filter(n => !n.isRead).length}</span>}
                     </div>
                 </Tooltip>
             </div>
 
-            {isNotificationOpen && user && (
-                <NotificationList user={user} onClose={() => setIsNotificationOpen(false)} />
-            )}
-
-            <div className='bottom flex column align-center' style={{ gap: '16px' }}>
-                <Tooltip title={`${theme === 'light' ? 'Dark' : 'Light'} mode`} arrow>
-                    <div className="theme-toggle-btn icon-container" onClick={toggleTheme}>
+            <div className='sidebar-bottom flex column align-center'>
+                <Tooltip title={`${theme === 'light' ? 'Dark' : 'Light'} mode`} placement="right" arrow>
+                    <div className="theme-toggle-btn" onClick={toggleTheme}>
                         {theme === 'light' ? <BsMoon /> : <BsSun />}
                     </div>
                 </Tooltip>
-                <Tooltip title="Login & Logout" arrow>
-                    <img className='logged-user-img' src={(user && user.imgUrl) ? user.imgUrl : guest} alt="" onClick={() => setIsLoginModalOpen(prev => !prev)} />
-                </Tooltip>
+
+                <div className="user-profile-section" onClick={() => setIsLoginModalOpen(prev => !prev)}>
+                    <Tooltip
+                        title={
+                            <div className="user-tooltip-content">
+                                <p className="name">{user?.fullname || 'Guest'}</p>
+                                <p className="email">{user?.username || 'Click to log in'}</p>
+                            </div>
+                        }
+                        placement="right"
+                        arrow
+                    >
+                        <div className="avatar-wrapper">
+                            <img
+                                className='logged-user-img'
+                                src={(user && user.imgUrl) ? user.imgUrl : guest}
+                                alt={user?.fullname}
+                            />
+                            {user && <span className="online-indicator"></span>}
+                        </div>
+                    </Tooltip>
+                </div>
             </div>
         </section>
     )
-}
+}

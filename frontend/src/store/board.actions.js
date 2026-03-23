@@ -114,7 +114,7 @@ export async function saveBoard(board) {
     try {
         const newBoard = await boardService.save(board)
         store.dispatch({ type, board: newBoard })
-        return board
+        return newBoard
     } catch (err) {
         loggerService.error('Cannot save board:', err)
         throw err

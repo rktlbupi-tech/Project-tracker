@@ -105,6 +105,8 @@ function DynamicCmp({ cmp, info, onUpdate }) {
             return <FilePicker info={info} onUpdate={onUpdate} />
         case "updated-picker":
             return <UpdatedPicker info={info} onUpdate={onUpdate} />
+        case "deadline-picker":
+            return <DueDate info={info} onUpdate={onUpdate} />
         default:
             return <p>UNKNOWN {cmp}</p>
     }

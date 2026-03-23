@@ -42,24 +42,27 @@ export function NotificationList({ user, onClose }) {
     }
 
     return (
-        <section className="notification-list" ref={notificationRef}>
+        <section className="notification-list-sidebar">
             <div className="notification-header flex space-between align-center">
                 <h3>Notifications</h3>
                 <div className="header-actions flex">
-                    <button className="mark-read-btn" onClick={markNotificationsRead}>Mark all as read</button>
-                    <button className="clear-all-btn" onClick={clearNotifications}>Clear all</button>
+                    <span className="action-link" onClick={markNotificationsRead}>Mark read</span>
+                    <span className="action-link danger" onClick={clearNotifications}>Clear all</span>
                 </div>
-                <button className="close-btn" onClick={onClose}>&times;</button>
             </div>
             <div className="notification-content">
-                {pendingInvitations.length === 0 && notifications.length === 0 && <p className="empty-msg">No new notifications</p>}
+                {pendingInvitations.length === 0 && notifications.length === 0 && (
+                    <div className="empty-notifications flex column align-center">
+                        <p>No new notifications</p>
+                    </div>
+                )}
                 
                 {pendingInvitations.map(inv => (
                     <div key={inv.id} className="notification-item flex column inv-item">
                         <div className="inv-info flex align-center">
-                            <img src={inv.from.imgUrl} alt={inv.from.fullname} className="user-img" />
+                            {inv.from.imgUrl ? <img src={inv.from.imgUrl} alt={inv.from.fullname} className="user-img" /> : <div className="user-avatar">{inv.from.fullname.substring(0,1)}</div>}
                             <p>
-                                <strong>{inv.from.fullname}</strong> invited you to join the board <strong>{inv.board.title}</strong>
+                                <strong>{inv.from.fullname}</strong> invited you to join <strong>{inv.board.title}</strong>
                             </p>
                         </div>
                         <div className="inv-actions flex">
@@ -77,11 +80,11 @@ export function NotificationList({ user, onClose }) {
                         onClick={() => onNotificationClick(notification.board._id)}
                     >
                         <div className="inv-info flex align-center">
-                            <img src={notification.from.imgUrl} alt={notification.from.fullname} className="user-img" />
+                            {notification.from.imgUrl ? <img src={notification.from.imgUrl} alt={notification.from.fullname} className="user-img" /> : <div className="user-avatar">{notification.from.fullname.substring(0,1)}</div>}
                             <p>
                                 {notification.txt || (
                                     <>
-                                        <strong>{notification.from.fullname}</strong> assigned you a task <strong>{notification.task.title}</strong> on board <strong>{notification.board.title}</strong>
+                                        <strong>{notification.from.fullname}</strong> assigned you <strong>{notification.task.title}</strong>
                                     </>
                                 )}
                             </p>

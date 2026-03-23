@@ -1,17 +1,21 @@
-.task-preview-kanban{
+.task-preview-kanban {
     display: flex;
     flex-direction: column;
-    width: 140px;
-    >*{
+    flex-grow: 1;
+
+    >* {
         margin-bottom: 8px;
+        height: 40px;
+        display: flex;
+        align-items: center;
     }
-    
-    & .picker{
+
+    .picker {
         cursor: pointer;
-        background-color: $board-description-bg;
+        width: 100%;
         height: 36px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
     }
-
-    
-
 }

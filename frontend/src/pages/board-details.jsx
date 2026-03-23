@@ -49,7 +49,7 @@ export function BoardDetails() {
 
     // Using searchParams.toString() as a stable dependency for filter changes
     const searchStr = searchParams.toString()
-    
+
     const queryFilterBy = useMemo(() => {
         return boardService.getFilterFromSearchParams(searchParams)
     }, [searchStr]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -58,14 +58,15 @@ export function BoardDetails() {
         if (board?.workspaceId) {
             setCurrWorkspace(board.workspaceId)
         }
-        
+
         // --- Migration: Ensure 'deadline-picker' exists and 'number-picker' is removed ---
         if (fullBoard) {
             let hasChanged = false
             const newBoard = structuredClone(fullBoard)
-            
+
             if (!newBoard.cmpsOption) newBoard.cmpsOption = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
-            
+            if (!newBoard.cmpsOrder) newBoard.cmpsOrder = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
+
             // 1. Ensure Deadline is an option
             if (!newBoard.cmpsOption.includes('deadline-picker')) {
                 newBoard.cmpsOption.push('deadline-picker')
@@ -83,7 +84,7 @@ export function BoardDetails() {
                 newBoard.cmpsOption.push('file-picker')
                 hasChanged = true
             }
-            
+
             // 4. Ensure Deadline is currently visible (in cmpsOrder)
             if (!newBoard.cmpsOrder.includes('deadline-picker')) {
                 const updatedIdx = newBoard.cmpsOrder.indexOf('updated-picker')
@@ -137,14 +138,14 @@ export function BoardDetails() {
     return (
         <section className="board-details flex">
             <div className='sidebar flex'>
-                <MainSidebar setWorkspaceDisplay={setWorkspaceDisplay} setIsWorkspaceOpen={setIsWorkspaceOpen} setIsLoginModalOpen={setIsLoginModalOpen} />
-                <WorkspaceSidebar 
-                    workspaceDisplay={workspaceDisplay} 
+                <MainSidebar isWorkspaceOpen={isWorkspaceOpen} setWorkspaceDisplay={setWorkspaceDisplay} setIsWorkspaceOpen={setIsWorkspaceOpen} setIsLoginModalOpen={setIsLoginModalOpen} />
+                <WorkspaceSidebar
+                    workspaceDisplay={workspaceDisplay}
                     setWorkspaceDisplay={setWorkspaceDisplay}
-                    isWorkspaceOpen={isWorkspaceOpen} 
-                    setIsWorkspaceOpen={setIsWorkspaceOpen} 
-                    board={board} 
-                    setIsCreateModalOpen={setIsCreateModalOpen} 
+                    isWorkspaceOpen={isWorkspaceOpen}
+                    setIsWorkspaceOpen={setIsWorkspaceOpen}
+                    board={board}
+                    setIsCreateModalOpen={setIsCreateModalOpen}
                     setIsCreateWorkspaceModalOpen={setIsCreateWorkspaceModalOpen}
                 />
             </div>
@@ -161,11 +162,11 @@ export function BoardDetails() {
                         {boardType === 'dashboard' && <Dashboard />}
                     </>
                 ) : (
-                    <div className="empty-board-view flex column align-center justify-center" style={{ height: '100%', gap: '20px', color: '#676879' }}>
-                        <img src="https://res.cloudinary.com/du63kkxhl/image/upload/v1700131641/empty_state_bzxvzk.png" alt="Empty" style={{ width: '200px', opacity: 0.7 }} />
-                        <div style={{ textAlign: 'center' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '10px' }}>You're not invited into any boards yet</h2>
-                            <p style={{ fontSize: '16px' }}>When you are invited to a board, it will show up here.</p>
+                    <div className="empty-board-view flex column align-center justify-center" style={{ height: '100%', gap: '15px', padding: '40px' }}>
+                        <img src={require('../assets/img/empty_state_modern.png')} alt="Empty" style={{ width: '450px', maxWidth: '100%', opacity: 1, filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.05))' }} />
+                        <div style={{ textAlign: 'center', maxWidth: '600px', marginTop: '10px' }}>
+                            <h2 style={{ fontSize: '30px', fontWeight: 600, color: '#172b4d', marginBottom: '12px' }}>A new way to manage your work</h2>
+                            <p style={{ fontSize: '18px', color: '#5e6c84', fontWeight: 400 }}>Select a board or create a new one to unlock your peak productivity.</p>
                         </div>
                     </div>
                 )}
@@ -173,7 +174,7 @@ export function BoardDetails() {
             {isCreateModalOpen && <CreateBoard setIsModalOpen={setIsCreateModalOpen} />}
             {isCreateWorkspaceModalOpen && <CreateWorkspace setIsModalOpen={setIsCreateWorkspaceModalOpen} setWorkspaceDisplay={setWorkspaceDisplay} />}
             {isAutomationsOpen && board && <BoardAutomations board={board} setIsAutomationsOpen={setIsAutomationsOpen} />}
-            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || isCreateWorkspaceModalOpen || (isBoardModalOpen && isMouseOver)) && <div className='dark-screen'></div>}
+            {(isAutomationsOpen || isInviteModalOpen || isCreateModalOpen || isCreateWorkspaceModalOpen) && <div className='dark-screen'></div>}
             {isShowDescription && board &&
                 <>
                     <BoardDescription setIsShowDescription={setIsShowDescription} board={board} />

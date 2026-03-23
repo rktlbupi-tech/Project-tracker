@@ -1,32 +1,138 @@
 .login-logout-modal {
     position: absolute;
-    background-color: $app-bg;
-    border-radius: $spacing-small;
-    color: $primary-text-color;
-    box-shadow: $glass-shadow;
-    padding: $spacing-small;
-    font-size: rem(14px);
-    z-index: 10;
-    border: 1px solid $border-color;
-    left: 74%;
-    bottom: 70px;    
-    
-    span, a {
-        @include center-flex();
-        cursor: pointer;
-        padding: 0 $spacing-xs;
-        border-radius: 4px;
-        gap: $spacing-xs;
-        color: $primary-text-color;
-        &:hover {
-            background-color: $workspace-hover;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    z-index: 1000;
+    border: 1px solid #dfe1e6;
+    left: 70px;
+    bottom: 20px;
+    min-width: 240px;
+    animation: slideIn 0.2s ease-out;
+
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 4px;
+
+            .profile-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #6161ff;
+            }
+
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                
+                .fullname {
+                    font-weight: 700;
+                    color: #172b4d;
+                    font-size: 16px;
+                }
+                .username {
+                    font-size: 13px;
+                    color: #5e6c84;
+                }
+            }
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #dfe1e6;
+            margin: 4px 0;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #42526e;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            &:hover {
+                background-color: #f4f5f7;
+                color: #ff3b30;
+                .icon {
+                    color: #ff3b30;
+                }
+            }
+
+            .icon {
+                font-size: 20px;
+                color: #5e6c84;
+            }
         }
     }
-    
-    @include for-narrow-layout() {
-        &{
-            left: 60px;
-            bottom: 15px;
+
+    .guest-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 8px;
+
+        .guest-msg {
+            color: #5e6c84;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .login-btn-link {
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            background-color: #6161ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            gap: 8px;
+            transition: background 0.2s;
+
+            &:hover {
+                background-color: #5050e6;
+            }
+
+            .icon {
+                font-size: 18px;
+            }
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 }

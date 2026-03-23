@@ -1,79 +1,258 @@
 .home-page {
-  background-image: $home-bg;
-  margin: 0;
-  padding-top: rem(72px);
-  color: $text-primary;
-  font-family: $title-font-family;
-  background-color: $bg-primary;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding-top: rem(80px);
+    color: #121212;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
 
-  .home-content {
-    padding-top: $spacing-xxl;
-    @include center-flex();
-    flex-direction: column;
-    margin-bottom: $spacing-medium;
-
-    .home-paragraph {
-      color: $app-bg;
-      text-align: center;
-      font-size: rem(14px);
-      color: $workspace-icon-color;
+    .layout {
+        max-width: rem(1200px);
+        margin: 0 auto;
+        padding: 0 rem(20px);
     }
 
-    .headers-container {
-      text-align: center;
-
-      .main-title {
+    .hero-section {
+        padding: rem(100px) 0;
+        text-align: center;
         display: flex;
         flex-direction: column;
-        font-weight: 600;
-        background: linear-gradient(360deg, #adadad 53.95%, #8080e0 121.37%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: $spacing-large;
-        font-size: rem(30px);
-        margin-bottom: $spacing-medium;
-        line-height: 40px;
-        letter-spacing: 2px;
+        align-items: center;
+        gap: rem(40px);
+        background-color: #ffffff;
+        border-radius: rem(100px) rem(100px) rem(100px) rem(100px);
+        box-shadow: 0 rem(20px) rem(40px) rgba(0, 0, 0, 0.03);
+        margin-bottom: rem(100px);
+        margin-top: rem(50px);
 
-        @include for-normal-layout() {
-          & {
-            font-size: rem(46px);
-            margin-bottom: $spacing-medium;
-            line-height: 65px;
-          }
+        position: relative;
+
+        .trusted-badge {
+            display: flex;
+            align-items: center;
+            gap: rem(12px);
+            background: #f0f0f0;
+            padding: rem(10px) rem(20px);
+            border-radius: rem(40px);
+
+            .founder-imgs {
+                display: flex;
+
+                img {
+                    width: rem(32px);
+                    height: rem(32px);
+                    border-radius: 50%;
+                    border: 2px solid #fff;
+                    margin-left: rem(-10px);
+
+                    &:first-child {
+                        margin-left: 0;
+                    }
+                }
+            }
+
+            span {
+                font-size: rem(14px);
+                color: #555;
+                font-weight: 600;
+            }
         }
-      }
 
-      .secondary-title {
-        font-weight: 300;
-        font-size: rem(16px);
-        letter-spacing: 1px;
-        padding: 0 $spacing-large;
+        .main-title {
+            font-size: clamp(rem(40px), 8vw, rem(72px));
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            max-width: rem(1000px);
+            margin: 0;
 
-        @include for-normal-layout() {
-          & {
+            span.highlight-inline {
+                color: #4C50FF;
+            }
+
+            .inline-img {
+                height: rem(60px);
+                width: auto;
+                min-width: rem(80px);
+                border-radius: rem(40px);
+                object-fit: cover;
+                display: inline-block;
+                vertical-align: middle;
+                margin: 0 rem(10px);
+                box-shadow: 0 rem(10px) rem(20px) rgba(0, 0, 0, 0.1);
+
+                &.circle {
+                    border-radius: 50%;
+                    width: rem(60px);
+                }
+            }
+        }
+
+        .sub-title {
             font-size: rem(20px);
-            padding: 0;
-          }
+            color: #666;
+            max-width: rem(700px);
+            margin: 0 auto;
+            line-height: 1.5;
         }
-      }
+
+        .btn-start-project {
+            background-color: #121212;
+            color: #fff;
+            padding: rem(20px) rem(40px);
+            border-radius: rem(50px);
+            font-weight: 700;
+            font-size: rem(18px);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 rem(15px) rem(30px) rgba(0, 0, 0, 0.1);
+
+            &:hover {
+                background-color: #000;
+                transform: scale(1.05);
+                box-shadow: 0 rem(20px) rem(40px) rgba(0, 0, 0, 0.15);
+            }
+        }
     }
 
-    .get-started {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 32px 0;
-      max-width: 90%;
-    }
-  }
+    .features-section {
+        margin-bottom: rem(120px);
 
-  .hero {
-    width: 100%;
-    height: auto;
-    margin: 0;
-    padding: 0;
-  }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(rem(300px), 1fr));
+            gap: rem(40px);
+            padding: rem(20px); // Space for hover lift
+            overflow: visible;
+        }
+
+        .feature-card {
+            background: #fff;
+            padding: rem(60px) rem(40px);
+            border-radius: rem(80px); // Extra curvy
+            box-shadow: 0 rem(4px) rem(30px) rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: rem(24px);
+            transition: all 0.4s ease;
+
+            &:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 rem(30px) rem(60px) rgba(0, 0, 0, 0.08);
+                border-color: #4C50FF;
+            }
+
+            .card-icon {
+                font-size: rem(50px);
+            }
+
+            h3 {
+                font-size: rem(26px);
+                font-weight: 700;
+                margin: 0;
+            }
+
+            p {
+                font-size: rem(18px);
+                color: #666;
+                line-height: 1.6;
+                margin: 0;
+            }
+        }
+    }
+
+    .client-logos {
+        background: #fff;
+        padding: rem(80px) 0;
+        border-radius: rem(80px);
+        margin-bottom: rem(120px);
+        text-align: center;
+
+        p {
+            font-size: rem(14px);
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: rem(40px);
+        }
+
+        .logos-strip {
+            img {
+                height: rem(40px);
+                opacity: 0.3;
+                filter: grayscale(1);
+            }
+        }
+    }
+
+    .marquee-section {
+        position: relative;
+        height: rem(300px);
+        margin-bottom: rem(120px);
+    }
+
+    .cta-section {
+        background-color: #fff;
+        border-radius: rem(100px);
+        padding: rem(100px) rem(40px);
+        text-align: center;
+        margin-bottom: rem(120px);
+        box-shadow: 0 rem(20px) rem(50px) rgba(0, 0, 0, 0.02);
+
+        h2 {
+            font-size: clamp(rem(60px), 12vw, rem(140px));
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.03);
+            text-transform: uppercase;
+            margin: 0 0 rem(-40px);
+            user-select: none;
+        }
+
+        .cta-content {
+            background: #121212;
+            color: white;
+            padding: rem(80px) rem(40px);
+            border-radius: rem(80px);
+            max-width: rem(900px);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: rem(32px);
+            align-items: center;
+            position: relative;
+            z-index: 2;
+
+            h3 {
+                font-size: rem(42px);
+                font-weight: 700;
+                margin: 0;
+            }
+
+            p {
+                font-size: rem(20px);
+                color: #aaa;
+                margin: 0;
+                max-width: rem(500px);
+            }
+
+            button {
+                background: white;
+                color: black;
+                border: none;
+                padding: rem(18px) rem(40px);
+                border-radius: rem(40px);
+                font-size: rem(18px);
+                font-weight: 700;
+                cursor: pointer;
+                transition: transform 0.2s;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
+    }
 }

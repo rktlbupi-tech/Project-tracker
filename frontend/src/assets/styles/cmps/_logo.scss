@@ -1,26 +1,32 @@
 .logo {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      gap: 7px;
+    display: flex;
+    align-items: center;
+    gap: rem(12px);
+    text-decoration: none;
+    cursor: pointer;
 
-      &-title {
-          font-size: rem(20px);
-          font-weight:700;
-          color: $text-primary;
-      }
+    .logo-icon {
+        display: flex;
+        gap: rem(4px);
+        .icon-left, .icon-right {
+            width: rem(8px);
+            height: rem(24px);
+            background-color: #121212;
+            border-radius: rem(4px);
+        }
+        .icon-right {
+            height: rem(16px);
+            align-self: flex-end;
+            background-color: #4C50FF;
+        }
+    }
 
-      &-img {
-          height: rem(18px);
-      }
-
-      @include for-normal-layout() {
-          &-title {
-              font-size: rem(24px);
-          }
-
-          &-img {
-              height: rem(20px);
-          }
-      }            
-  }
+    .logo-title {
+        font-size: rem(20px);
+        font-weight: 800;
+        color: #121212;
+        letter-spacing: rem(-0.5px);
+        margin: 0;
+        text-transform: uppercase;
+    }
+}

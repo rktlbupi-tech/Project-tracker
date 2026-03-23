@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { useState, useEffect, useCallback } from 'react'
 import { ImgUploader } from '../cmps/login/img-uploader'
-import { LoginPageHeader } from '../cmps/login/login-page-header'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { loadUsers, login, signup } from '../store/user.actions'
@@ -9,6 +8,7 @@ import { loadBoards } from '../store/board.actions'
 import { boardService } from '../services/board.service'
 import { useGoogleLogin } from '@react-oauth/google'
 import { loggerService } from '../services/logger.service'
+import Logo from '../cmps/logo'
 
 export function LoginSignup() {
     const [credentials, setCredentials] = useState({ username: '', password: '', fullname: '' })
@@ -19,6 +19,11 @@ export function LoginSignup() {
     const returnTo = location.state?.returnTo
     const boards = useSelector(storeState => storeState.boardModule.boards)
     const users = useSelector(storeState => storeState.userModule.users)
+
+    // Sync isSignup with URL path (/auth/signup vs /auth/login)
+    useEffect(() => {
+        setIsSignup(location.pathname.includes('signup'))
+    }, [location.pathname])
 
     const googleLogin = useGoogleLogin({
         onSuccess: codeResponse => {
@@ -41,13 +46,11 @@ export function LoginSignup() {
                 })
             }
 
-            // Check for returnTo state (e.g. from an invite page)
             if (returnTo) {
                 navigate(returnTo)
                 return
             }
 
-            // Check for pending invite (legacy)
             const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
             if (pendingBoardId) {
                 await boardService.acceptInvite(pendingBoardId)
@@ -66,7 +69,7 @@ export function LoginSignup() {
         } catch (err) {
             loggerService.error('Error with Google credentials:', err)
         }
-    }, [users, navigate])
+    }, [users, navigate, returnTo])
 
     const onGoogleLogin = useCallback(async () => {
         try {
@@ -107,13 +110,11 @@ export function LoginSignup() {
                 await login(credentials)
             }
 
-            // Check for returnTo state (e.g. from an invite page)
             if (returnTo) {
                 navigate(returnTo)
                 return
             }
 
-            // Check for pending invite (legacy)
             const pendingBoardId = sessionStorage.getItem('pendingInviteBoardId')
             if (pendingBoardId) {
                 await boardService.acceptInvite(pendingBoardId)
@@ -142,20 +143,19 @@ export function LoginSignup() {
         setCredentials({ ...credentials, imgUrl })
     }
 
-
-
     return (
-        // TODO: Change header to the original header(option)
-        // TODO: Change label to p
-        // TODO: fix image uplouder 
         <div className="login-signup">
-            <LoginPageHeader />
+            <header className="login-header">
+                <Logo />
+            </header>
             <main className="main-content">
                 <form className="form-container" onSubmit={(ev) => onSubmit(ev, isSignup)}>
-                    <h1>{isSignup ? 'Create your Workio account here ' : 'Log in to your account'}</h1>
-                    {isSignup && <ImgUploader onUploaded={onUploaded} />}
-                    {!isSignup && <p className="login-explain">Enter your username and password</p>}
-                    {isSignup && <p className="login-explain">Enter your details to get started</p>}
+                    <h1>{isSignup ? 'Create Account' : 'Log in to Workio'}</h1>
+                    <p className="login-explain">
+                        {isSignup ? 'Get started for free today.' : 'Enter your details to access your dashboard.'}
+                    </p>
+                    
+                    {isSignup && <div className="uploader-stack"><ImgUploader onUploaded={onUploaded} /></div>}
                     
                     <div className="inputs-container">
                         {isSignup && 
@@ -172,7 +172,7 @@ export function LoginSignup() {
                             type="text"
                             name="username"
                             value={credentials.username}
-                            placeholder="Username"
+                            placeholder="Email or Username"
                             onChange={handleChange}
                             required
                         />
@@ -189,16 +189,16 @@ export function LoginSignup() {
                     <button className="btn-next">{isSignup ? 'Sign up' : 'Log in'}</button>
 
                     <div className="split-line">
-                        <p>{isSignup ? 'Or sign up with' : 'Or sign in with'}</p>
+                        <p>OR</p>
                     </div>
 
                     <button type="button" className="btn-login-google" onClick={() => googleLogin()}>
                         <img className="img-google-login" src="https://cdn.monday.com/images/logo_google_v2.svg" aria-hidden="true" alt="" />
-                        <span>Google</span>
+                        <span>Continue with Google</span>
                     </button>
 
                     <div className="suggest-signup">
-                        <span>{isSignup ? 'Already have an account?' : 'Don\'t have an account yet?'}</span>
+                        <span>{isSignup ? 'Already have an account?' : 'Don\'t have an account?'}</span>
                         {!isSignup && <Link to={'/auth/signup'} className="btn-signup" onClick={toggleSignup}>Sign up</Link>}
                         {isSignup && <Link to={'/auth/login'} className="btn-signup" onClick={toggleSignup}>Log in</Link>}
                     </div>
