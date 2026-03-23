@@ -7,6 +7,8 @@ import { LoginSignup } from './pages/login-signup'
 import { InvitePage } from './pages/invite-page'
 import { store } from './store/store'
 import { RequireAuth } from './cmps/require-auth'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export function RootCmp () {
     return (
@@ -24,6 +26,18 @@ export function RootCmp () {
                         <Route element={<InvitePage />} path='/invite/:token' />
                     </Routes>
                 </main>
+                <ToastContainer 
+                    position="bottom-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                />
             </div>
         </Provider>
     )

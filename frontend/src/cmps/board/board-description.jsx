@@ -1,10 +1,14 @@
 import { BsFillLightningFill } from "react-icons/bs";
 import { CgClose } from "react-icons/cg";
+import { useSelector } from "react-redux";
 import { loadBoards, saveBoard } from "../../store/board.actions";
 import { utilService } from "../../services/util.service";
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
 export function BoardDescription({ setIsShowDescription, board }) {
+    const workspaces = useSelector(storeState => storeState.workspaceModule.workspaces)
+    const workspace = workspaces.find(w => (w._id === board.workspaceId || w.id === board.workspaceId))
+    const workspaceName = workspace?.title || board.workspaceName || "Main Workspace"
 
     async function onSave(ev) {
         let value = ev.target.innerText
@@ -43,21 +47,25 @@ export function BoardDescription({ setIsShowDescription, board }) {
                         <span className="lightning-container">
                             <BsFillLightningFill />
                         </span>
-                        <span className="workspace-name">Sprint 4</span>
+                        <span className="workspace-name">{workspaceName}</span>
                     </div>
                 </div>
                 <div className="created-by">
                     <span className="header">Created At</span>
                     <div className="created-by-details flex">
-                        <img src={board.createdBy.imgUrl || guest} alt="" />
-                        <span className="date">{utilService.getFormattedDate(board.archivedAt)}</span>
+                        <span className="date">{utilService.getFormattedDate(board.createdAt || board.archivedAt)}</span>
                     </div>
                 </div>
                 <div className="owners">
                     <span className="header">Owners</span>
-                    <div className="owners-details">
-                        <img src={board.createdBy.imgUrl || guest} alt="" />
-                        <span className="owner-name">{board.createdBy.fullname}</span>
+                    <div className="owners-details flex align-center">
+                        <div className="owner-avatar-container">
+                             <div className="avatar-fallback" style={{ backgroundColor: utilService.getLabelColor(board.createdBy?.fullname || 'Guest') }}>
+                                {(board.createdBy?.fullname || 'G').charAt(0).toUpperCase()}
+                            </div>
+                            <img src={board.createdBy?.imgUrl || guest} alt="" />
+                        </div>
+                        <span className="owner-name">{board.createdBy?.fullname || 'Guest'}</span>
                     </div>
                 </div>
                 <div className="board-type">
