@@ -39,7 +39,6 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December']
 
 const STATUS_COLORS = { Done: '#00c875', Progress: '#fdab3d', Stuck: '#e2445c', default: '#6161ff' }
-const PRIORITY_COLORS = { High: '#e2445c', Medium: '#fdab3d', Low: '#00c875', Critical: '#9b51e0', default: '#c4c4c4' }
 
 function getStatusColor(s) { return STATUS_COLORS[s] || STATUS_COLORS.default }
 

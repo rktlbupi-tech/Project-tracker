@@ -1,7 +1,5 @@
-import { storageService } from './async-storage.service'
 import { httpService } from './http.service'
 
-const STORAGE_KEY = 'workspace'
 const BASE_URL = 'workspace/'
 
 export const workspaceService = {

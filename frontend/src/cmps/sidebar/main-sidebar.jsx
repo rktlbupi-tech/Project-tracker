@@ -20,7 +20,6 @@ const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/gue
 
 export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspaceDisplay, setIsWorkspaceOpen }) {
     const [display, setDisplay] = useState('board')
-    const [isNotificationOpen, setIsNotificationOpen] = useState(false)
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
     const user = useSelector(storeState => storeState.userModule.user)
 
@@ -109,10 +108,7 @@ export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspace
             setWorkspaceDisplay(icon)
             setIsWorkspaceOpen(true)
         }
-        setIsNotificationOpen(false)
     }
-
-    const { updateLastSeenNotifications } = require('../../store/user.actions')
 
     return (
         <section className="main-sidebar flex">

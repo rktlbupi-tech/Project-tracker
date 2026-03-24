@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { socketService, SOCKET_EVENT_ADD_UPDATE_BOARD, SOCKET_EMIT_WATCH_BOARD, SOCKET_EMIT_UNWATCH_BOARD, SOCKET_EVENT_BOARD_USERS_ONLINE, SOCKET_EMIT_SET_USER_PRESENCE } from '../services/socket.service'
-import { loadBoard, loadBoards, setBoardFromSocket, setFilter, setOnlineUsers, setTaskEditing, unsetTaskEditing, saveBoard } from '../store/board.actions'
+import { loadBoard, setBoardFromSocket, setFilter, setOnlineUsers, setTaskEditing, unsetTaskEditing, saveBoard } from '../store/board.actions'
 import { ModalMemberInvite } from '../cmps/modal/modal-member-invite'
 import { WorkspaceSidebar } from '../cmps/sidebar/workspace-sidebar'
 import { LoginLogoutModal } from '../cmps/modal/login-logout-modal'
@@ -29,8 +29,6 @@ import { loggerService } from '../services/logger.service'
 export function BoardDetails() {
     const board = useSelector(storeState => storeState.boardModule.filteredBoard)
     const fullBoard = useSelector(storeState => storeState.boardModule.board)
-    const boards = useSelector(storeState => storeState.boardModule.boards)
-    const isBoardModalOpen = useSelector(storeState => storeState.boardModule.isBoardModalOpen)
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isCreateWorkspaceModalOpen, setIsCreateWorkspaceModalOpen] = useState(false)
@@ -38,8 +36,8 @@ export function BoardDetails() {
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
     const [isAutomationsOpen, setIsAutomationsOpen] = useState(false)
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-    const [isStarredOpen, setIsStarredOpen] = useState(false)
-    const [isMouseOver, setIsMouseOver] = useState(false)
+    const [isStarredOpen] = useState(false)
+    const [, setIsMouseOver] = useState(false)
     const [boardType, setBoardType] = useState('table')
 
     const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false)
