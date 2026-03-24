@@ -8,3 +8,11 @@ export function Loader() {
         </div>
     )
 }
+
+export function MiniLoader() {
+    return (
+        <div className="mini-loader">
+            <div className="spinner"></div>
+        </div>
+    )
+}

@@ -29,7 +29,7 @@ window.onunhandledrejection = (event) => {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <GoogleOAuthProvider clientId="206331273095-es5eep8nfovokr5vilsalpr8gnqsfdut.apps.googleusercontent.com">
+  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
     <Provider store={store}>
       <Router>
         <RootCmp />

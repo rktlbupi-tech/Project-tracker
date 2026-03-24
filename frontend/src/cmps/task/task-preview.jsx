@@ -12,6 +12,7 @@ import { NumberPicker } from "./number-picker"
 import { FilePicker } from "./file-picker"
 import { loggerService } from "../../services/logger.service"
 import { DeadlinePicker } from "./deadline-picker"
+import { CustomPicker } from "./custom-picker"
 
 import { TbArrowsDiagonal } from 'react-icons/tb'
 import { BiDotsHorizontalRounded, BiMessageRoundedAdd } from 'react-icons/bi'
@@ -152,6 +153,9 @@ function DynamicCmp({ cmp, info, onUpdate }) {
         case "deadline-picker":
             return <DeadlinePicker info={info} onUpdate={onUpdate} />
         default:
+            if (cmp.startsWith('custom-picker')) {
+                return <CustomPicker info={info} onUpdate={onUpdate} columnId={cmp} />
+            }
             return <p>UNKNOWN {cmp}</p>
     }
 }

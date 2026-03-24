@@ -54,7 +54,7 @@ export default function HomePage() {
                         From simple tasks to complex roadmaps.
                     </p>
 
-                    <button className="btn-start-project" onClick={() => navigate('/board')}>
+                    <button className="btn-start-project" onClick={() => navigate('/auth/signup')}>
                         Get Started for Free →
                     </button>
                 </div>
@@ -108,7 +108,7 @@ export default function HomePage() {
                     <div className="cta-content">
                         <h3>Break silos and move faster as a team.</h3>
                         <p>Join thousands of organizations using workio to deliver faster results.</p>
-                        <button onClick={() => navigate('/board')}>Start managing</button>
+                        <button onClick={() => navigate('/auth/login')}>Start managing</button>
                     </div>
                 </div>
 

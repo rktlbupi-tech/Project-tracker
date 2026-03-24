@@ -8,24 +8,24 @@ export function HomeFooter() {
                     <div className="footer-section">
                         <h4>Navigation</h4>
                         <ul className="clean-list">
-                            <li>About</li>
-                            <li>Works</li>
-                            <li>Services</li>
-                            <li>Blog</li>
+                            <li><a href="https://incitedigital.com/about/" target="_blank" rel="noreferrer">About</a></li>
+                            <li><a href="https://incitedigital.com/works/" target="_blank" rel="noreferrer">Works</a></li>
+                            <li><a href="https://incitedigital.com/services/" target="_blank" rel="noreferrer">Services</a></li>
+                            <li><a href="https://incitedigital.com/blog/" target="_blank" rel="noreferrer">Blog</a></li>
                         </ul>
                     </div>
                     <div className="footer-section">
                         <h4>Social</h4>
                         <ul className="clean-list">
-                            <li>Instagram</li>
-                            <li>LinkedIn</li>
+                            <li><a href="https://www.instagram.com/incitedigitalagency/" target="_blank" rel="noreferrer">Instagram</a></li>
+                            <li><a href="https://www.linkedin.com/company/incite-digital-llc/" target="_blank" rel="noreferrer">LinkedIn</a></li>
                         </ul>
                     </div>
                     <div className="footer-section">
                         <h4>Legals</h4>
                         <ul className="clean-list">
-                            <li>Privacy Policy</li>
-                            <li>Terms of Service</li>
+                            <li><a href="https://incitedigital.com/privacy-policy/" target="_blank" rel="noreferrer">Privacy Policy</a></li>
+                            <li><a href="https://incitedigital.com/terms-and-condition/" target="_blank" rel="noreferrer">Terms of Service</a></li>
                         </ul>
                     </div>
                 </div>

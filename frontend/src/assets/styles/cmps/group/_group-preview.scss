@@ -21,6 +21,27 @@
     .cmp-order-title {
         position: relative;
 
+        .column-title {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0 8px;
+            outline: none;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            &:focus {
+                background-color: $bg-primary;
+                box-shadow: inset 0 0 0 1px $primary-color;
+            }
+        }
+
         .open-modal-icon {
             opacity: 0;
             position: absolute;

@@ -203,7 +203,18 @@ function getEmptyBoard() {
         "automations": [],
         "cmpsOrder": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'updated-picker', 'deadline-picker'],
         "description": "",
-        "cmpsOption": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'file-picker', 'updated-picker', 'deadline-picker']
+        "cmpsOption": ["status-picker", "member-picker", "date-picker", 'priority-picker', 'file-picker', 'updated-picker', 'deadline-picker', 'custom-picker'],
+        "cmpsTitles": {
+            "status-picker": "Status",
+            "member-picker": "Person",
+            "date-picker": "Date",
+            "priority-picker": "Priority",
+            "number-picker": "Number",
+            "file-picker": "Files",
+            "updated-picker": "Last Updated",
+            "deadline-picker": "Deadline",
+            "custom-picker": "Custom"
+        }
     }
 }
 

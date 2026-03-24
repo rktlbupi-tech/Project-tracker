@@ -3,10 +3,13 @@ import { useSelector } from 'react-redux'
 import { BsChevronLeft, BsChevronRight, BsCalendar3, BsPeopleFill } from 'react-icons/bs'
 import { MdToday, MdAdd } from 'react-icons/md'
 import { IoClose } from 'react-icons/io5'
-import { updateOptimisticBoard, addTask } from '../../store/board.actions'
+import { updateOptimisticBoard, addTask, updateTaskAction } from '../../store/board.actions'
 import { boardService } from '../../services/board.service'
 import { utilService } from '../../services/util.service'
 import { userService } from '../../services/user.service'
+import { StatusPicker } from '../task/status-picker'
+import { PriorityPicker } from '../task/priority-picker'
+import { MemberPicker } from '../task/member-picker'
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const DISPLAY_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -294,6 +297,22 @@ export function BoardCalendar({ board }) {
     }
 
 
+    async function onUpdateTaskField(cmpType, data, activity) {
+        if (!selectedTask || !fullBoard) return
+        const { task } = selectedTask
+        const taskToUpdate = structuredClone(task)
+        taskToUpdate[cmpType] = data
+        try {
+            await updateTaskAction(fullBoard, task._groupId, taskToUpdate, activity, cmpType)
+            setSelectedTask(prev => {
+                if (!prev) return null
+                return { ...prev, task: { ...prev.task, [cmpType]: data } }
+            })
+        } catch (err) {
+            console.error('Failed to update task field from calendar', err)
+        }
+    }
+
     function cancelAddTask() {
         setAddingToDate(null)
         setNewTaskTitle('')
@@ -507,7 +526,15 @@ export function BoardCalendar({ board }) {
                                 {selectedTask.overdue ? '⚠ Overdue' : selectedTask.type === 'deadline' ? '⏰ Deadline' : '📅 Due Date'}
                             </span>
                         </div>
-                        <h3 className="cal-popup-title">{selectedTask.task.title}</h3>
+                        <h3 
+                            className="cal-popup-title" 
+                            contentEditable 
+                            suppressContentEditableWarning 
+                            onBlur={(ev) => onUpdateTaskField('title', ev.target.innerText)}
+                            onKeyDown={(ev) => ev.key === 'Enter' && ev.target.blur()}
+                        >
+                            {selectedTask.task.title}
+                        </h3>
 
                         {/* Progress bar in popup */}
                         <div className="cal-popup-progress">
@@ -535,59 +562,28 @@ export function BoardCalendar({ board }) {
                             </div>
                             <div className="cal-popup-row">
                                 <span className="cal-popup-label">Status</span>
-                                <span className="cal-popup-chip" style={{
-                                    background: getStatusColor(selectedTask.task.status) + '22',
-                                    color: getStatusColor(selectedTask.task.status)
-                                }}>
-                                    {selectedTask.task.status || 'None'}
+                                <div className="cal-picker-container">
+                                    <StatusPicker info={selectedTask.task} onUpdate={onUpdateTaskField} />
+                                </div>
+                            </div>
+                            <div className="cal-popup-row">
+                                <span className="cal-popup-label">Priority</span>
+                                <div className="cal-picker-container">
+                                    <PriorityPicker info={selectedTask.task} onUpdate={onUpdateTaskField} />
+                                </div>
+                            </div>
+                            <div className="cal-popup-row">
+                                <span className="cal-popup-label">Deadline</span>
+                                <span className="cal-popup-value">
+                                    {selectedTask.task._deadlineDate?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'No Deadline'}
                                 </span>
                             </div>
-                            {selectedTask.task.priority && (
-                                <div className="cal-popup-row">
-                                    <span className="cal-popup-label">Priority</span>
-                                    <span className="cal-popup-chip" style={{
-                                        background: getPriorityColor(selectedTask.task.priority) + '22',
-                                        color: getPriorityColor(selectedTask.task.priority)
-                                    }}>
-                                        {selectedTask.task.priority}
-                                    </span>
+                            <div className="cal-popup-row align-start">
+                                <span className="cal-popup-label" style={{ marginTop: '8px' }}>Assignees</span>
+                                <div className="cal-picker-container">
+                                    <MemberPicker info={selectedTask.task} onUpdate={onUpdateTaskField} board={fullBoard} />
                                 </div>
-                            )}
-                            {selectedTask.task._deadlineDate && (
-                                <div className="cal-popup-row">
-                                    <span className="cal-popup-label">Deadline</span>
-                                    <span className="cal-popup-value">
-                                        {selectedTask.task._deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </span>
-                                </div>
-                            )}
-                            {selectedTask.task._dateDate && (
-                                <div className="cal-popup-row">
-                                    <span className="cal-popup-label">Due Date</span>
-                                    <span className="cal-popup-value">
-                                        {selectedTask.task._dateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </span>
-                                </div>
-                            )}
-                            {/* Assignees */}
-                            {selectedTask.task.memberIds?.length > 0 && (
-                                <div className="cal-popup-row">
-                                    <span className="cal-popup-label">Assigned</span>
-                                    <div className="cal-popup-assignees">
-                                        {selectedTask.task.memberIds.map(mid => {
-                                            const m = workloadMap[mid]
-                                            return m ? (
-                                                <div key={mid} className="cal-assignee" title={m.name}>
-                                                    {m.imgUrl
-                                                        ? <img src={m.imgUrl} alt={m.name} />
-                                                        : <div className="cal-assignee-initial">{m.name[0]?.toUpperCase()}</div>
-                                                    }
-                                                </div>
-                                            ) : null
-                                        })}
-                                    </div>
-                                </div>
-                            )}
+                            </div>
                         </div>
                         <p className="cal-popup-drag-hint">💡 Drag the task on the calendar to reschedule it</p>
                     </div>
