@@ -16,6 +16,7 @@ export function BoardModal({ setIsMouseOver }) {
         if (groupId && taskId) {
             loadTask()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     function loadTask() {

@@ -1,16 +1,11 @@
-import { useRef, useState } from "react"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
 
 import { DueDate } from "../task/date-picker"
-import { duplicateTask, toggleModal, updateGroupAction, updateTaskAction } from "../../store/board.actions"
+import { duplicateTask, updateGroupAction, updateTaskAction } from "../../store/board.actions"
 
-import { TbArrowsDiagonal } from 'react-icons/tb'
-import { BiDotsHorizontalRounded, BiMessageRoundedAdd } from 'react-icons/bi'
 import { TaskMenuModal } from "../modal/task-menu-modal"
 import { utilService } from "../../services/util.service"
 import { boardService } from "../../services/board.service"
-import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2'
 import { NumberPicker } from "../task/number-picker"
 import { FilePicker } from "../task/file-picker"
 import { UpdatedPicker } from "../task/updated-picker"
@@ -20,7 +15,6 @@ import { PriorityPicker } from "../task/priority-picker"
 
 export function TaskPreviewKanban({ task, group, board, isTaskModalOpen, setIsTaskModalOpen }) {
     const user = useSelector(storeState => storeState.userModule.user)
-    const navigate = useNavigate()
     const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
     async function updateTask(cmpType, data, activity) {

@@ -1,4 +1,3 @@
-import { IoTimeOutline } from 'react-icons/io5'
 import { utilService } from '../services/util.service'
 
 export function LastViewed({ member }) {

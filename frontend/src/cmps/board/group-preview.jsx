@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import { TaskPreview } from "../task/task-preview"
-import { addTask, updateGroupAction, updatePickerCmpsOrder, addActivity, setDynamicModalObj } from "../../store/board.actions"
+import { addTask, updateGroupAction, addActivity, setDynamicModalObj } from "../../store/board.actions"
 import { boardService } from "../../services/board.service"
 
 import { TaskToolsModal } from "../modal/task-tools-modal"
