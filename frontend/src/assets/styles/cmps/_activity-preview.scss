@@ -6,7 +6,7 @@
     gap: 5%;
     font-size: rem(16px);
     height: 60px;
-    color: $primary-text-color;
+    color: $text-primary;
 
     @include for-mobile-layout() {
         & {
@@ -21,6 +21,7 @@
 
     .time-title {
         width: 200px;
+        color: $text-primary;
 
         @include for-mobile-layout() {
             & {

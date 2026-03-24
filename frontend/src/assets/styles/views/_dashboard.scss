@@ -4,14 +4,14 @@
     justify-content: flex-start;
     gap: 32px;
     padding: 32px;
-    background-color: #f4f5f7;
+    background-color: var(--bg-secondary);
     min-height: calc(100vh - 60px);
 
     >* {
         width: 45%;
         border-radius: 12px;
-        background-color: #fff;
-        border: 1px solid #dfe1e6;
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
         height: fit-content;
@@ -21,19 +21,19 @@
 
         &:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            border-color: #4c9aff;
+            border-color: var(--primary-color, #4c9aff);
         }
 
         .chart-header {
             padding: 16px 20px;
-            border-bottom: 1px solid #efefef;
-            color: #172b4d;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
 
             h2 {
                 margin: 0;
                 font-size: 16px;
                 font-weight: 600;
-                color: #42526e;
+                color: var(--text-secondary);
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
             }
@@ -64,12 +64,12 @@
                 height: 32px;
                 cursor: pointer;
                 border-radius: 6px;
-                color: #6b778c;
+                color: var(--text-secondary);
                 transition: background-color 0.2s;
 
                 &:hover {
-                    background-color: #ebecf0;
-                    color: #172b4d;
+                    background-color: var(--bg-secondary);
+                    color: var(--text-primary);
                 }
 
                 svg {

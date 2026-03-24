@@ -23,6 +23,7 @@ import { loadUsers } from '../store/user.actions'
 import { setCurrWorkspace } from '../store/workspace.actions'
 import { Loader } from '../cmps/loader'
 import { Dashboard } from './dashboard'
+import { BoardCalendar } from '../cmps/board/board-calendar'
 import { loggerService } from '../services/logger.service'
 
 export function BoardDetails() {
@@ -160,13 +161,20 @@ export function BoardDetails() {
                         }
                         <BoardModal setIsMouseOver={setIsMouseOver} />
                         {boardType === 'dashboard' && <Dashboard />}
+                        {boardType === 'calendar' && <BoardCalendar board={fullBoard} />}
                     </>
                 ) : (
-                    <div className="empty-board-view flex column align-center justify-center" style={{ height: '100%', gap: '15px', padding: '40px' }}>
-                        <img src={require('../assets/img/empty_state_modern.png')} alt="Empty" style={{ width: '450px', maxWidth: '100%', opacity: 1, filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.05))' }} />
-                        <div style={{ textAlign: 'center', maxWidth: '600px', marginTop: '10px' }}>
-                            <h2 style={{ fontSize: '30px', fontWeight: 600, color: '#172b4d', marginBottom: '12px' }}>A new way to manage your work</h2>
-                            <p style={{ fontSize: '18px', color: '#5e6c84', fontWeight: 400 }}>Select a board or create a new one to unlock your peak productivity.</p>
+                    <div className="empty-board-view flex column align-center justify-center">
+                        <div className="empty-img-container">
+                            <img 
+                                src={require('../assets/img/empty_state_modern.png')} 
+                                alt="Empty State" 
+                                className="main-empty-img"
+                            />
+                        </div>
+                        <div className="empty-text-container">
+                            <h2>A new way to manage your work</h2>
+                            <p>Select a board or create a new one to unlock your peak productivity.</p>
                         </div>
                     </div>
                 )}

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { AiOutlineStar } from 'react-icons/ai'
 import { BsSun, BsMoon } from 'react-icons/bs'
@@ -11,9 +11,10 @@ import { closeDynamicModal } from '../../store/board.actions'
 import { setUser } from '../../store/user.actions'
 import { socketService } from '../../services/socket.service'
 import { Tooltip } from '@mui/material'
-import { NotificationList } from '../user/notification-list'
-import { useEffect } from 'react'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
+import { NotificationList } from '../user/notification-list'
 import { loggerService } from '../../services/logger.service'
 
 const logo = require('../../assets/img/logo.png')
@@ -25,18 +26,46 @@ export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspace
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
     const user = useSelector(storeState => storeState.userModule.user)
 
+    function toggleTheme() {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light')
+    }
+
+    useEffect(() => {
+        // Request permission for native browser notifications on mount
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission()
+        }
+    }, [])
+
     useEffect(() => {
         document.documentElement.className = theme === 'dark' ? 'theme-dark' : ''
         localStorage.setItem('theme', theme)
     }, [theme])
 
-    function toggleTheme() {
-        setTheme(prev => prev === 'light' ? 'dark' : 'light')
-    }
+    const showNativeNotification = (title, body, url = null) => {
+        console.log('--- SHOWING NATIVE NOTIFICATION ---', { title, body })
+        
+        if (!('Notification' in window)) return
 
-    const pendingInvitationsCount = user?.invitations?.filter(inv => inv.status === 'pending').length || 0
-    const pendingNotificationsCount = user?.notifications?.filter(noti => !noti.isRead && noti.createdAt > (user.lastSeenNotifications || 0)).length || 0
-    const pendingCount = pendingInvitationsCount + pendingNotificationsCount
+        if (Notification.permission === 'granted') {
+            try {
+                const n = new Notification(title, {
+                    body: body,
+                    tag: 'workio-alert'
+                })
+
+                n.onclick = () => {
+                    window.focus()
+                    if (url) window.location.href = url
+                    n.close()
+                }
+            } catch (err) {
+                console.error('Error in new Notification:', err)
+            }
+        } else {
+            console.log('Notification permission state:', Notification.permission)
+        }
+    }
 
     useEffect(() => {
         const onInviteReceived = (invitation) => {
@@ -44,6 +73,12 @@ export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspace
             const updatedInvitations = [invitation, ...(user?.invitations || [])]
             const updatedUser = { ...user, invitations: updatedInvitations }
             setUser(updatedUser)
+
+            const msg = `You were invited to: ${invitation.board.title}`
+            toast.info(msg, { icon: '🔔' })
+
+            // Showing it always for now so you can see it works
+            showNativeNotification('Workio: New Invitation', msg, `/board/${invitation.board._id}`)
         }
 
         const onNotificationReceived = (notification) => {
@@ -52,9 +87,11 @@ export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspace
             const updatedUser = { ...user, notifications: updatedNotifications }
             setUser(updatedUser)
 
-            // Show a visual alert
-            const toastContent = notification.txt || `New Notification: ${notification.type}`
-            console.log('FLASHING NOTIFICATION:', toastContent)
+            const msg = notification.txt || `New Alert: ${notification.type}`
+            toast.success(msg)
+
+            // Showing it always for now so you can see it works
+            showNativeNotification('Workio Notification', msg)
         }
 
         socketService.on('invitation-received', onInviteReceived)

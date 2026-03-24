@@ -30,7 +30,7 @@ class AutomationService {
 
     async evaluateAutomations(boardId, groupId, updatedTask, eventType, updatedField = '') {
         const board = await boardService.getById(boardId)
-        if (!board || !board.automations || !board.automations.length) return
+        if (!board) return
 
         // Critical: Find the actual task object within the newly fetched board context
         const group = board.groups.find(g => (g.id === groupId || g._id?.toString() === groupId))
@@ -41,11 +41,37 @@ class AutomationService {
         let boardNeedsSave = false
         let hasMoved = false
 
-        // --- GLOBAL DEFAULT: Reset highlight if priority is changed to non-High ---
-        if (updatedField === 'priority-picker' && taskToModify.priority !== 'High' && taskToModify.style && taskToModify.style.backgroundColor) {
-            console.log(`[Automation Engine] Priority changed to ${taskToModify.priority}, resetting style for: ${taskToModify.title}`)
-            taskToModify.style = {}
-            boardNeedsSave = true
+        // --- GLOBAL DEFAULT: Synchronize Highlight with Priority ---
+        const isPriorityChange = updatedField === 'priority-picker' || updatedField === 'priority' || !updatedField
+        const isStatusChange = updatedField === 'status-picker' || updatedField === 'status'
+        const isTaskCreated = eventType === 'TASK_CREATED'
+
+        if (isPriorityChange || isStatusChange || isTaskCreated) {
+            const isHighAndNotDone = taskToModify.priority === 'High' && taskToModify.status !== 'Done'
+            const hasHighlight = taskToModify.style && taskToModify.style.backgroundColor
+            
+            if (isHighAndNotDone && !hasHighlight) {
+                console.log(`[Automation Engine] Priority is High (Not Done), auto-highlighting: ${taskToModify.title}`)
+                taskToModify.style = { 
+                    backgroundColor: 'rgba(255, 171, 0, 0.12)', 
+                    boxShadow: 'inset 4px 0 0 #ffab00',
+                    transition: 'all 0.5s ease'
+                }
+                boardNeedsSave = true
+            } else if (!isHighAndNotDone && hasHighlight) {
+                console.log(`[Automation Engine] Priority is ${taskToModify.priority || 'None'}, Status is ${taskToModify.status || 'None'}. Resetting style for: ${taskToModify.title}`)
+                taskToModify.style = {}
+                boardNeedsSave = true
+            }
+        }
+
+        if (!board.automations || !board.automations.length) {
+            if (boardNeedsSave) {
+                console.log(`[Automation Engine] Saving global defaults for board ${boardId}`)
+                const savedBoard = await boardService.update(board)
+                eventBus.emit('BOARD_UPDATED', savedBoard)
+            }
+            return
         }
 
         for (const auto of board.automations) {

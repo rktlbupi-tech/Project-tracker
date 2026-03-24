@@ -122,6 +122,17 @@ export async function markNotificationsRead() {
     }
 }
 
+export async function markSingleNotificationRead(notificationId) {
+    try {
+        const user = await userService.markSingleNotificationRead(notificationId)
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        loggerService.error('Cannot mark single notification as read', err)
+        throw err
+    }
+}
+
 export async function updateLastSeenNotifications() {
     try {
         const user = await userService.updateLastSeenNotifications()

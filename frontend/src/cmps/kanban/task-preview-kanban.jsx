@@ -28,7 +28,7 @@ export function TaskPreviewKanban({ task, group, board, isTaskModalOpen, setIsTa
         task.updatedBy.date = Date.now()
         task.updatedBy.imgUrl = (user && user.imgUrl) || guest
         try {
-            await updateTaskAction(board, group.id, task, activity)
+            await updateTaskAction(board, group.id, task, activity, cmpType)
         } catch (err) {
             console.log(err)
         }

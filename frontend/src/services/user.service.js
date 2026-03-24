@@ -20,6 +20,7 @@ export const userService = {
     toggleStarred,
     clearNotifications,
     markNotificationsRead,
+    markSingleNotificationRead,
     updateLastSeenNotifications
 }
 
@@ -65,6 +66,11 @@ async function clearNotifications() {
 
 async function markNotificationsRead() {
     const user = await httpService.post(BASE_URL + 'mark-read')
+    return saveLocalUser(user)
+}
+
+async function markSingleNotificationRead(notificationId) {
+    const user = await httpService.post(BASE_URL + 'mark-single-read', { notificationId })
     return saveLocalUser(user)
 }
 

@@ -10,14 +10,8 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
     const [creationMode, setCreationMode] = useState('recipe') // 'recipe' | 'custom'
 
     // Smart Recipes (Updated for User requests)
+    // Smart Recipes (Updated for User requests)
     const recipes = [
-        {
-            id: 'r1',
-            title: 'Highlight High Priority',
-            description: 'When priority changes to High, highlight the item with a golden glow.',
-            trigger: { type: 'COLUMN_CHANGE', columnType: 'priority', value: 'High' },
-            action: { type: 'HIGHLIGHT' }
-        },
         {
             id: 'r2',
             title: 'Move Stuck to Attention',
@@ -38,6 +32,22 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
             description: 'When status changes to Done, move the item to the Completed group.',
             trigger: { type: 'COLUMN_CHANGE', columnType: 'status', value: 'Done' },
             action: { type: 'MOVE_TO_GROUP', target: 'Completed' }
+        },
+        {
+            id: 'r5',
+            title: 'Move Status to Group',
+            description: 'When status changes to a value, move item to any group (Customizable).',
+            isDynamic: true,
+            trigger: { type: 'COLUMN_CHANGE', columnType: 'status', value: 'Stuck' },
+            action: { type: 'MOVE_TO_GROUP' }
+        },
+        {
+            id: 'r6',
+            title: 'Move Priority to Group',
+            description: 'When priority changes to a value, move item to any group (Customizable).',
+            isDynamic: true,
+            trigger: { type: 'COLUMN_CHANGE', columnType: 'priority', value: 'High' },
+            action: { type: 'MOVE_TO_GROUP' }
         }
     ]
 
@@ -47,8 +57,8 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
         { id: 'priority', label: 'Priority' }
     ]
     const columnValues = {
-        status: ['Done', 'Progress', 'Stuck', 'Working on it', 'Backlog'],
-        priority: ['High', 'Medium', 'Low', 'Critical']
+        status: ['Stuck', 'Progress', 'Done'],
+        priority: ['High', 'Medium', 'Low']
     }
     const actionTypes = [
         { id: 'HIGHLIGHT', label: 'Highlight the item' },
@@ -60,11 +70,18 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
 
     // Custom Form State
     const [customColumn, setCustomColumn] = useState('status')
-    const [customValue, setCustomValue] = useState('Done')
+    const [customValue, setCustomValue] = useState('Stuck')
     const [customActionType, setCustomActionType] = useState('MOVE_TO_GROUP')
-    const [customActionTarget, setCustomActionTarget] = useState('Completed')
+    const [customActionTarget, setCustomActionTarget] = useState('')
 
     async function onAddRecipe(recipe) {
+        if (recipe.isDynamic) {
+            setCreationMode('custom')
+            setCustomColumn(recipe.trigger.columnType)
+            setCustomValue(recipe.trigger.value)
+            setCustomActionType(recipe.action.type)
+            return
+        }
         const newAutomation = {
             id: utilService.makeId(),
             name: recipe.title,
@@ -255,10 +272,18 @@ export function BoardAutomations({ board, setIsAutomationsOpen }) {
                                         </select>
 
                                         {customActionType === 'MOVE_TO_GROUP' && (
-                                            <select className="inline-select" value={customActionTarget} onChange={(e) => setCustomActionTarget(e.target.value)}>
-                                                <option value="">Select Group...</option>
-                                                {board.groups.map(g => <option key={g.id} value={g.title}>{g.title}</option>)}
-                                            </select>
+                                            <div style={{ display: 'inline' }}>
+                                                <input 
+                                                    className="inline-input" 
+                                                    value={customActionTarget} 
+                                                    onChange={(e) => setCustomActionTarget(e.target.value)}
+                                                    placeholder="Completed"
+                                                    list="group-names"
+                                                />
+                                                <datalist id="group-names">
+                                                    {board.groups.map(g => <option key={g.id} value={g.title} />)}
+                                                </datalist>
+                                            </div>
                                         )}
                                     </div>
                                     <div className="creator-actions flex justify-end">

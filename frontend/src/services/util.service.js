@@ -9,7 +9,8 @@ export const utilService = {
     getColors,
     getRandomColor,
     calculateTime,
-    getFormattedDate
+    getFormattedDate,
+    getLabelColor
 }
 
 function makeId (length = 6) {
@@ -113,4 +114,14 @@ function getFormattedDate (timestamp) {
     const year = date.getFullYear()
 
     return `${day}/${month}/${year}`
+}
+
+function getLabelColor(name = 'G') {
+    const colors = getColors()
+    let hash = 0
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    const index = Math.abs(hash % colors.length)
+    return colors[index]
 }
