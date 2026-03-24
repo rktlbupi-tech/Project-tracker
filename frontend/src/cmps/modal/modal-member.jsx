@@ -18,14 +18,14 @@ export function ModalMember({ dynamicModalObj }) {
             members.push(board.createdBy)
         }
         return members
-    }, [board.members, board.createdBy])
+    }, [board])
     
     const taskMembers = useMemo(() => {
         if (!dynamicModalObj.task?.memberIds) return []
         return dynamicModalObj.task.memberIds.map(memberId => {
             return allBoardMembers.find(member => member._id === memberId)
         }).filter(Boolean)
-    }, [board.members, dynamicModalObj.task.memberIds])
+    }, [allBoardMembers, dynamicModalObj])
 
     useEffect(() => {
         setOutTaskMembers(allBoardMembers.filter(member => !taskMembers.find(tm => tm._id === member._id)))
