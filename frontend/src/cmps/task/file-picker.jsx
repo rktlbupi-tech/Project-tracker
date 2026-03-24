@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { uploadService } from '../../services/upload.service'
 import { utilService } from '../../services/util.service'
 import { setDynamicModalObj } from '../../store/board.actions'
+import { MiniLoader } from '../loader'
 
 export function FilePicker({ info, onUpdate }) {
     const [isUploading, setIsUploading] = useState(false)
@@ -46,7 +47,7 @@ export function FilePicker({ info, onUpdate }) {
     return (
         <section ref={elContainer} className="file-picker picker flex align-center" style={{ minWidth: '40px', padding: '0 8px', gap: '8px' }}>
             {isUploading ? (
-                <div className="uploading-spinner" style={{ fontSize: '12px' }}>...</div>
+                <MiniLoader />
             ) : (
                 <>
                     {/* File Previews & Manage Menu */}

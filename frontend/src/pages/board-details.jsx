@@ -86,7 +86,29 @@ export function BoardDetails() {
                 hasChanged = true
             }
 
-            // 4. Ensure Deadline is currently visible (in cmpsOrder)
+            // 4. Ensure Custom is an option if missing
+            if (!newBoard.cmpsOption.includes('custom-picker')) {
+                newBoard.cmpsOption.push('custom-picker')
+                hasChanged = true
+            }
+
+            // 5. Initialize column titles if missing
+            if (!newBoard.cmpsTitles) {
+                newBoard.cmpsTitles = {
+                    "status-picker": "Status",
+                    "member-picker": "Person",
+                    "date-picker": "Date",
+                    "priority-picker": "Priority",
+                    "number-picker": "Number",
+                    "file-picker": "Files",
+                    "updated-picker": "Last Updated",
+                    "deadline-picker": "Deadline",
+                    "custom-picker": "Custom"
+                }
+                hasChanged = true
+            }
+
+            // 6. Ensure Deadline is currently visible (in cmpsOrder)
             if (!newBoard.cmpsOrder.includes('deadline-picker')) {
                 const updatedIdx = newBoard.cmpsOrder.indexOf('updated-picker')
                 if (updatedIdx !== -1) {

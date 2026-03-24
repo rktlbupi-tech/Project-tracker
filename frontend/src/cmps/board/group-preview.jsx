@@ -33,7 +33,7 @@ export function GroupPreview({ group, board, idx }) {
         const columns = board.cmpsOption.filter(cmpOption => {
             const isBoardGlobal = board.cmpsOrder.includes(cmpOption)
             const isGroupHidden = (group.hiddenColumns || []).includes(cmpOption)
-            return !isBoardGlobal || isGroupHidden
+            return !isBoardGlobal || isGroupHidden || cmpOption === 'custom-picker'
         })
         return columns
     }

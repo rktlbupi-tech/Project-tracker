@@ -1,0 +1,35 @@
+.custom-picker {
+    position: relative;
+    @include center-flex();
+    padding: rem(6px) rem(12px);
+    cursor: pointer;
+    min-width: rem(100px);
+    height: 100%;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .custom-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: rem(14px);
+        color: $text-primary;
+    }
+
+    input {
+        width: 100%;
+        height: 100%;
+        border: 1px solid $primary-color;
+        border-radius: rem(4px);
+        background: transparent;
+        color: $text-primary;
+        font-size: rem(14px);
+        padding: rem(2px) rem(6px);
+        outline: none;
+    }
+}

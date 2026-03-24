@@ -593,6 +593,11 @@
             align-items: center;
             justify-content: space-between;
             gap: 16px;
+            min-height: 38px;
+
+            &.align-start {
+                align-items: flex-start;
+            }
         }
 
         .cal-popup-label {
@@ -601,6 +606,26 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .cal-picker-container {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            max-width: 140px;
+
+            .picker {
+                border: none;
+                width: 100%;
+                height: 32px;
+                border-radius: 4px;
+                font-size: 12px;
+
+                &.status-picker, &.priority-picker {
+                    justify-content: center;
+                }
+            }
         }
 
         .cal-popup-value {

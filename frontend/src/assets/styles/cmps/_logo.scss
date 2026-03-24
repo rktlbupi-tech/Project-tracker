@@ -5,20 +5,10 @@
     text-decoration: none;
     cursor: pointer;
 
-    .logo-icon {
-        display: flex;
-        gap: rem(4px);
-        .icon-left, .icon-right {
-            width: rem(8px);
-            height: rem(24px);
-            background-color: #121212;
-            border-radius: rem(4px);
-        }
-        .icon-right {
-            height: rem(16px);
-            align-self: flex-end;
-            background-color: #4C50FF;
-        }
+    .logo-img {
+        height: rem(24px);
+        width: auto;
+        object-fit: contain;
     }
 
     .logo-title {

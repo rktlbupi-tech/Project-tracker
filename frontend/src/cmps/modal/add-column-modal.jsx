@@ -1,8 +1,10 @@
 import { ImFilesEmpty } from 'react-icons/im'
 import { CiCalculator2, CiCalendarDate } from 'react-icons/ci'
 import { RxCountdownTimer } from "react-icons/rx"
+import { FaEdit } from 'react-icons/fa'
 import { BsCheckSquare } from "react-icons/bs"
 import { HiOutlineUserCircle } from 'react-icons/hi'
+import { utilService } from '../../services/util.service'
 import { loadBoard, saveBoard, setDynamicModalObj, updateGroupAction } from '../../store/board.actions'
 import { useSelector } from 'react-redux'
 
@@ -14,7 +16,14 @@ export function AddColumnModal ({ dynamicModalObj }) {
 
     async function addColumn (columnType) {
         try {
-            if (group && group.hiddenColumns?.includes(columnType)) {
+            if (columnType === 'custom-picker') {
+                const newColType = `custom-picker-${utilService.makeId()}`
+                board.cmpsOrder.push(newColType)
+                if (!board.cmpsTitles) board.cmpsTitles = {}
+                board.cmpsTitles[newColType] = "Custom"
+                await saveBoard(board)
+                loadBoard(board._id)
+            } else if (group && group.hiddenColumns?.includes(columnType)) {
                 const groupToUpdate = { ...group, hiddenColumns: group.hiddenColumns.filter(c => c !== columnType) }
                 await updateGroupAction(board, groupToUpdate)
             } else if (!board.cmpsOrder.includes(columnType)) {
@@ -92,6 +101,13 @@ export function AddColumnModal ({ dynamicModalObj }) {
                     <div onClick={() => addColumn('checkbox-picker')}>
                         <BsCheckSquare />
                         Checkbox
+                    </div>
+                )
+            case "custom-picker":
+                return (
+                    <div onClick={() => addColumn('custom-picker')}>
+                        <FaEdit />
+                        Custom
                     </div>
                 )
             default:

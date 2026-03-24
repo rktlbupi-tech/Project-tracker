@@ -10,17 +10,17 @@ export function HomeHeader ({ boards }) {
                 </div>
                 
                 <nav className="header-nav items-center">
-                    <Link to="#">About</Link>
-                    <Link to="#">Services</Link>
-                    <Link to="#">Case Studies</Link>
-                    <Link to="#">Blog</Link>
+                    <a href="https://incitedigital.com/about/" target="_blank" rel="noreferrer">About</a>
+                    <a href="https://incitedigital.com/services/" target="_blank" rel="noreferrer">Services</a>
+                    <a href="https://incitedigital.com/works/" target="_blank" rel="noreferrer">Case Studies</a>
+                    <a href="https://incitedigital.com/blog/" target="_blank" rel="noreferrer">Blog</a>
                 </nav>
 
                 <div className='header-btns flex items-center'>
                     <Link to={'/auth/login'} className="btn-client-zone">Client Zone</Link>
-                    <Link to={boards?.length ? `/board/${boards[0]._id}` : '/auth/login'}>
+                    <a href="https://incitedigital.com/contact/" target="_blank" rel="noreferrer">
                         <button className='btn-contact'>Contact Us</button>
-                    </Link>
+                    </a>
                 </div>
             </div>
         </header>
