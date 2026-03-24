@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { CgClose } from "react-icons/cg"
 import { useNavigate } from "react-router-dom"
 import { toggleModal, updateTaskAction } from "../../store/board.actions"

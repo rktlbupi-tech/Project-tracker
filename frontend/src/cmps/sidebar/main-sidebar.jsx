@@ -13,7 +13,6 @@ import { Tooltip } from '@mui/material'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { NotificationList } from '../user/notification-list'
 import { loggerService } from '../../services/logger.service'
 
 const logo = require('../../assets/img/logo.png')
@@ -113,16 +112,7 @@ export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspace
         setIsNotificationOpen(false)
     }
 
-    const { updateLastSeenNotifications, markNotificationsRead, clearNotifications } = require('../../store/user.actions')
-
-    function onToggleNotification(ev) {
-        ev.stopPropagation()
-        if (!isNotificationOpen) {
-            // Update last seen to clear badge
-            updateLastSeenNotifications()
-        }
-        setIsNotificationOpen(!isNotificationOpen)
-    }
+    const { updateLastSeenNotifications } = require('../../store/user.actions')
 
     return (
         <section className="main-sidebar flex">
