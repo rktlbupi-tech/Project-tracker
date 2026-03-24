@@ -16,7 +16,6 @@ import { loggerService } from "../../services/logger.service"
 import { CommentPreview } from "../task/comment-preview"
 import { ActivityPreview } from "../activity-preview"
 import { socketService, SOCKET_EMIT_SEND_MSG, SOCKET_EMIT_SET_TOPIC, SOCKET_EVENT_ADD_MSG } from "../../services/socket.service"
-const noUpdate = require('../../assets/img/empty-update.png')
 
 export function TaskModal({ task, board, groupId, setModalCurrTask }) {
     const user = useSelector(storeState => storeState.userModule.user)

@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
-import { Loader } from './loader'
 
 export function RequireAuth({ children }) {
     const user = useSelector(storeState => storeState.userModule.user)
