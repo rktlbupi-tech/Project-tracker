@@ -15,11 +15,19 @@ async function query(filterBy, loggedinUser) {
         }
 
         // Only return boards where the user is creator OR an accepted member
+        // Check both string and ObjectId forms to handle legacy data in DB
         const userId = loggedinUser._id.toString()
-        criteria.$or = [
+        const userObjectId = ObjectId.isValid(userId) ? ObjectId(userId) : null
+        const userOrConditions = [
             { 'createdBy._id': userId },
             { 'members._id': userId }
         ]
+        if (userObjectId) {
+            userOrConditions.push({ 'createdBy._id': userObjectId })
+            userOrConditions.push({ 'members._id': userObjectId })
+        }
+        criteria.$or = userOrConditions
+
 
         const isStarred = (filterBy.isStarred === 'true' || filterBy.isStarred === true)
         if (isStarred) {
