@@ -6,7 +6,8 @@ var gBoardUsers = {} // { boardId: { socketId: user } }
 function setupSocketAPI(http) {
     gIo = require('socket.io')(http, {
         cors: {
-            origin: '*',
+            origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
+            credentials: true
         }
     })
     gIo.on('connection', socket => {
