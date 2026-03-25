@@ -4,12 +4,19 @@ const logger = require('./logger.service')
 // Create a transporter object using the default SMTP transport
 // To use Gmail, you need to use an App Password if 2FA is enabled.
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // or 'smtp.gmail.com'
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // Use STARTTLS instead of SSL port 465
     auth: {
         user: process.env.EMAIL_USER || 'your-email@gmail.com',
         pass: process.env.EMAIL_PASS || 'your-app-password'
+    },
+    tls: {
+       // Do not fail on invalid certs
+       rejectUnauthorized: false
     }
 })
+
 
 /**
  * Sends an invitation email to a user.
