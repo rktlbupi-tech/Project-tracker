@@ -32,11 +32,14 @@ async function createInvite(inviteData, fromUser) {
 
         // Send email
         let targetTitle = 'a workspace'
-        if (inviteData.boardId) {
+        
+        const isValidId = (id) => id && typeof id === 'string' && id.length === 24
+
+        if (isValidId(inviteData.boardId)) {
             const boardCollection = await dbService.getCollection('board')
             const board = await boardCollection.findOne({ _id: ObjectId(inviteData.boardId) })
             if (board) targetTitle = `board: ${board.title}`
-        } else if (inviteData.workspaceId) {
+        } else if (isValidId(inviteData.workspaceId)) {
             const workspaceCollection = await dbService.getCollection('workspace')
             const workspace = await workspaceCollection.findOne({ _id: ObjectId(inviteData.workspaceId) })
             if (workspace) targetTitle = `workspace: ${workspace.title}`
