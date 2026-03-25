@@ -5,11 +5,22 @@ const ObjectId = require('mongodb').ObjectId
 
 async function query(filterBy, loggedinUser) {
     try {
+        // If no logged-in user or guest, they see no boards
+        if (!loggedinUser || !loggedinUser._id) return []
+
         const criteria = {}
         if (filterBy.title) criteria.title = { $regex: filterBy.title, $options: 'i' }
         if (filterBy.workspaceId && filterBy.workspaceId !== 'undefined') {
             criteria.workspaceId = filterBy.workspaceId
         }
+
+        // Only return boards where the user is creator OR an accepted member
+        const userId = loggedinUser._id.toString()
+        criteria.$or = [
+            { 'createdBy._id': userId },
+            { 'members._id': userId }
+        ]
+
         const isStarred = (filterBy.isStarred === 'true' || filterBy.isStarred === true)
         if (isStarred) {
             const user = await userService.getById(loggedinUser._id)
@@ -25,11 +36,25 @@ async function query(filterBy, loggedinUser) {
     }
 }
 
+
 async function getById(boardId, loggedinUser) {
     try {
         const collection = await dbService.getCollection('board')
         const board = await collection.findOne({ _id: ObjectId(boardId) })
         if (!board) throw new Error(`Board ${boardId} not found`)
+
+        // Access check: user must be creator or an accepted member
+        if (loggedinUser && loggedinUser._id) {
+            const userId = loggedinUser._id.toString()
+            const isCreator = board.createdBy?._id?.toString() === userId
+            const isMember = board.members?.some(m => m._id?.toString() === userId)
+            if (!isCreator && !isMember) {
+                const err = new Error('Forbidden')
+                err.status = 403
+                throw err
+            }
+        }
+
         return board
     } catch (err) {
         logger.error(`cannot find board ${boardId}`, err)
