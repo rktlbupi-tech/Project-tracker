@@ -93,7 +93,8 @@ export function LoginSignup() {
         if (!Array.isArray(users) || !users.length) loadUsers()
         if (!boards.length) loadBoards()
         onGoogleLogin()
-    }, [googleUser, onGoogleLogin, users.length, boards.length])
+    }, [googleUser, onGoogleLogin, users, boards.length])
+
 
     function handleChange(ev) {
         const field = ev.target.name
