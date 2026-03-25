@@ -51,13 +51,20 @@ async function sendInviteEmail(toEmail, fromUser, targetTitle, inviteLink) {
 
         // If credentials are provided, try sending. Otherwise, just mock it.
         if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your-email@gmail.com') {
-            const info = await transporter.sendMail(mailOptions)
-            logger.info(`Message sent: ${info.messageId}`)
-            return info
+            try {
+                const info = await transporter.sendMail(mailOptions)
+                logger.info(`Message sent: ${info.messageId}`)
+                return info
+            } catch (mailErr) {
+                logger.error('Failed to send actual email, falling back to mock logs', mailErr)
+                logger.info(`=== INVITATION LINK (EMAIL FAILED) ===\n${inviteLink}\n===================================`)
+                return { messageId: 'mock-id-fallback' }
+            }
         } else {
             logger.info(`Mock email sent to ${toEmail}. Check terminal for link.`)
             return { messageId: 'mock-id' }
         }
+
 
     } catch (err) {
         logger.error('Failed to send invite email', err)
