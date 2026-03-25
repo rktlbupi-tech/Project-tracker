@@ -34,7 +34,9 @@ export function LoginSignup() {
 
     const checkGoogleCredentials = useCallback(async (credentials) => {
         try {
-            const user = users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
+            const user = Array.isArray(users) 
+                ? users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
+                : null;
             if (user) {
                 await login(user)
             } else {
@@ -88,10 +90,11 @@ export function LoginSignup() {
     }, [googleUser, checkGoogleCredentials])
 
     useEffect(() => {
-        if (!users.length) loadUsers()
+        if (!Array.isArray(users) || !users.length) loadUsers()
         if (!boards.length) loadBoards()
         onGoogleLogin()
-    }, [googleUser, onGoogleLogin, users.length, boards.length])
+    }, [googleUser, onGoogleLogin, users, boards.length])
+
 
     function handleChange(ev) {
         const field = ev.target.name
