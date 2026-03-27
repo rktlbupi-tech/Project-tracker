@@ -7,7 +7,10 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.NODE_ENV === 'pr
 
 
 const axios = Axios.create({
-    withCredentials: true
+    withCredentials: true,
+    headers: {
+        'ngrok-skip-browser-warning': '69420'
+    }
 })
 
 // Request Interceptor

@@ -55,6 +55,10 @@ require('./services/automation.service')
 require('./services/deadline-reminder.service')
 registerSocketEvents()
 
+app.get('/api', (req, res) => {
+    res.send('<h1>project tracker workio backend running</h1>')
+})
+
 app.get('/**', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
