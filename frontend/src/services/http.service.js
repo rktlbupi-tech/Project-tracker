@@ -11,10 +11,7 @@ if (BASE_URL && !BASE_URL.endsWith('/')) {
 
 
 const axios = Axios.create({
-    withCredentials: true,
-    headers: {
-        'ngrok-skip-browser-warning': '69420'
-    }
+    withCredentials: true
 })
 
 // Request Interceptor
