@@ -34,7 +34,7 @@ axios.interceptors.response.use(
     (error) => {
         const status = error.response?.status || "Network Error"
         const url = error.config?.url || "Unknown URL"
-        
+
         loggerService.error(`API Error: ${status} ${url}`, error.response?.data || error.message)
 
         if (error.response && error.response.status === 401) {
@@ -48,21 +48,21 @@ axios.interceptors.response.use(
 );
 
 export const httpService = {
-    get (endpoint, data) {
+    get(endpoint, data) {
         return ajax(endpoint, 'GET', data)
     },
-    post (endpoint, data) {
+    post(endpoint, data) {
         return ajax(endpoint, 'POST', data)
     },
-    put (endpoint, data) {
+    put(endpoint, data) {
         return ajax(endpoint, 'PUT', data)
     },
-    delete (endpoint, data) {
+    delete(endpoint, data) {
         return ajax(endpoint, 'DELETE', data)
     }
 }
 
-async function ajax (endpoint, method = 'GET', data = null) {
+async function ajax(endpoint, method = 'GET', data = null) {
     try {
         const res = await axios({
             url: `${BASE_URL}${endpoint}`,

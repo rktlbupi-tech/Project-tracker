@@ -64,8 +64,13 @@
             .img-picker {
                 cursor: pointer;
                 background: #f0f0f0;
-                padding: rem(12px) rem(24px);
+                padding: rem(12px) rem(32px);
                 border-radius: rem(40px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: rem(44px);
+                min-width: rem(220px);
                 font-size: rem(14px);
                 font-weight: 600;
                 color: #555;
@@ -133,12 +138,46 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-bottom: rem(24px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: rem(60px);
 
-            &:hover {
+            &:hover:not(:disabled) {
                 background: #000;
                 transform: scale(1.02);
                 box-shadow: 0 rem(10px) rem(30px) rgba(0, 0, 0, 0.1);
             }
+
+            &:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+            .mini-loader .spinner {
+                border-top-color: #fff;
+                border-left-color: rgba(255, 255, 255, 0.3);
+                border-bottom-color: rgba(255, 255, 255, 0.3);
+                border-right-color: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #d32f2f;
+            padding: rem(12px) rem(20px);
+            border-radius: rem(12px);
+            font-size: rem(14px);
+            font-weight: 600;
+            margin-bottom: rem(24px);
+            border: 1px solid #ffcdd2;
+            text-align: left;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .split-line {
@@ -180,6 +219,11 @@
             &:hover {
                 background: #f9f9f9;
                 border-color: #ddd;
+            }
+
+            &:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
             }
 
             .img-google-login {

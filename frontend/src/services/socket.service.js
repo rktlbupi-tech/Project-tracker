@@ -31,7 +31,7 @@ function createSocketService() {
     setup() {
       socket = io(baseUrl)
       loggerService.debug(`Socket setup with ${baseUrl}`)
-      setTimeout(()=>{
+      setTimeout(() => {
         const user = userService.getLoggedinUser()
         if (user) {
           loggerService.debug(`Auto-logging in socket for user: ${user._id}`)
@@ -79,9 +79,9 @@ function createDummySocketService() {
     terminate() {
       this.setup()
     },
-    login() {   
+    login() {
     },
-    logout() {   
+    logout() {
     },
     on(eventName, cb) {
       listenersMap[eventName] = [...(listenersMap[eventName]) || [], cb]

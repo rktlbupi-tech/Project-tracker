@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState, useEffect, useCallback } from 'react'
 import { ImgUploader } from '../cmps/login/img-uploader'
+import { MiniLoader } from '../cmps/loader'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { loadUsers, login, signup } from '../store/user.actions'
@@ -14,6 +15,8 @@ export function LoginSignup() {
     const [credentials, setCredentials] = useState({ username: '', password: '', fullname: '' })
     const [googleUser, setGoogleUser] = useState(null)
     const [isSignup, setIsSignup] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [errorMsg, setErrorMsg] = useState('')
     const navigate = useNavigate()
     const location = useLocation()
     const returnTo = location.state?.returnTo
@@ -33,6 +36,8 @@ export function LoginSignup() {
     })
 
     const checkGoogleCredentials = useCallback(async (credentials) => {
+        setIsLoading(true)
+        setErrorMsg('')
         try {
             const user = Array.isArray(users) 
                 ? users.find(currUser => currUser.fullname === credentials.name && currUser.username === credentials.email)
@@ -70,6 +75,9 @@ export function LoginSignup() {
             }
         } catch (err) {
             loggerService.error('Error with Google credentials:', err)
+            setErrorMsg('Google authentication failed. Please try again.')
+        } finally {
+            setIsLoading(false)
         }
     }, [users, navigate, returnTo])
 
@@ -105,9 +113,15 @@ export function LoginSignup() {
     async function onSubmit(ev, isSignup) {
         ev.preventDefault()
         if (!credentials.username || !credentials.password) return
+        setIsLoading(true)
+        setErrorMsg('')
         try {
             if(isSignup) {
-                if(!credentials.fullname) return 
+                if(!credentials.fullname) {
+                    setErrorMsg('Full name is required')
+                    setIsLoading(false)
+                    return
+                }
                 await signup(credentials)
             } else {
                 await login(credentials)
@@ -135,6 +149,10 @@ export function LoginSignup() {
             }
         } catch (err) {
             loggerService.error('Error in login/signup:', err)
+            const msg = err.response?.data?.msg || err.response?.data || 'Failed to authenticate. Please check your credentials.'
+            setErrorMsg(typeof msg === 'string' ? msg : 'An unexpected error occurred')
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -157,6 +175,8 @@ export function LoginSignup() {
                     <p className="login-explain">
                         {isSignup ? 'Get started for free today.' : 'Enter your details to access your dashboard.'}
                     </p>
+
+                    {errorMsg && <div className="error-message">{errorMsg}</div>}
                     
                     {isSignup && <div className="uploader-stack"><ImgUploader onUploaded={onUploaded} /></div>}
                     
@@ -189,13 +209,15 @@ export function LoginSignup() {
                         />
                     </div>
 
-                    <button className="btn-next">{isSignup ? 'Sign up' : 'Log in'}</button>
+                    <button className="btn-next" disabled={isLoading}>
+                        {isLoading ? <MiniLoader /> : (isSignup ? 'Sign up' : 'Log in')}
+                    </button>
 
                     <div className="split-line">
                         <p>OR</p>
                     </div>
 
-                    <button type="button" className="btn-login-google" onClick={() => googleLogin()}>
+                    <button type="button" className="btn-login-google" onClick={() => googleLogin()} disabled={isLoading}>
                         <img className="img-google-login" src="https://cdn.monday.com/images/logo_google_v2.svg" aria-hidden="true" alt="" />
                         <span>Continue with Google</span>
                     </button>

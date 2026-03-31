@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { uploadService } from '../../services/upload.service'
+import { MiniLoader } from '../loader'
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
 export function ImgUploader({ onUploaded = null }) {
@@ -19,8 +20,9 @@ export function ImgUploader({ onUploaded = null }) {
   }
 
   function getUploadLabel() {
+    if (isUploading) return <MiniLoader />
     if (imgData.imgUrl) return 'Upload Another?'
-    return isUploading ? 'Uploading....' : 'Upload a profile picture'
+    return 'Upload a profile picture'
   }
 
   // TODO: fix all
