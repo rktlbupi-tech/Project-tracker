@@ -6,7 +6,8 @@ var gBoardUsers = {} // { boardId: { socketId: user } }
 function setupSocketAPI(http) {
     gIo = require('socket.io')(http, {
         cors: {
-            origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
+            origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ["https://workio-neon.vercel.app"],
+            methods: ["GET", "POST"],
             credentials: true
         }
     })
@@ -59,7 +60,7 @@ function setupSocketAPI(http) {
             // We'll also attach the user object if we want richer presence later
             // For now, let's look up the user or just use the ID
         })
-        
+
         socket.on('set-user-presence', user => {
             logger.info(`Setting socket.user and socket.userId for presence [id: ${socket.id}, userId: ${user?._id}]`)
             socket.user = user
@@ -113,7 +114,7 @@ async function emitToUser({ type, data, userId }) {
 async function broadcast({ type, data, room = null, userId }) {
     if (room) room = room.toString()
     logger.info(`Broadcasting event: ${type} to room: ${room}`)
-    
+
     let excludedSocket = null
     if (userId) {
         userId = userId.toString()
@@ -188,9 +189,9 @@ module.exports = {
     // set up the sockets service and define the API
     setupSocketAPI,
     // emit to everyone / everyone in a specific room (label)
-    emitTo, 
+    emitTo,
     // emit to a specific user (if currently active in system)
-    emitToUser, 
+    emitToUser,
     // Send to all sockets BUT not the current socket - if found
     // (otherwise broadcast to a room / to all)
     broadcast,
