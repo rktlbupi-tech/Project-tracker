@@ -1,13 +1,8 @@
 import Axios from 'axios'
 import { loggerService } from './logger.service'
 
-let BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.NODE_ENV === 'production'
-    ? '/api/'
-    : '//localhost:3031/api/')
+let BASE_URL = 'http://51.20.20.239:3031/api/';
 
-if (BASE_URL && !BASE_URL.endsWith('/')) {
-    BASE_URL += '/'
-}
 
 
 const axios = Axios.create({
