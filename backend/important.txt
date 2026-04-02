@@ -1,1 +1,16 @@
+chmod 400 /Users/rajesh/Documents/rs/projectTracker/Project-tracker/backend/dev-incitedigital.pem
+
+
 ssh -i /Users/rajesh/Documents/rs/projectTracker/Project-tracker/backend/dev-incitedigital.pem ubuntu@51.20.20.239
+
+
+sudo apt update && sudo apt upgrade -y
+
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+node -v
+npm -v
+
+
+curl http://51.20.20.239:3031/api
