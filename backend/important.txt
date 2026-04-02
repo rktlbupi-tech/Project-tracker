@@ -1,0 +1,1 @@
+ssh -i /Users/rajesh/Documents/rs/projectTracker/Project-tracker/backend/dev-incitedigital.pem ubuntu@51.20.20.239

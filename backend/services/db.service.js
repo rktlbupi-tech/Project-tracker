@@ -4,7 +4,8 @@ const config = require('../config')
 const logger = require('./logger.service')
 
 module.exports = {
-    getCollection
+    getCollection,
+    connect
 }
 
 var dbConn = null
@@ -26,6 +27,7 @@ async function connect() {
         const client = await MongoClient.connect(config.dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
         const db = client.db(config.dbName)
         dbConn = db
+        logger.info('Connected to MongoDB')
         return db
     } catch (err) {
         logger.error('Cannot Connect to DB', err)

@@ -50,7 +50,9 @@ app.use('/api/workspace', workspaceRoutes)
 app.use('/api/invite', inviteRoutes)
 setupSocketAPI(http)
 
-// Initialize Automation and Socket Event listeners
+// Initialize Database and Services
+const dbService = require('./services/db.service')
+dbService.connect()
 require('./services/automation.service')
 require('./services/deadline-reminder.service')
 registerSocketEvents()
