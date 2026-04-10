@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://51.20.20.239:3031/api/:path*"
+      "destination": "https://project.incitedigital.com/api/:path*"
     },
     {
       "source": "/(.*)",
