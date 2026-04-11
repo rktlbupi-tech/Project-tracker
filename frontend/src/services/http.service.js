@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import { loggerService } from './logger.service'
 
-let BASE_URL = 'https://project.incitedigital.com/api/'
+let BASE_URL = 'https://projectapi.incitedigital.com/api/'
 
 
 

@@ -22,12 +22,14 @@ app.use((req, res, next) => {
 
 const corsOptions = {
     origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [
-        'http://127.0.0.1:3000', 
-        'http://localhost:3000', 
-        'http://127.0.0.1:5173', 
-        'http://localhost:5173', 
+        'http://127.0.0.1:3000',
+        'http://localhost:3000',
+        'http://127.0.0.1:5173',
+        'http://localhost:5173',
         'https://workio-neon.vercel.app',
-        'https://project-tracker-nine-pied.vercel.app'
+        'https://project-tracker-nine-pied.vercel.app',
+        'https://project-tracker-bice-omega.vercel.app',
+        'https://project.incitedigital.com'
     ],
     credentials: true
 }
