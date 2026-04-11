@@ -52,16 +52,19 @@ function doLog(level, ...args) {
 
 module.exports = {
     debug(...args) {
-        if (process.env.NODE_ENV === 'production') return
+        if (isProduction) return
         doLog('DEBUG', ...args)
     },
     info(...args) {
+        if (isProduction) return
         doLog('INFO', ...args)
     },
     warn(...args) {
+        if (isProduction) return
         doLog('WARN', ...args)
     },
     error(...args) {
+        if (isProduction) return
         doLog('ERROR', ...args)
     }
 }

@@ -6,12 +6,15 @@ export const loggerService = {
         doLog('DEBUG', '#868E96', ...args)
     },
     info(...args) {
+        if (isProduction) return
         doLog('INFO', '#6CC51D', ...args)
     },
     warn(...args) {
+        if (isProduction) return
         doLog('WARN', '#FFD43B', ...args)
     },
     error(...args) {
+        if (isProduction) return
         doLog('ERROR', '#FA5252', ...args)
     }
 }
