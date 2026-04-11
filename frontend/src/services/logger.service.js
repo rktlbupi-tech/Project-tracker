@@ -1,5 +1,5 @@
 const isProduction = process.env.NODE_ENV === 'production'
-
+// dsf
 export const loggerService = {
     debug(...args) {
         if (isProduction) return
@@ -21,7 +21,7 @@ export const loggerService = {
 
 function doLog(level, color, ...args) {
     const time = new Date().toLocaleTimeString('en-US', { hour12: false })
-    
+
     // Check if the last argument is an object/error to log it separately for better inspection
     let data = null
     let logs = [...args]
@@ -31,7 +31,7 @@ function doLog(level, color, ...args) {
 
     console.log(
         `%c[${time}] %c${level.padEnd(5)} %c| ${logs.join(' | ')}`,
-        'color: #868E96;', 
+        'color: #868E96;',
         `color: ${color}; font-weight: bold;`,
         'color: inherit;',
         data || ''
