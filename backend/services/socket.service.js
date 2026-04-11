@@ -6,7 +6,13 @@ var gBoardUsers = {} // { boardId: { socketId: user } }
 function setupSocketAPI(http) {
     gIo = require('socket.io')(http, {
         cors: {
-            origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ["https://workio-neon.vercel.app"],
+            origin: function (origin, callback) {
+                if (!origin || origin.includes('incitedigital.com') || origin.includes('vercel.app') || origin.includes('localhost')) {
+                    callback(null, true)
+                } else {
+                    callback(new Error('Not allowed by CORS'))
+                }
+            },
             methods: ["GET", "POST"],
             credentials: true
         }

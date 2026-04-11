@@ -21,17 +21,22 @@ app.use((req, res, next) => {
 
 
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [
-        'http://127.0.0.1:3000',
-        'http://localhost:3000',
-        'http://127.0.0.1:5173',
-        'http://localhost:5173',
-        'https://workio-neon.vercel.app',
-        'https://project-tracker-nine-pied.vercel.app',
-        'https://project-tracker-bice-omega.vercel.app',
-        'https://project.incitedigital.com',
-        'https://project-tracker-gilt.vercel.app'
-    ],
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://127.0.0.1:3000',
+            'http://localhost:3000',
+            'http://127.0.0.1:5173',
+            'http://localhost:5173',
+        ]
+        if (!origin || 
+            allowedOrigins.includes(origin) || 
+            origin.includes('incitedigital.com') || 
+            origin.includes('vercel.app')) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
     credentials: true
 }
 app.use(cors(corsOptions))
