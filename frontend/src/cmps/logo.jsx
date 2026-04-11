@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-const logo = require('../assets/img/logo.png')
+import { ReactComponent as LogoIcon } from '../assets/img/logo.svg'
 
 export default function Logo () {
       return (
             <Link to={'/'} className='logo'>
-                  <img src={logo} alt="workio" className='logo-img' />
+                  <LogoIcon className='logo-img' />
                   <h1 className='logo-title'>workio</h1>
             </Link>
       )

@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import { loggerService } from '../../services/logger.service'
 
-const logo = require('../../assets/img/logo.png')
+import { ReactComponent as LogoIcon } from '../../assets/img/logo.svg'
 const guest = "https://res.cloudinary.com/du63kkxhl/image/upload/v1675013009/guest_f8d60j.png"
 
 export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspaceDisplay, setIsWorkspaceOpen }) {
@@ -117,7 +117,7 @@ export function MainSidebar({ isWorkspaceOpen, setIsLoginModalOpen, setWorkspace
             </span>
             <Link to={'/'} className='icon-link'>
                 <Tooltip title="Home" arrow>
-                    <img className='home-img' src={logo} alt="logo" onClick={closeDynamicModal} />
+                    <LogoIcon className='home-img' onClick={closeDynamicModal} />
                 </Tooltip>
             </Link>
             <div className='tools-container flex column align-center'>
