@@ -29,7 +29,8 @@ const corsOptions = {
         'https://workio-neon.vercel.app',
         'https://project-tracker-nine-pied.vercel.app',
         'https://project-tracker-bice-omega.vercel.app',
-        'https://project.incitedigital.com'
+        'https://project.incitedigital.com',
+        'https://project-tracker-gilt.vercel.app'
     ],
     credentials: true
 }
