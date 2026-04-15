@@ -7,7 +7,13 @@ function setupSocketAPI(http) {
     gIo = require('socket.io')(http, {
         cors: {
             origin: function (origin, callback) {
-                if (!origin || origin.includes('incitedigital.com') || origin.includes('vercel.app') || origin.includes('localhost')) {
+                const envOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : []
+                if (!origin || 
+                    origin.includes('incitedigital.com') || 
+                    origin.includes('vercel.app') || 
+                    origin.includes('amplifyapp.com') || 
+                    origin.includes('localhost') ||
+                    envOrigins.includes(origin)) {
                     callback(null, true)
                 } else {
                     callback(new Error('Not allowed by CORS'))

@@ -22,16 +22,19 @@ app.use((req, res, next) => {
 
 const corsOptions = {
     origin: function (origin, callback) {
+        const envOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : []
         const allowedOrigins = [
             'http://127.0.0.1:3000',
             'http://localhost:3000',
             'http://127.0.0.1:5173',
             'http://localhost:5173',
+            ...envOrigins
         ]
         if (!origin || 
             allowedOrigins.includes(origin) || 
             origin.includes('incitedigital.com') || 
-            origin.includes('vercel.app')) {
+            origin.includes('vercel.app') ||
+            origin.includes('amplifyapp.com')) {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by CORS'))
