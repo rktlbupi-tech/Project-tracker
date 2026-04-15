@@ -31,14 +31,12 @@ async function uploadFile(ev) {
         throw new Error('Failed to upload file to S3')
     }
 
-    // Return the data in a structure that matches what the app expects
-    // Usually it expects an object with a 'secure_url' or similar
-    // Based on ImgUploader, it expects secure_url, height, width
-    return {
+    // Return as array to match expected behavior for multiple uploads
+    return [{
       secure_url: fileUrl,
-      width: 500, // Dummy values for now as S3 doesn't return metadata
+      width: 500,
       height: 500
-    }
+    }]
     
   } catch (err) {
     console.error('Error in upload process:', err)
