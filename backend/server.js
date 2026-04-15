@@ -51,6 +51,7 @@ const userRoutes = require('./api/user/user.routes')
 const boardRoutes = require('./api/board/board.routes')
 const workspaceRoutes = require('./api/workspace/workspace.routes')
 const inviteRoutes = require('./api/invite/invite.routes')
+const uploadRoutes = require('./api/upload/upload.routes')
 const { setupSocketAPI } = require('./services/socket.service')
 const { registerSocketEvents } = require('./services/socket.events')
 
@@ -63,6 +64,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/board', boardRoutes)
 app.use('/api/workspace', workspaceRoutes)
 app.use('/api/invite', inviteRoutes)
+app.use('/api/upload', uploadRoutes)
 setupSocketAPI(http)
 
 // Initialize Database and Services
