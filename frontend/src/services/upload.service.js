@@ -1,34 +1,48 @@
+import { httpService } from './http.service'
+
 export const uploadService = {
-  uploadFile
+  uploadFile,
+  uploadImg: uploadFile
 }
 
 async function uploadFile(ev) {
-  const CLOUD_NAME = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || "dwemun2dn"
-  const UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_PRESET || "vt0iqgff"
-  const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`
+  const file = ev.target.files[0]
+  if (!file) return
 
-  const files = ev.target.files
-  const uploadPromises = Array.from(files).map(async (file) => {
-    const formData = new FormData()
-    formData.append('upload_preset', UPLOAD_PRESET)
-    formData.append('file', file)
+  try {
+    // 1. Get signed URL from backend
+    const { uploadUrl, fileUrl } = await httpService.get('upload/sign', {
+      fileName: file.name,
+      fileType: file.type
+    })
 
-    try {
-      const res = await fetch(UPLOAD_URL, {
-        method: 'POST',
-        body: formData
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        console.error('Cloudinary upload failed:', data.error?.message || 'Unknown error')
-        throw new Error(data.error?.message)
-      }
-      return data
-    } catch (err) {
-      console.error('Error during upload process:', err)
-      throw err
+    // 2. Upload file directly to S3
+    const response = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type
+      },
+      body: file
+    })
+
+    if (!response.ok) {
+        const errorText = await response.text()
+        console.error('S3 Upload Error:', errorText)
+        throw new Error('Failed to upload file to S3')
     }
-  })
 
-  return Promise.all(uploadPromises)
+    // Return the data in a structure that matches what the app expects
+    // Usually it expects an object with a 'secure_url' or similar
+    // Based on ImgUploader, it expects secure_url, height, width
+    return {
+      secure_url: fileUrl,
+      width: 500, // Dummy values for now as S3 doesn't return metadata
+      height: 500
+    }
+    
+  } catch (err) {
+    console.error('Error in upload process:', err)
+    throw err
+  }
 }
+
