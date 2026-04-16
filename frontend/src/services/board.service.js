@@ -27,19 +27,37 @@ function query(filter = {}) {
 }
 
 function getFilteredBoard(board, filterBy = getDefaultFilterBoard()) {
-    const filteredBoard = { ...board }
+    const filteredBoard = structuredClone(board)
     if (filterBy.title) {
         const regex = new RegExp(filterBy.title, 'i')
-        const groups = filteredBoard.groups.filter(group => regex.test(group.title))
-        groups.forEach(group => {
-            group.tasks = group.tasks.filter(task => regex.test(task.title))
+        filteredBoard.groups = filteredBoard.groups.filter(group => {
+            const isGroupMatch = regex.test(group.title)
+            const matchingTasks = group.tasks.filter(task => 
+                regex.test(task.title) || (task.status && regex.test(task.status))
+            )
+
+            if (isGroupMatch) {
+                // If group title matches, we keep the group and all its tasks?
+                // Or maybe just show matching tasks. Usually, user expects matching tasks.
+                // Let's show matching tasks if any, otherwise all tasks if group matches.
+                // Actually, standard behavior in project trackers: show group if it matches OR has matching tasks.
+                // If group matches, show all its tasks? No, usually just filter.
+                group.tasks = isGroupMatch ? group.tasks : matchingTasks
+                return true
+            }
+
+            if (matchingTasks.length > 0) {
+                group.tasks = matchingTasks
+                return true
+            }
+            return false
         })
     }
     if (filterBy.memberId) {
-        const groups = filteredBoard.groups
-        groups.forEach(group => {
+        filteredBoard.groups.forEach(group => {
             group.tasks = group.tasks.filter(task => task.memberIds.includes(filterBy.memberId))
         })
+        filteredBoard.groups = filteredBoard.groups.filter(group => group.tasks.length > 0)
     }
     return filteredBoard
 }
