@@ -27,39 +27,36 @@ function query(filter = {}) {
 }
 
 function getFilteredBoard(board, filterBy = getDefaultFilterBoard()) {
-    const filteredBoard = structuredClone(board)
-    if (filterBy.title) {
-        const regex = new RegExp(filterBy.title, 'i')
-        filteredBoard.groups = filteredBoard.groups.filter(group => {
-            const isGroupMatch = regex.test(group.title)
-            const matchingTasks = group.tasks.filter(task => 
-                regex.test(task.title) || (task.status && regex.test(task.status))
-            )
+    if (!filterBy.title && !filterBy.memberId) return board
 
-            if (isGroupMatch) {
-                // If group title matches, we keep the group and all its tasks?
-                // Or maybe just show matching tasks. Usually, user expects matching tasks.
-                // Let's show matching tasks if any, otherwise all tasks if group matches.
-                // Actually, standard behavior in project trackers: show group if it matches OR has matching tasks.
-                // If group matches, show all its tasks? No, usually just filter.
-                group.tasks = isGroupMatch ? group.tasks : matchingTasks
-                return true
-            }
+    const { title, memberId } = filterBy
+    const regex = title ? new RegExp(title, 'i') : null
 
-            if (matchingTasks.length > 0) {
-                group.tasks = matchingTasks
-                return true
-            }
-            return false
+    const filteredGroups = board.groups.map(group => {
+        // 1. Group Title Match?
+        const isGroupMatch = regex ? regex.test(group.title) : false
+
+        // 2. Filter Tasks
+        const matchingTasks = group.tasks.filter(task => {
+            const isTitleMatch = regex ? regex.test(task.title) : false
+            const isStatusMatch = regex ? (task.status && regex.test(task.status)) : false
+            const isMemberMatch = memberId ? task.memberIds.includes(memberId) : true
+
+            // Logic: if searching title/status, it MUST match. If filtering member, it MUST match.
+            const matchesSearch = regex ? (isTitleMatch || isStatusMatch) : true
+            return matchesSearch && isMemberMatch
         })
-    }
-    if (filterBy.memberId) {
-        filteredBoard.groups.forEach(group => {
-            group.tasks = group.tasks.filter(task => task.memberIds.includes(filterBy.memberId))
-        })
-        filteredBoard.groups = filteredBoard.groups.filter(group => group.tasks.length > 0)
-    }
-    return filteredBoard
+
+        // 3. Return a copy of the group with filtered tasks (if any matches or if group itself matches)
+        if (isGroupMatch) {
+            return { ...group, tasks: group.tasks } // Keep all tasks if group title matches
+        } else if (matchingTasks.length > 0) {
+            return { ...group, tasks: matchingTasks }
+        }
+        return null
+    }).filter(Boolean)
+
+    return { ...board, groups: filteredGroups }
 }
 
 function getById(boardId) {

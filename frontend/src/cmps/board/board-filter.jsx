@@ -1,5 +1,5 @@
 import { addTaskOnFirstGroup, setDynamicModalObj } from '../../store/board.actions'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEffectUpdate } from '../../customHooks/useEffectUpdate'
 import { utilService } from '../../services/util.service'
 
@@ -23,6 +23,10 @@ export function BoardFilter ({ board, onSetFilter }) {
         onSetFilter.current(filterBy)
         loadMemberImg()
     }, [filterBy])
+
+    useEffect(() => {
+        setFilterBy(filter)
+    }, [filter])
 
     function loadMemberImg () {
         const member = board.members.find(member => member._id === filterBy.memberId)

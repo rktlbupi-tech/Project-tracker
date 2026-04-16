@@ -2,6 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
+
 import { socketService, SOCKET_EVENT_ADD_UPDATE_BOARD, SOCKET_EMIT_WATCH_BOARD, SOCKET_EMIT_UNWATCH_BOARD, SOCKET_EVENT_BOARD_USERS_ONLINE, SOCKET_EMIT_SET_USER_PRESENCE } from '../services/socket.service'
 import { loadBoard, setBoardFromSocket, setFilter, setOnlineUsers, setTaskEditing, unsetTaskEditing, saveBoard } from '../store/board.actions'
 import { ModalMemberInvite } from '../cmps/modal/modal-member-invite'
@@ -54,75 +55,81 @@ export function BoardDetails() {
     }, [searchStr]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (board?.workspaceId) {
+        if (board?.workspaceId && board?._id === boardId) {
             setCurrWorkspace(board.workspaceId)
         }
 
         // --- Migration: Ensure 'deadline-picker' exists and 'number-picker' is removed ---
         if (fullBoard) {
-            let hasChanged = false
-            const newBoard = structuredClone(fullBoard)
+            const needsMigration = 
+                !fullBoard.cmpsOption || 
+                !fullBoard.cmpsOrder || 
+                !fullBoard.cmpsOption.includes('deadline-picker') ||
+                fullBoard.cmpsOption.includes('number-picker') ||
+                !fullBoard.cmpsOption.includes('file-picker') ||
+                !fullBoard.cmpsOption.includes('custom-picker') ||
+                !fullBoard.cmpsTitles ||
+                !fullBoard.cmpsOrder.includes('deadline-picker')
 
-            if (!newBoard.cmpsOption) newBoard.cmpsOption = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
-            if (!newBoard.cmpsOrder) newBoard.cmpsOrder = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
+            if (needsMigration) {
+                let hasChanged = false
+                const newBoard = structuredClone(fullBoard)
 
-            // 1. Ensure Deadline is an option
-            if (!newBoard.cmpsOption.includes('deadline-picker')) {
-                newBoard.cmpsOption.push('deadline-picker')
-                hasChanged = true
-            }
+                if (!newBoard.cmpsOption) newBoard.cmpsOption = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
+                if (!newBoard.cmpsOrder) newBoard.cmpsOrder = ["status-picker", "member-picker", "date-picker", "priority-picker", "updated-picker"]
 
-            // 2. Remove Numbers from options as requested
-            if (newBoard.cmpsOption.includes('number-picker')) {
-                newBoard.cmpsOption = newBoard.cmpsOption.filter(c => c !== 'number-picker')
-                hasChanged = true
-            }
-
-            // 3. Ensure Files is an option if missing
-            if (!newBoard.cmpsOption.includes('file-picker')) {
-                newBoard.cmpsOption.push('file-picker')
-                hasChanged = true
-            }
-
-            // 4. Ensure Custom is an option if missing
-            if (!newBoard.cmpsOption.includes('custom-picker')) {
-                newBoard.cmpsOption.push('custom-picker')
-                hasChanged = true
-            }
-
-            // 5. Initialize column titles if missing
-            if (!newBoard.cmpsTitles) {
-                newBoard.cmpsTitles = {
-                    "status-picker": "Status",
-                    "member-picker": "Person",
-                    "date-picker": "Date",
-                    "priority-picker": "Priority",
-                    "number-picker": "Number",
-                    "file-picker": "Files",
-                    "updated-picker": "Last Updated",
-                    "deadline-picker": "Deadline",
-                    "custom-picker": "Custom"
+                if (!newBoard.cmpsOption.includes('deadline-picker')) {
+                    newBoard.cmpsOption.push('deadline-picker')
+                    hasChanged = true
                 }
-                hasChanged = true
-            }
 
-            // 6. Ensure Deadline is currently visible (in cmpsOrder)
-            if (!newBoard.cmpsOrder.includes('deadline-picker')) {
-                const updatedIdx = newBoard.cmpsOrder.indexOf('updated-picker')
-                if (updatedIdx !== -1) {
-                    newBoard.cmpsOrder.splice(updatedIdx + 1, 0, 'deadline-picker')
-                } else {
-                    newBoard.cmpsOrder.push('deadline-picker')
+                if (newBoard.cmpsOption.includes('number-picker')) {
+                    newBoard.cmpsOption = newBoard.cmpsOption.filter(c => c !== 'number-picker')
+                    hasChanged = true
                 }
-                hasChanged = true
-            }
 
-            if (hasChanged) {
-                loggerService.info('Migrating full board to latest column structure')
-                saveBoard(newBoard)
+                if (!newBoard.cmpsOption.includes('file-picker')) {
+                    newBoard.cmpsOption.push('file-picker')
+                    hasChanged = true
+                }
+
+                if (!newBoard.cmpsOption.includes('custom-picker')) {
+                    newBoard.cmpsOption.push('custom-picker')
+                    hasChanged = true
+                }
+
+                if (!newBoard.cmpsTitles) {
+                    newBoard.cmpsTitles = {
+                        "status-picker": "Status",
+                        "member-picker": "Person",
+                        "date-picker": "Date",
+                        "priority-picker": "Priority",
+                        "number-picker": "Number",
+                        "file-picker": "Files",
+                        "updated-picker": "Last Updated",
+                        "deadline-picker": "Deadline",
+                        "custom-picker": "Custom"
+                    }
+                    hasChanged = true
+                }
+
+                if (!newBoard.cmpsOrder.includes('deadline-picker')) {
+                    const updatedIdx = newBoard.cmpsOrder.indexOf('updated-picker')
+                    if (updatedIdx !== -1) {
+                        newBoard.cmpsOrder.splice(updatedIdx + 1, 0, 'deadline-picker')
+                    } else {
+                        newBoard.cmpsOrder.push('deadline-picker')
+                    }
+                    hasChanged = true
+                }
+
+                if (hasChanged) {
+                    loggerService.info('Migrating full board to latest column structure')
+                    saveBoard(newBoard)
+                }
             }
         }
-    }, [fullBoard, board])
+    }, [fullBoard, board, boardId])
 
     useEffect(() => {
         loadBoard(boardId, queryFilterBy)
