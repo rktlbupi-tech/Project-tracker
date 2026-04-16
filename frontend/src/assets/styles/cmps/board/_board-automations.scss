@@ -444,4 +444,82 @@
             }
         }
     }
+
+    @include for-mobile-layout() {
+        & {
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            top: 0;
+            left: 0;
+            transform: none;
+            border-radius: 0;
+            border: none;
+
+            .header {
+                padding: rem(16px) rem(20px);
+                .close-btn { font-size: rem(24px); }
+            }
+
+            .content {
+                padding: rem(20px);
+
+                .automation-creator {
+                    .recipes-grid {
+                        grid-template-columns: 1fr;
+                        gap: rem(16px);
+                    }
+
+                    .custom-builder {
+                        padding: rem(20px) rem(16px);
+                        
+                        .builder-sentence {
+                            flex-direction: column;
+                            align-items: stretch;
+                            text-align: left;
+                            padding: rem(20px) 0;
+                            gap: rem(12px);
+
+                            .bolt-icon, .arrow-icon {
+                                display: none;
+                            }
+
+                            .inline-select, .inline-input {
+                                width: 100%;
+                                min-width: 0;
+                                text-align: left;
+                                font-size: rem(14px);
+                                padding: rem(10px) rem(12px);
+                            }
+                        }
+                    }
+
+                    .mode-tabs {
+                        gap: rem(16px);
+                        .tab { font-size: rem(13px); }
+                    }
+
+                    .creator-actions {
+                        flex-direction: column-reverse;
+                        button { width: 100%; }
+                    }
+                }
+
+                .automations-list {
+                    .automation-item {
+                        .automation-details {
+                            flex-direction: column;
+                            align-items: flex-start;
+                        }
+
+                        .automation-actions {
+                            margin-top: rem(12px);
+                            justify-content: space-between;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
