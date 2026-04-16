@@ -82,11 +82,14 @@
 
     @include for-mobile-layout() {
         & {
-            padding: 16px 0;
-            justify-content: center;
+            padding: rem(16px);
+            flex-direction: column;
+            gap: rem(20px);
+            min-height: auto;
 
             >* {
-                width: 90%;
+                width: 100%;
+                min-height: rem(300px);
             }
         }
     }

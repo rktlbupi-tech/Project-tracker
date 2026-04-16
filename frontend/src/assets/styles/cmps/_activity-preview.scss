@@ -10,7 +10,13 @@
 
     @include for-mobile-layout() {
         & {
+            height: auto;
+            min-height: rem(60px);
+            flex-wrap: wrap;
+            padding: rem(12px) 0;
+            gap: rem(8px);
             font-size: rem(12px);
+            margin: 0 rem(16px);
         }
     }
 
@@ -25,8 +31,11 @@
 
         @include for-mobile-layout() {
             & {
-                width: 100px;
-                gap: unset;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: rem(4px);
             }
         }
 
@@ -35,7 +44,8 @@
 
             @include for-mobile-layout() {
                 & {
-                    width: 50px;
+                    width: auto;
+                    font-weight: 600;
                 }
             }
         }
@@ -47,9 +57,10 @@
 
             @include for-mobile-layout() {
                 & {
-                    width: 50px;
-                    gap: unset;
+                    width: auto;
+                    max-width: rem(120px);
                     overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
 
@@ -58,7 +69,8 @@
 
                 @include for-mobile-layout() {
                     & {
-                        display: none;
+                        width: rem(20px);
+                        height: rem(20px);
                     }
                 }
             }
@@ -76,7 +88,7 @@
 
         @include for-mobile-layout() {
             & {
-                width: 60px;
+                width: rem(50px);
             }
         }
 
@@ -101,7 +113,10 @@
 
         @include for-mobile-layout() {
             & {
-                width: 100px;
+                width: 100%;
+                margin-top: rem(4px);
+                justify-content: flex-end;
+                gap: rem(8px);
             }
         }
 
@@ -112,7 +127,9 @@
 
             @include for-mobile-layout() {
                 & {
-                    width: 40px;
+                    width: auto;
+                    min-width: rem(60px);
+                    padding: rem(4px) rem(8px);
                 }
             }
 
@@ -127,6 +144,12 @@
             font-size: rem(35px);
             color: $text-secondary;
             margin: 0 $spacing-xs;
+
+            @include for-mobile-layout() {
+                & {
+                    font-size: rem(18px);
+                }
+            }
         }
 
         &.label-container {
@@ -139,9 +162,11 @@
 
                     @include for-mobile-layout() {
                         &.label {
-                            width: 40px;
-                            height: 30px;
-                            font-size: rem(10px);
+                            width: auto;
+                            min-width: rem(60px);
+                            height: auto;
+                            padding: rem(4px) rem(10px);
+                            font-size: rem(11px);
                         }
                     }
                 }
@@ -157,4 +182,4 @@
             }
         }
     }
-}
+}

@@ -255,4 +255,99 @@
             }
         }
     }
-}
+
+    @include for-mobile-layout {
+        padding-top: rem(60px);
+
+        .layout {
+            padding: 0 rem(20px);
+        }
+
+        .hero-section {
+            padding: rem(60px) rem(20px);
+            border-radius: rem(40px);
+            gap: rem(32px);
+            margin-bottom: rem(60px);
+            margin-top: rem(20px);
+
+            .main-title {
+                font-size: rem(42px);
+                line-height: 1.2;
+                letter-spacing: -1px;
+
+                .inline-img {
+                    height: rem(45px);
+                    min-width: rem(60px);
+                    margin: 0 rem(5px);
+                }
+            }
+
+            .sub-title {
+                font-size: rem(17px);
+                padding: 0 rem(10px);
+            }
+
+            .btn-start-project {
+                width: 100%;
+                padding: rem(18px) rem(20px);
+            }
+        }
+
+        .features-section {
+            margin-bottom: rem(80px);
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: rem(24px);
+                padding: 0;
+            }
+
+            .feature-card {
+                padding: rem(48px) rem(32px);
+                border-radius: rem(40px);
+                gap: rem(16px);
+
+                h3 { font-size: rem(22px); }
+                p { font-size: rem(16px); }
+            }
+        }
+
+        .client-logos {
+            padding: rem(60px) 0;
+            border-radius: rem(40px);
+            margin-bottom: rem(80px);
+
+            p { margin-bottom: rem(32px); }
+        }
+
+        .marquee-section {
+            height: rem(200px);
+            margin-bottom: rem(80px);
+        }
+
+        .cta-section {
+            padding: rem(60px) rem(16px);
+            border-radius: rem(40px);
+            margin-bottom: rem(80px);
+
+            h2 {
+                font-size: rem(60px);
+                margin: 0 0 rem(-20px);
+            }
+
+            .cta-content {
+                padding: rem(60px) rem(24px);
+                border-radius: rem(40px);
+                gap: rem(24px);
+
+                h3 { font-size: rem(28px); }
+                p { font-size: rem(17px); }
+                
+                button {
+                    width: 100%;
+                    padding: rem(16px) rem(24px);
+                }
+            }
+        }
+    }
+}

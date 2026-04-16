@@ -1,19 +1,27 @@
 .notification-list-sidebar {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
+    max-height: 100vh;
     background-color: var(--bg-surface);
+    overflow: hidden;
+
+    @include for-mobile-layout {
+        height: calc(100vh - 64px);
+        max-height: calc(100vh - 64px);
+    }
 
     .notification-header {
-        padding: 24px 45px 24px 20px;
+        padding: rem(24px) rem(20px);
         border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: rem(8px);
         
         h3 {
             margin: 0;
-            font-size: 18px;
+            font-size: rem(18px);
             font-weight: 600;
             color: var(--text-primary);
         }
@@ -45,15 +53,13 @@
     .notification-content {
         flex: 1;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         padding: 8px 0;
 
         &::-webkit-scrollbar {
-            width: 4px;
+            display: none !important;
         }
-        &::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
+        scrollbar-width: none !important;
 
         .empty-notifications {
             padding: 40px 20px;

@@ -258,4 +258,73 @@
             }
         }
     }
-}
+
+    @include for-mobile-layout {
+        .login-header {
+            height: rem(70px);
+        }
+
+        .main-content {
+            padding: rem(20px) rem(16px);
+        }
+
+        .form-container {
+            padding: rem(48px) rem(24px);
+            border-radius: rem(40px);
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 rem(10px) rem(30px) rgba(0, 0, 0, 0.05);
+
+            h1 {
+                font-size: rem(26px);
+                letter-spacing: -1px;
+                margin-bottom: rem(8px);
+            }
+
+            .login-explain {
+                font-size: rem(15px);
+                margin-bottom: rem(32px);
+                padding: 0 rem(10px);
+            }
+
+            .uploader-stack {
+                margin-bottom: rem(24px);
+            }
+
+            .inputs-container {
+                gap: rem(12px);
+                margin-bottom: rem(20px);
+
+                input {
+                    padding: rem(15px) rem(22px);
+                    font-size: rem(15px);
+                }
+            }
+
+            .btn-next {
+                padding: rem(15px);
+                font-size: rem(16px);
+                min-height: rem(54px);
+                margin-bottom: rem(20px);
+            }
+
+            .split-line {
+                margin: rem(24px) 0;
+            }
+
+            .btn-login-google {
+                padding: rem(14px);
+                margin-bottom: rem(28px);
+                
+                span {
+                    font-size: rem(15px);
+                }
+            }
+
+            .suggest-signup {
+                margin-top: rem(32px);
+                font-size: rem(15px);
+            }
+        }
+    }
+}

@@ -760,11 +760,90 @@
     }
 
     // ─── Responsive ───────────────────────────────────────────
-    @media (max-width: 720px) {
-        padding: 12px;
+    @include for-mobile-layout {
+        padding: rem(12px);
+        min-height: calc(100vh - 64px);
 
-        .cal-grid { grid-template-rows: repeat(6, minmax(65px, 1fr)); }
-        .cal-workload-sidebar { display: none; }
-        .cal-task-pill .pill-progress-bar { display: none; }
+        .cal-header {
+            flex-direction: column;
+            gap: rem(16px);
+            align-items: flex-start;
+
+            .cal-header-right {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+        }
+
+        .cal-legend {
+            justify-content: center;
+            padding-bottom: rem(10px);
+            border-bottom: 1px solid var(--border-color);
+            .legend-drag { display: none; }
+        }
+
+        .cal-grid {
+            grid-template-rows: repeat(6, minmax(80px, 1fr));
+            gap: 2px;
+        }
+
+        .cal-cell {
+            padding: 4px;
+            border-radius: 6px;
+            min-height: 80px;
+
+            .cal-date-num {
+                width: 20px;
+                height: 20px;
+                font-size: 11px;
+            }
+
+            .cal-add-btn { display: none; }
+        }
+
+        .cal-task-pill {
+            padding: 2px 4px;
+            .cal-task-name { font-size: 9px; }
+            .cal-task-badge, .pill-progress-bar { display: none; }
+        }
+
+        .cal-task-popup {
+            width: 85vw;
+            padding: rem(16px);
+            gap: rem(8px);
+            border-radius: rem(12px);
+
+            .cal-popup-title {
+                font-size: rem(18px);
+                margin-bottom: rem(8px);
+            }
+
+            .cal-popup-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: rem(2px);
+                margin-bottom: rem(8px);
+                min-height: auto;
+
+                .cal-picker-container {
+                    max-width: none;
+                    justify-content: flex-start;
+                }
+            }
+        }
+
+        .cal-workload-sidebar {
+            position: fixed;
+            inset: 0;
+            top: auto;
+            width: 100vw;
+            height: 50vh;
+            z-index: 1001;
+            border-radius: rem(16px) rem(16px) 0 0;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+            padding: rem(20px);
+            animation: calSlideUp 0.3s ease;
+        }
     }
 }

@@ -271,24 +271,82 @@
 
     @include for-mobile-layout() {
         & {
-            padding: $spacing-medium 16px 0 16px;
+            padding: rem(12px) rem(16px) 0 rem(50px);
 
-            .board-info h1 {
-                font-size: rem(18px);
-                white-space: nowrap;
+            .board-title {
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: row; 
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: rem(16px);
+
+                .board-info, .board-tools {
+                    display: contents;
+                }
+
+                blockquote {
+                    flex: 0 0 100%;
+                    margin-bottom: rem(12px);
+                    h1 {
+                        font-size: rem(20px);
+                        padding: 0;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 90%;
+                    }
+                }
+
+                .icon, .activity, .invite-icon, .invite {
+                   flex: 0 0 auto;
+                }
+
+                .icon, .activity {
+                    font-size: rem(20px);
+                    color: var(--text-secondary);
+                    padding: rem(4px);
+                    margin: 0;
+                }
+
+                .star-btn {
+                    order: 2; // Star icon after Info
+                }
+
+                .invite, .invite.automations-trigger {
+                    margin: 0;
+                    padding: rem(6px) rem(10px);
+                    border: 1px solid var(--border-color);
+                    border-radius: rem(6px);
+                    background: transparent;
+                    
+                    span:not(.invite-icon) {
+                        display: none;
+                    }
+                }
+
+                .members-last-seen {
+                    display: none;
+                }
+
+                .members-imgs {
+                    order: 10;
+                    margin-left: auto;
+                }
             }
 
-            .board-tools {
-                margin-right: auto;
+            .board-display-btns {
+                margin-top: rem(12px);
+                border-top: 1px solid var(--border-color);
+                justify-content: space-around;
+                .type-btn {
+                    padding: rem(10px);
+                    span { display: none; }
+                }
             }
 
             .board-description {
                 display: none;
-            }
-
-            blockquote {
-                max-width: 180px;
-                white-space: nowrap;
             }
         }
     }
@@ -300,4 +358,4 @@
             }
         }
     }
-}
+}

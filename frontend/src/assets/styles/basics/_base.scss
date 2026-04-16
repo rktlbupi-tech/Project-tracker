@@ -111,7 +111,9 @@ button {
 
     @include for-mobile-layout {
         & {
-            height: 92vh;
+            height: calc(100vh - 64px); // Correct height for bottom nav
+            overflow-x: auto;
+            width: 100vw;
         }
     }
 }

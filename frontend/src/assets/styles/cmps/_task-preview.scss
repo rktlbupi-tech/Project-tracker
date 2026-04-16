@@ -25,6 +25,20 @@
 
     .sticky-div {
         transition: $transition-smooth;
+        background-color: $bg-primary;
+
+        @include for-mobile-layout {
+            & {
+                position: sticky;
+                left: 0;
+                z-index: 5;
+                min-width: rem(200px);
+                max-width: rem(220px);
+                background-color: $bg-primary;
+                box-shadow: 4px 0 8px rgba(0, 0, 0, 0.05);
+            }
+        }
+
         &.on-typing {
             background-color: $workspace-board-active;
         }

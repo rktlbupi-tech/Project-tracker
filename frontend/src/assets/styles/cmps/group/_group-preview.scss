@@ -371,14 +371,24 @@
 
         @include for-mobile-layout {
             & {
-                min-width: 240px;
+                min-width: rem(200px);
+                max-width: rem(220px);
                 left: 0;
+                z-index: 5;
+                background-color: $bg-primary; // Ensure it's solid
+                box-shadow: 4px 0 8px rgba(0, 0, 0, 0.05); // Subtle shadow to show it's sticky
             }
         }
 
         &.titles {
             border-top-left-radius: 8px;
             z-index: 11;
+
+            @include for-mobile-layout {
+                & {
+                    z-index: 12; // Higher than task rows
+                }
+            }
         }
     }
 

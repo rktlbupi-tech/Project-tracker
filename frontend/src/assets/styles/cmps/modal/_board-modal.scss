@@ -297,4 +297,57 @@
             .no-updates-modern h3 { color: #fff; }
         }
     }
+}
+
+.board-modal {
+    @include for-mobile-layout {
+        min-width: 0;
+        width: 100vw;
+        border-left: none;
+
+        .task-modal-header {
+            padding: rem(16px) rem(20px);
+            .title blockquote {
+                font-size: rem(22px);
+            }
+        }
+
+        .task-modal-type {
+            padding: 0 rem(20px);
+            gap: rem(16px);
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            &::-webkit-scrollbar { display: none; }
+            
+            .type-tab {
+                font-size: rem(13px);
+                flex-shrink: 0;
+            }
+        }
+
+        .update-section {
+            padding: rem(20px);
+            gap: rem(16px);
+            max-height: calc(100vh - rem(180px));
+            overflow-y: auto;
+            &::-webkit-scrollbar { display: none; }
+            scrollbar-width: none;
+
+            .no-updates-modern {
+                padding: rem(20px) 0;
+                img { width: rem(200px); }
+                .msg-box h3 { font-size: rem(18px); }
+            }
+        }
+
+        .activity-container {
+            padding: rem(20px);
+            max-height: calc(100vh - rem(180px));
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            &::-webkit-scrollbar { display: none; }
+            scrollbar-width: none;
+        }
+    }
 }

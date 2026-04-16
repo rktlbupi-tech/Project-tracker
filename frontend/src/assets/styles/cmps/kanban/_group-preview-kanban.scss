@@ -8,6 +8,14 @@
     display: flex;
     flex-direction: column;
 
+    @include for-mobile-layout {
+        & {
+            width: 85vw;
+            min-width: 85vw;
+            margin-right: rem(12px);
+        }
+    }
+
     .group-header {
         padding: 12px 16px;
 

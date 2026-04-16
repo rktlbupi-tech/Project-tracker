@@ -162,7 +162,8 @@
             min-width: auto;
             border-right: none;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: #000000;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding: 0 20px;
 
             .icon-link,
@@ -176,14 +177,14 @@
                 padding: 0;
                 justify-content: space-around;
                 width: 100%;
-                color: #1e2235;
+                color: rgba(255, 255, 255, 0.7);
 
                 .icon-container {
-                    color: #5e6c84;
+                    color: rgba(255, 255, 255, 0.6);
 
                     &.active {
                         background-color: transparent;
-                        color: #6161ff;
+                        color: #ffffff;
                         box-shadow: none;
 
                         &::after {
@@ -192,7 +193,7 @@
                             top: 0;
                             height: 3px;
                             width: 20px;
-                            background-color: #6161ff;
+                            background-color: #ffffff;
                             border-radius: 0 0 4px 4px;
                         }
                     }
@@ -200,7 +201,40 @@
             }
 
             .sidebar-bottom {
-                display: none;
+                display: flex;
+                flex-direction: row;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+                flex-grow: 1;
+                justify-content: space-around;
+                align-items: center;
+
+                .theme-toggle-btn {
+                    color: rgba(255, 255, 255, 0.6);
+                    font-size: rem(24px);
+                    width: rem(44px);
+                    height: rem(44px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .user-profile-section {
+                    width: rem(44px);
+                    height: rem(44px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .avatar-wrapper {
+                        .logged-user-img {
+                            height: rem(30px);
+                            width: rem(30px);
+                            border: 2px solid rgba(255, 255, 255, 0.2);
+                        }
+                    }
+                }
             }
         }
     }

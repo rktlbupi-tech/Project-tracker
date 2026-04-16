@@ -231,27 +231,59 @@
     @include for-mobile-layout() {
         &.close {
             min-width: 0;
+            width: 0;
+            overflow: visible;
+
+            .toggle-workspace {
+                left: rem(8px);
+                top: rem(12px);
+                position: fixed;
+                transform: rotate(180deg);
+            }
         }
 
         &.open {
-            width: 100vw;
-        }
-
-        .toggle-workspace {
-            display: none;
-        }
-    }
-}
-
-.workspace-sidebar {
-    &.open {
-        .toggle-workspace {
-            &:hover {
-                padding: $spacing-xs;
-                padding-right: $spacing-medium;
+            width: rem(280px);
+            box-shadow: 20px 0 50px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            
+            .toggle-workspace {
+                right: rem(-16px);
                 left: auto;
-                right: -12px;
+                top: rem(12px);
+                position: absolute;
+
+                // The "Click Outside" Magic: An invisible full-screen button extension
+                &::before {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    right: 0;
+                    width: calc(100vw - rem(280px));
+                    height: 100vh;
+                    background: transparent;
+                    z-index: -1; // Sit behind the toggle arrow but in front of the board
+                    cursor: default;
+                }
             }
         }
+
+        .toggle-workspace {
+            display: flex;
+            width: rem(32px);
+            height: rem(32px);
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid $border-color;
+            justify-content: center;
+            align-items: center;
+            color: #1e2235;
+            
+            * { display: flex !important; font-size: rem(14px); }
+            &::before, &::after { display: none; }
+            background-image: none;
+        }
     }
 }
+

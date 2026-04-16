@@ -14,7 +14,7 @@
 
         @include for-mobile-layout() {
             & {
-                width: 250px;
+                width: 100%;
             }
         }
 
@@ -57,10 +57,13 @@
                 width: 320px;
                 border-radius: 8px;
                 border: 2px solid $border-color;
+                display: flex; // Ensure icons stay in line
+                align-items: center;
 
                 @include for-mobile-layout() {
                     & {
-                        width: 200px;
+                        width: 100%;
+                        box-sizing: border-box;
                     }
                 }
 
