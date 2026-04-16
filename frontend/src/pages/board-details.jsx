@@ -1,5 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 
 
@@ -156,11 +156,11 @@ export function BoardDetails() {
         }
     }, [boardId])
 
-    function onSetFilter(filterBy) {
+    const onSetFilter = useCallback((filterBy) => {
         setSearchParams(filterBy)
         loadBoard(boardId, filterBy)
         setFilter(filterBy)
-    }
+    }, [boardId, setSearchParams])
 
     if (boardId && !board) return <Loader />
     return (

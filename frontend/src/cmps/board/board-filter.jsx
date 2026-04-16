@@ -1,5 +1,5 @@
 import { addTaskOnFirstGroup, setDynamicModalObj } from '../../store/board.actions'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useEffectUpdate } from '../../customHooks/useEffectUpdate'
 import { utilService } from '../../services/util.service'
 
@@ -9,7 +9,6 @@ import { BsPersonCircle } from 'react-icons/bs'
 import { AiFillCloseCircle } from 'react-icons/ai'
 import { useSelector } from 'react-redux'
 import { Tooltip } from '@mui/material'
-
 export function BoardFilter ({ board, onSetFilter }) {
     const filter = useSelector(storeState => storeState.boardModule.filter)
     const [filterBy, setFilterBy] = useState(filter)
@@ -17,10 +16,21 @@ export function BoardFilter ({ board, onSetFilter }) {
     const dynamicModalObj = useSelector(storeState => storeState.boardModule.dynamicModalObj)
     const elBoardFilter = useRef()
     const elMemberFilter = useRef()
-    onSetFilter = useRef(utilService.debounce(onSetFilter))
+
+    const onSetFilterRef = useRef(onSetFilter)
+    
+    useEffect(() => {
+        onSetFilterRef.current = onSetFilter
+    }, [onSetFilter])
+
+    const debouncedOnSetFilter = useMemo(() => {
+        return utilService.debounce((filterBy) => {
+            onSetFilterRef.current(filterBy)
+        })
+    }, [])
 
     useEffectUpdate(() => {
-        onSetFilter.current(filterBy)
+        debouncedOnSetFilter(filterBy)
         loadMemberImg()
     }, [filterBy])
 
